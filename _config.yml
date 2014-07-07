@@ -1,0 +1,12 @@
+# Site settings
+title: Kylin Soong Blog
+email: kylinsoong.1214@gmail.com
+description: "Open Source Middleware: JBoss Application Platform(WildFly), JBoss Data Virtualization(Teiid), JBoss Data Grid(Infinispan), JBoss BPM Suite(jBPM)"
+baseurl: ""
+url: "http://kylinsoong.github.io/"
+twitter_username: kylinsoong
+github_username:  kylinsoong
+
+# Build settings
+markdown: kramdown
+permalink: pretty
