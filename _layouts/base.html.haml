@@ -25,9 +25,9 @@
         %li.divider
           %li
             %a{:href=>"#{site.base_url}/"} Home
-        -#%li.divider
-        -#  %li
-        -#    %a{:href=>"#{site.base_url}/blog"} Blog
+        %li.divider
+          %li
+            %a{:href=>"#{site.base_url}/blog"} Blog
   .row
     .large-12.columns
       ~ content
@@ -35,7 +35,7 @@
     %hr
     .large-6.columns
       %p(style='margin-bottom: .75em')
-        &copy; #{site.org} #{Date.today.year}
+        &copy; #{Date.today.year} #{site.org}
         %br
         Built on Foundation. Baked by Awestruct.
     .large-6.columns
