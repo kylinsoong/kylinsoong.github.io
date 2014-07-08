@@ -2,3 +2,14 @@ name: ksoong
 title: ksoong
 org: ksoong.org
 base_url: ''
+
+
+profiles: 
+  production: 
+    css_minifier: enabled
+    js_minifier: enabled
+    html_minifier: enabled
+    base_url: http://kylinsoong.github.io/ 
+    deploy: 
+      host: github_pages 
+      branch: master
