@@ -3,6 +3,7 @@ title: ksoong
 org: ksoong
 base_url: ''
 
+google_analytics: UA-18521069-1
 
 profiles: 
   production: 
