@@ -1,0 +1,15 @@
+---
+layout: blog
+---
+
+          
+{% for post in site.categories[page.title] %}
+
+              <div class="byline">
+                <span class="dateinline">{{ post.date | date: "%b %-d, %Y" }} : </span>
+                 <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+              </div>
+
+
+{% endfor %}
+

@@ -1,0 +1,50 @@
+# Site settings
+title: Kylin Soong Blog
+email: kylinsoong.1214@gmail.com
+description: "Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description."
+#baseurl: ""
+url: ""
+twitter_username: jekyllrb
+github_username:  jekyll
+
+# Build settings
+markdown: kramdown
+permalink: pretty
+
+paginate: 5
+paginate_path: "/blog/page:num"
+
+# Global Configuration
+source: .
+destination: ./_site
+safe: true
+exclude: []
+include: ['.htaccess']
+timezone: Asia/Shanghai
+encoding: UTF-8
+
+# Build Command Options
+future: true
+#lsi: true
+limit_posts: 10000
+
+# Serve Command Options
+port: 8080
+host: localhost
+baseurl: ""
+detach: false
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "post"
+    values:
+      layout: "default"
+
+#collections:
+#  my_collection:
+#    output: true
+#    permalink: /awesome/:path/
+#    foo: bar
+   
