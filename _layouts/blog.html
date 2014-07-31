@@ -1,55 +1,15 @@
 ---
-layout: default
+layout: blogs
 ---
 
-<div id="content-header">
-        <div class="container">
-         <h1>
-              <a href="/blog">Blog</a>
-              <a href="#">&raquo;</a>
-              <a href="{{ page.url }}">{{ page.title }}</a>
-          </h1>
-        </div>
-</div>
-      <div class="container">
-        <div id="content">
           
 {{ content }}
 
-        </div>
-        <aside id="sidebar" role="complementary">
-          <div class="subscribe">
-            <h2 class="icon news">
-              <a href="/feed.xml">Subscribe</a>
-            </h2>
-          </div>
-          <nav class="latest">
-            <h2>Latest Posts</h2>
-            <ul>
-            {% for post in site.posts offset: 0 limit: 5 %}
-              <li>
-                <div class="title">
-                  <a href="{{post.url}}">{{ post.title }}</a>
-                </div>
-                <div class="meta">
-                  {{ post.date | date: "%b %-d, %Y" }}
-                </div>
-              </li>
-             {% endfor %}
-            </ul>
-            
-                        
-          </nav>
-          <nav class="tags">
-            <h2>Categories</h2>
-            <div class="tag-cloud">
-              {% for cate in site.categories %}
-              <span class="tag tag-1">
-                <a href="/categories/{{cate | first}}">{{cate | first | capitalize}}({{ cate | last | size }})</a>
-              </span>
-              {% endfor %}
-              
-            </div>
-          </nav>
-        </aside>
-      </div>
+	    <ul class="pager">
+		{% if page.previous %}
+		<li class="previous"><a href="{{ page.previous.url }}">&laquo;&nbsp;{{ page.previous.title | truncatewords:5 }}</a></li>
+		{% endif %}
+		{% if page.next %}
+		<li class="next"><a href="{{ page.next.url }}">{{ page.next.title | truncatewords:5 }}&nbsp;&raquo;</a></li>
+		{% endif %}
+	    </ul>

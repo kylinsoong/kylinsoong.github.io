@@ -1,5 +1,5 @@
 ---
-layout: blog
+layout: blogs
 ---
 
 {% for post in paginator.posts %}
@@ -19,6 +19,11 @@ layout: blog
               {{ post.excerpt }}
               <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">view more &raquo;</a>
             </div>
+            <div class="footer">
+		<a href="{{ post.url | prepend: site.baseurl }}">Comments</a>
+		| <i class="icon-tags"></i> tagged as 
+		<a class="tag" href="/categories/{{ post.categories }}">{{ post.categories }}</a> 
+	    </div>
               
 </article>
 
