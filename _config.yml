@@ -47,4 +47,11 @@ defaults:
 #    output: true
 #    permalink: /awesome/:path/
 #    foo: bar
-   
+# Comments   
+disqus:
+  config: false
+  id: need register
+
+duoshuo:
+  config: true
+  id: ksoong   

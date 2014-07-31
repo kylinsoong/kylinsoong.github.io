@@ -5,6 +5,7 @@ date:   2014-07-21 17:57:12
 categories: jekyll
 excerpt: "<p/>Primary purpose of this article is for how to set a post excerpt"
 author: Kylin Soong
+duoshuoid: ksoong20140721
 ---
 
 Each post automatically takes the first block of text, from the beginning of the content to the first occurrence of `excerpt_separator`, and sets it as the `post.excerpt`. Take the above example of an index of posts. Perhaps you want to include a little hint about the post’s content by adding the first paragraph of each of your posts:
