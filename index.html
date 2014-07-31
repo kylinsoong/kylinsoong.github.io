@@ -2,3 +2,59 @@
 layout: default
 ---
 
+<br/>
+
+<div class="container" id="content">
+    <div class="container-fluid"> 		
+		
+        <div class="row-fluid">
+            <div class="carousel slide" id="myCarousel">
+	        <ol class="carousel-indicators">
+		    <li class="" data-slide-to="0" data-target="#myCarousel"></li>
+		    <li class="active" data-slide-to="1" data-target="#myCarousel"></li>
+                    <li class="" data-slide-to="2" data-target="#myCarousel"></li>
+		</ol>
+		<div class="carousel-inner">
+		    <div class="item">
+			<a href="/blog"> <img src="/assets/dog.png"></a>
+		    </div>
+		    <div class="item active">
+			<a href="/blog"><img src="/assets/quickstart-tutorials.png"></a>
+		    </div>
+                    <div class="item">
+                        <a href="/blog"><img src="/assets/iwantyou.jpg"></a>
+                    </div>
+		</div>
+		<a class="carousel-control left" data-slide="prev" href="#myCarousel">‹</a> <a class="carousel-control right" data-slide="next" href="#myCarousel">›</a>
+	    </div>			
+	</div>
+    </div>
+    <div class="container-fluid">
+	<div class="row-fluid">
+	    <div class="span6 well">
+	        <h2>Latest Posts</h2>	
+	            <div id="feed">
+                            {% for post in site.posts offset: 0 limit: 5 %}
+                               <hr/>
+                                <h5 class="title">
+                                  <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                                </h5>
+                                <small>{{ post.date | date: "%b %-d, %Y" }}</small>
+                                <p>
+                                  {{ post.excerpt }}
+                                </p> 
+                            {% endfor %}
+                    </div> 
+                    <a class="post-link" href="/blog">view more &raquo;</a>
+	    </div>
+            <div class="span6 well">
+                          <h2>Latest Events</h2> 				
+	                  <div id="feed">
+                            <small>No Events</small>
+                          </div>
+	    </div>
+			
+	</div>
+    </div>
+</div>
+
