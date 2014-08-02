@@ -5,7 +5,7 @@ layout: blogs
           
 {{ content }}
 
-<div class="ds-thread" data-thread-key="{{ page.duoshuoid }}" data-title="{{ page.title }}" data-url="{{ page.url }}"></div>
+<div class="ds-thread" data-thread-key="{{ page.duoshuoid }}" data-title="{{ page.title }}" data-url="{{site.url}}{{ page.url }}"></div>
 
 	    <ul class="pager">
 		{% if page.previous %}
