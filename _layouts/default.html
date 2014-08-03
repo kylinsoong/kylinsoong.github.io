@@ -2,14 +2,14 @@
 <html class="ready" lang="en"><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Kylin Soong · Blog</title>
+    <title>{{ site.title }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="/atom.xml" rel="alternate" title="Kylin Soong blog Atom feed" type="application/atom+xml">
+    <link href="/atom.xml" rel="alternate" title="{{ site.title }} Atom feed" type="application/atom+xml">
     <link href="{{ "/css/screen.css" | prepend: site.baseurl }}" rel="stylesheet">
-    <script async="" src="{{ "/css/cbgapi.js" | prepend: site.baseurl }}"></script>
-    <script async="" src="{{ "/css/cbgapi_002.js" | prepend: site.baseurl }}"></script>
-    <script src="{{ "/css/ga.js" | prepend: site.baseurl }}" async="" type="text/javascript"></script>
-    <script gapi_processed="true" src="{{ "/css/plusone.js" | prepend: site.baseurl }}" async=""></script>
+    <!--script async="" src="{{ "/css/cbgapi.js" | prepend: site.baseurl }}"></script-->
+    <!--script async="" src="{{ "/css/cbgapi_002.js" | prepend: site.baseurl }}"></script-->
+    <!--script src="{{ "/css/ga.js" | prepend: site.baseurl }}" async="" type="text/javascript"></script-->
+    <!--script gapi_processed="true" src="{{ "/css/plusone.js" | prepend: site.baseurl }}" async=""></script-->
     <script src="{{ "/css/jquery.js" | prepend: site.baseurl }}"></script>
     <!--[if lt IE 9]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
@@ -17,6 +17,20 @@
     <link href="/favicon.ico" rel="shortcut icon">
   <script src="{{ "/css/count.js" | prepend: site.baseurl }}" async=""></script>
   <script src="{{ "/css/count-data.js" | prepend: site.baseurl }}" async=""></script></head>
+  <script>
+      $(function() {
+        $('html').addClass('ready');
+        prettify();
+        activateFooterGravity();
+        activateTooltips();
+        activateToTopControl();
+      });
+    </script>
+    <script src="{{ "/css/bootstrap.js" | prepend: site.baseurl }}"></script>
+    <script src="{{ "/css/prettify.js" | prepend: site.baseurl }}"></script>
+    <script src="{{ "/css/site.js" | prepend: site.baseurl }}"></script>
+
+
   <body class="blog index">
     <header class="navbar navbar-fixed-top" id="banner" role="banner">
       <div class="navbar-inner">
@@ -96,18 +110,6 @@
         <a class="visible-desktop" href="#" id="toTop">Top</a>
       </div>
     </footer>
-    <script>
-      $(function() {
-        $('html').addClass('ready');
-        prettify();
-        activateFooterGravity();
-        activateTooltips();
-        activateToTopControl();
-      });
-    </script>
-    <script src="{{ "/css/bootstrap.js" | prepend: site.baseurl }}"></script>
-    <script src="{{ "/css/prettify.js" | prepend: site.baseurl }}"></script>
-    <script src="{{ "/css/site.js" | prepend: site.baseurl }}"></script>
   
 
 </body>
