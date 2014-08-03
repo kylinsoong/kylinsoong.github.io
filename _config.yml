@@ -6,6 +6,8 @@ description: "Write an awesome description for your new site here. You can edit 
 url: ksoong.org
 twitter_username: kylinsoong
 github_username:  kylinsoong
+author: Kylin Soong
+
 
 # Build settings
 markdown: kramdown
