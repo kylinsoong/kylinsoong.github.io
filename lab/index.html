@@ -1,5 +1,31 @@
 ---
 layout: lab
+duoshuoid: ksoonglabs
+title: View All Available Labs
 ---
 
-This is labs page
+
+<table class="table table-bordered table-striped">
+    <tbody>
+	<tr>
+            <th width="40%">Name</th>
+            <th>Description</th>
+	    <th width="10%">Lauch</th>
+        </tr>
+
+        <tr>
+            <td><a href="{{ site.baseurl }}/lab">JVM Options Configuration Tool</a></td>
+            <td>JVM Options Configuration Tool allows you to specify various parameters for your specific environment and JVM and generates optimized JVM options.</td>
+            <td><a href="{{ site.baseurl }}/lab">Launch &raquo;</a></td>
+        </tr>
+	<tr>
+            <td><a href="{{ site.baseurl }}/lab">Load Balancer Configuration Tool</a></td>
+            <td>Load Balancer Configuration Tool helps to create an optimal balance between apache-based load balancers and JBoss application servers.</td>
+            <td><a href="{{ site.baseurl }}/lab">Launch &raquo;</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+<div class="ds-thread" data-thread-key="{{ page.duoshuoid }}" data-title="{{ page.title }}" data-url="{{site.url}}{{ page.url }}"></div>
