@@ -18,13 +18,13 @@ Use the Following Steps can include images and resources in a post:
 **Including an image asset in a post:**
 
 ~~~
-![My helpful screenshot]({{ site.url }}/assets/screenshot.jpg)
+![My helpful screenshot]({{ site.baseurl }}/assets/screenshot.jpg)
 ~~~
 
 **Linking to a PDF for readers to download:**
 
 ~~~
-you can [get the PDF]({{ site.url }}/assets/mydoc.pdf) directly.
+you can [get the PDF]({{ site.baseurl }}/assets/mydoc.pdf) directly.
 ~~~
 
 > Note `site.url` refer to *url* parameter in *_config.yml*
