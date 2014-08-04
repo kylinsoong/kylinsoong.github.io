@@ -2,7 +2,7 @@
 layout: blog
 title:  "How to include image and resource"
 date:   2014-07-29 17:57:12
-categories: Teiid
+categories: jekyll
 author: Kylin Soong
 duoshuoid: ksoong 20140729
 ---
