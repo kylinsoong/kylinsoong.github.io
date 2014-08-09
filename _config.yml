@@ -13,7 +13,7 @@ author: Kylin Soong
 markdown: kramdown
 permalink: pretty
 
-paginate: 5
+paginate: 10
 paginate_path: "/blog/page:num"
 
 # Global Configuration

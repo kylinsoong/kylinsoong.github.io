@@ -4,56 +4,14 @@
     <meta charset="utf-8">
     <title>{{ site.title }}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="/atom.xml" rel="alternate" title="{{ site.title }} Atom feed" type="application/atom+xml">
+    <link href="/feed.xm" rel="alternate" title="{{ site.title }} Atom feed" type="application/atom+xml">
     <link href="{{ "/css/screen.css" | prepend: site.baseurl }}" rel="stylesheet">
-    <script src="{{ "/css/jquery.js" | prepend: site.baseurl }}"></script>
     <!--[if lt IE 9]>
       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.js"></script>
     <![endif]-->
     <link href="/favicon.ico" rel="shortcut icon">
 
 </head>
-  <script>
-      $(function() {
-        $('html').addClass('ready');
-        prettify();
-        activateFooterGravity();
-        activateTooltips();
-        activateToTopControl();
-      });
-    </script>
-    <script src="{{ "/css/bootstrap.js" | prepend: site.baseurl }}"></script>
-    <script src="{{ "/css/prettify.js" | prepend: site.baseurl }}"></script>
-    <script src="{{ "/css/site.js" | prepend: site.baseurl }}"></script>
-
-    {% if site.disqus.config %}
-        <script type="text/javascript">
-            //disqus
-            var disqus_shortname = '{{ site.disqus.id }}';
-            (function() {
-                var dsq = document.createElement('script'); 
-                dsq.type = 'text/javascript'; 
-                dsq.async = true;
-                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        {% else %}
-            {% if site.duoshuo.config %}
-            <script type="text/javascript">
-                var duoshuoQuery = {short_name:"{{ site.duoshuo.id }}"};
-                (function() {
-                    var ds = document.createElement('script');
-                    ds.type = 'text/javascript';
-                    ds.async = true;
-                    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-                    ds.charset = 'UTF-8';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
-                })();
-            </script>
-            {% endif %}
-        {% endif %}
-
 
   <body class="blog index">
     <header class="navbar navbar-fixed-top" id="banner" role="banner">
@@ -142,6 +100,49 @@
       </div>
     </footer>
   
+    
+    <script src="{{ "/css/jquery-1.11.1.min.js" | prepend: site.baseurl }}"></script>
+    <script src="{{ "/css/bootstrap.js" | prepend: site.baseurl }}"></script>
+
+   <script>
+      $(function() {
+        $('html').addClass('ready');
+        prettify();
+        activateFooterGravity();
+        activateTooltips();
+        activateToTopControl();
+      });
+    </script>
+    <script src="{{ "/css/site.js" | prepend: site.baseurl }}"></script>
+
+    {% if site.disqus.config %}
+        <script type="text/javascript">
+            //disqus
+            var disqus_shortname = '{{ site.disqus.id }}';
+            (function() {
+                var dsq = document.createElement('script'); 
+                dsq.type = 'text/javascript'; 
+                dsq.async = true;
+                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        {% else %}
+            {% if site.duoshuo.config %}
+            <script type="text/javascript">
+                var duoshuoQuery = {short_name:"{{ site.duoshuo.id }}"};
+                (function() {
+                    var ds = document.createElement('script');
+                    ds.type = 'text/javascript';
+                    ds.async = true;
+                    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                    ds.charset = 'UTF-8';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+                })();
+            </script>
+            {% endif %}
+        {% endif %}
+
 
 </body>
 </html>
