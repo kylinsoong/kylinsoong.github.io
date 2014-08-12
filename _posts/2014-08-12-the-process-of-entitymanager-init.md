@@ -7,6 +7,11 @@ author: Kylin Soong
 duoshuoid: ksoong2014081202
 ---
 
+EclipseLink is fully support JPA 2, this documents use EclipseLink as example, diving into the Process of JPA EntityManager initiation, we mainly focus on the below figure:
+
+
+![architecture]({{ site.baseurl }}/assets/blog/entityManager-init.png)
+
 * getAbstractSession()
 
 Returns the ServerSession that the Factory will be using and initializes it if it is not available. 
@@ -39,7 +44,7 @@ Generate the DDL using the correct connection.
 
 `eclipselink.ddl-generation` is the threshold used to enable DDL Generation, for example, *drop-and-create-tables*.
 
-* DefaultTableGenerator
+* TableCreator
 
 The DefaultTableGenerator is a utility class used to generate a default table schema, it hold a DatabasePlatform which initialized in updateLogins().
 
