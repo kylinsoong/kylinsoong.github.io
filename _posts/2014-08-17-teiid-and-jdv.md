@@ -1,8 +1,9 @@
 ---
 layout: blog
 title:  "Relation between Teiid and JBoss Data Virtualization"
-date:   2014-08-17 17:57:12
+date:   2014-08-17 21:52:12
 categories: teiid
+permalink: /teiid-and-jdv
 author: Kylin Soong
 duoshuoid: ksoong20140817
 ---
