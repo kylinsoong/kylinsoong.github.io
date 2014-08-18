@@ -1,7 +1,7 @@
 ---
 layout: blog
 title:  "Teiid DDL behavior with samples"
-date:   2014-08-14 17:57:12
+date:   2014-08-15 17:57:12
 categories: teiid
 author: Kylin Soong
 duoshuoid: ksoong20140815
