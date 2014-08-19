@@ -37,7 +37,7 @@ and the VDB we deployed:
 
 ~~~
 server.deployVDB(new FileInputStream(new File("src/vdb/marketdata-vdb.xml")));
-~~
+~~~
 
 [The Completed marketdata-vdb.xml](https://github.com/kylinsoong/teiid-samples/blob/master/teiid-quickstart/src/vdb/marketdata-vdb.xml)
 
