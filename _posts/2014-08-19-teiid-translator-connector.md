@@ -122,3 +122,16 @@ The Following code used test parent file:
 		assertTrue(f.isDirectory());
 	}
 ~~~
+
+## EmbeddedServer Initialization Process
+
+![Teiid EmbededServer init]({{ site.baseurl }}/assets/blog/EmbededServer_init.png)
+
+* EmbeddedProfile implements `org.teiid.jdbc.ConnectionProfile`
+* DQPCore implements `org.teiid.client.DQP`
+* VDBRepository represents repository for VDBs
+* SessionServiceImpl implements `org.teiid.dqp.service.SessionService`
+* BufferServiceImpl implements `org.teiid.dqp.service.BufferService`
+* TransactionServerImpl implements `org.teiid.dqp.service.TransactionService`
+* ClientServiceRegistryImpl implements `org.teiid.transport.ClientServiceRegistry`
+
