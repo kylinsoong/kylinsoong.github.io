@@ -3,6 +3,7 @@ layout: blog
 title:  "Basic Mysql Administration & Usage Commands "
 date:   2014-08-06 17:57:12
 categories: database
+permalink: /mysql-usage-commands
 author: Kylin Soong
 duoshuoid: ksoong20140806
 ---
