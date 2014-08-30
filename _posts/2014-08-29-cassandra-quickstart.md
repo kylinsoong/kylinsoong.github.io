@@ -8,6 +8,8 @@ author: Kylin Soong
 duoshuoid: ksoong2014082901
 ---
 
+This documents contain Cassandra quick installation, basic commands of create keyspace and table, and a samples for how Java Application connect to Cassandra.
+
 ## Quick installation
 
 Download one of stable version from [http://archive.apache.org/dist/cassandra/](http://archive.apache.org/dist/cassandra/), for example 2.0.1. Installing via unzip:
