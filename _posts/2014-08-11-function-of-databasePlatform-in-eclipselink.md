@@ -2,7 +2,7 @@
 layout: blog
 title:  "The Function of EclipseLink DatabasePlatform"
 date:   2014-08-11 17:14:12
-categories: jee
+categories: javaee
 author: Kylin Soong
 duoshuoid: ksoong20140811
 ---

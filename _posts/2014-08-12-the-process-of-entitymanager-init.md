@@ -2,7 +2,7 @@
 layout: blog
 title:  "The Process of JPA EntityManager init"
 date:   2014-08-12 17:14:12
-categories: jee
+categories: javaee
 author: Kylin Soong
 duoshuoid: ksoong2014081202
 ---
