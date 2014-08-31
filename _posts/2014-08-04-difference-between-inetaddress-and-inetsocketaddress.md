@@ -2,7 +2,7 @@
 layout: blog
 title:  "Difference between InetSocketAddress and InetAddress"
 date:   2014-08-04 17:57:12
-categories: j2se
+categories: java
 author: Kylin Soong
 duoshuoid: ksoong20140804
 ---
