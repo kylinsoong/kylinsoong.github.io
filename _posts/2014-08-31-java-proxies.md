@@ -183,12 +183,17 @@ To do our vehicle example with a dynamic proxy, we first need an invocation hand
 
 ~~~
 public class VehicleHandler implements InvocationHandler {
+	
+	private IVehicle v;
+
+	public VehicleHandler(IVehicle v) {
+		this.v = v;
+	}
 
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		System.out.println("Vehicle Handler: Invoking " + method.getName());
-		return method.invoke(proxy, args);
+		return method.invoke(v, args);
 	}
-
 }
 ~~~
 
@@ -204,7 +209,7 @@ public class ClientWithDynamicProxy {
 	public static void main(String[] args) {
 		IVehicle c = new Car("Botar");
 		ClassLoader loader = IVehicle.class.getClassLoader();
-		IVehicle v = (IVehicle) Proxy.newProxyInstance(loader, new Class[]{IVehicle.class}, new VehicleHandler());
+		IVehicle v = (IVehicle) Proxy.newProxyInstance(loader, new Class[]{IVehicle.class}, new VehicleHandler(c));
 		v.start();
 		v.forward();
 		v.stop();
