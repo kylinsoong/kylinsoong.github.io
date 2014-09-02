@@ -123,25 +123,4 @@ The Following code used test parent file:
 	}
 ~~~
 
-## EmbeddedServer Initialization
-
-![Teiid EmbededServer init]({{ site.baseurl }}/assets/blog/EmbededServer_init.png)
-
-* EmbeddedProfile implements `org.teiid.jdbc.ConnectionProfile`
-* DQPCore implements `org.teiid.client.DQP`
-* VDBRepository represents repository for VDBs
-* SessionServiceImpl implements `org.teiid.dqp.service.SessionService`
-* BufferServiceImpl implements `org.teiid.dqp.service.BufferService`
-* TransactionServerImpl implements `org.teiid.dqp.service.TransactionService`
-* ClientServiceRegistryImpl implements `org.teiid.transport.ClientServiceRegistry`
-
-## EmbeddedServer startup
-
-![Teiid EmbededServer start]({{ site.baseurl }}/assets/blog/EmbededServer_start.png)
-
-Combine with previous EmbeddedServer Initialization, total 16 threads created so far:
-
-* TimeTask in **new SessionServiceImpl()** and **getBufferService()** relevant 2 daemon threads up
-* Infinispan Cachemanager start 3 local cache `resultset`, `resultset-repl`, `preparedplan` cause 3 transaction clean up threads and 1 eviction thread up
-* Netty's **new NioServerSocketChannelFactory()** start up 8 `New I/O worker ` threads and 1 accept thread `New I/O server boss` 
 
