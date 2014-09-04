@@ -113,3 +113,9 @@ Start from left to right:
 * RemoteInvocationHandler assemble a `org.teiid.net.socket.Message` base on passed `org.teiid.client.RequestMessage`, then SocketServerInstanceImpl's **send** method be invoked
 * OioObjectChannel's **write** methd be invoked
 * ObjectOutputStream which come from socket **writeObject** `org.teiid.net.socket.Message`
+
+
+## How Teiid Server handle query request
+
+![teiid-server-hanlde-request]({{ site.baseurl }}/assets/blog/teiid-server-hanlde-request.png)
+
