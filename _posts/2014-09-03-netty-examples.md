@@ -12,7 +12,7 @@ This docuemnts contain the examples for getting start with Netty, we use the ver
 
 ## Discard example
 
-* **Source Code: ** [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/discard](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/discard)
+* Source Code:  [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/discard](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/discard)
 
 * Run [DiscardServer](https://github.com/kylinsoong/teiid-samples/blob/master/netty-samples/src/main/java/org/jboss/netty/example/discard/DiscardServer.java) start server
 
@@ -20,7 +20,7 @@ This docuemnts contain the examples for getting start with Netty, we use the ver
 
 ## Echo example
 
-* **Source code: ** [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/echo](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/echo)
+* Source code:  [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/echo](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/echo)
 
 * Run [EchoServer](https://github.com/kylinsoong/teiid-samples/blob/master/netty-samples/src/main/java/org/jboss/netty/example/echo/EchoServer.java) start server
 
@@ -28,7 +28,7 @@ This docuemnts contain the examples for getting start with Netty, we use the ver
 
 ## Telnet example
 
-* **Source code: ** [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/telnet](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/telnet)
+* Source code: [https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/telnet](https://github.com/kylinsoong/teiid-samples/tree/master/netty-samples/src/main/java/org/jboss/netty/example/telnet)
 
 * Run [TelnetServer](https://github.com/kylinsoong/teiid-samples/blob/master/netty-samples/src/main/java/org/jboss/netty/example/telnet/TelnetServer.java)
 
