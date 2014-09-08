@@ -8,8 +8,11 @@ author: Kylin Soong
 duoshuoid: ksoong20140908
 ---
 
-**youku: **
+### youtube
 
-<embed src="http://player.youku.com/player.php/sid/XNzc2NjIwNjI0/v.swf" allowFullScreen="true" quality="high" width="600" height="500" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">
+<iframe width="560" height="315" src="//www.youtube.com/embed/l17T3gJesHw" frameborder="0" allowfullscreen></iframe>
 
-**youtube**
+### youku
+
+<embed src="http://player.youku.com/player.php/sid/XNzc2NjIwNjI0/v.swf" allowFullScreen="true" quality="high" width="560" height="315" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash">
+
