@@ -39,6 +39,61 @@ mvn clean install
 
 运行 [StateServiceClient](https://github.com/kylinsoong/jaxws/blob/master/stateService/src/main/java/org/teiid/stateservice/client/StateServiceClient.java) 会依次调运 getAllStateInfo() 和 getStateInfo() 方法。
 
+同样 [StateServiceClient](https://github.com/kylinsoong/jaxws/blob/master/stateService/src/main/java/org/teiid/stateservice/client/StateServiceClient.java) 也演示了不同的 CXF 客户端的编写，包括：
+
+* CXF Proxy API 客户端
+
+~~~
+final Service service = Service.create(wsdlURL, serviceName);
+StateService client = service.getPort(portName, StateService.class);
+~~~
+
+* CXF Dispatch JAXB 客户端
+
+~~~
+final Service service = Service.create(wsdlURL, serviceName);
+JAXBContext ctx = JAXBContext.newInstance("org.teiid.stateservice.jaxb", StateServiceClient.class.getClassLoader());
+Dispatch<Object> dispatch = service.createDispatch(portName, ctx, Mode.PAYLOAD);
+Object response = dispatch.invoke(new ObjectFactory().createGetAllStateInfo());
+~~~
+
+* CXF Dispatch SOAP 请求客户端
+
+~~~
+final Service service = Service.create(wsdlURL, serviceName);
+Dispatch<SOAPMessage> dispatch = service.createDispatch(portName, SOAPMessage.class, Mode.MESSAGE);
+String getAll = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:stat=\"http://www.teiid.org/stateService/\"><soapenv:Header/><soapenv:Body><stat:GetAllStateInfo></stat:GetAllStateInfo></soapenv:Body></soapenv:Envelope>";
+SOAPMessage response = dispatch.invoke(getRequest(getAll));
+~~~
+
+* CXF Dispatch DOMSource 客户端
+
+~~~
+final Service service = Service.create(wsdlURL, serviceName);
+Dispatch<Source> dispatch = service.createDispatch(portName, Source.class, Mode.PAYLOAD);
+DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+Document requestDoc = db.newDocument();
+Element rootElement = requestDoc.createElementNS("http://www.teiid.org/stateService/", "GetAllStateInfo");
+requestDoc.appendChild(rootElement);
+DOMSource request = new DOMSource(requestDoc);
+Source response = dispatch.invoke(request);
+~~~
+
+* CXF Dispatch StAXSource 客户端
+
+~~~
+service = Service.create(serviceName);
+String bindingId = "http://schemas.xmlsoap.org/wsdl/soap/http";
+String endpointAddress = "http://localhost:8080/StateService/stateService/StateServiceImpl?WSDL";
+service.addPort(portName, bindingId, endpointAddress);
+Dispatch<StAXSource> dispatch = service.createDispatch(portName, StAXSource.class, Mode.PAYLOAD);
+		
+String xmlRequest = "<GetAllStateInfo xmlns=\"http://www.teiid.org/stateService/\"/>";
+XMLInputFactory factory = XMLInputFactory.newInstance();
+StAXSource source = new StAXSource(factory.createXMLStreamReader(new ByteArrayInputStream(xmlRequest.getBytes())));
+StAXSource returnValue = dispatch.invoke(source);
+~~~
+
 ## 使用 soapUI 调运 StateService
 
 * 启动 [soapUI](http://www.soapui.org/)，选择 `New Project` 创建工程 **StateServiceClient**，指定 WSDL 为 [http://localhost:8080/StateService/stateService/StateServiceImpl?WSDL](http://localhost:8080/StateService/stateService/StateServiceImpl?WSDL)
