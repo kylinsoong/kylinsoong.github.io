@@ -1,7 +1,7 @@
 ---
 layout: blog
 title:  "JavaEE Profiling concepts"
-date:   2014-09-10 16:05:00
+date:   2014-09-25 16:05:00
 categories: javaee
 permalink: /jee-profiling
 author: Kylin Soong
@@ -45,3 +45,41 @@ cpu cores   : 6
 ~~~
 
 cpu线程数=物理CPU个数*每个物理CPU的逻辑核数*2，因为每个逻辑核跑了2个cpu线程。所以，上面的24=2*6*2
+
+## Intel Hardware List
+
+* http://ark.intel.com/products/75128/Intel-Core-i7-4800MQ-Processor-6M-Cache-up-to-3_70-GHz
+
+4 cores, 8 processors
+
+* http://ark.intel.com/products/52229/Intel-Core-i5-2520M-Processor-3M-Cache-up-to-3_20-GHz
+
+2 cores, 4 processors
+
+* http://ark.intel.com/products/81059/Intel-Xeon-Processor-E5-2697-v3-35M-Cache-2_60-GHz
+
+14 cores, 28 processors
+
+* http://ark.intel.com/products/81713/Intel-Xeon-Processor-E5-2690-v3-30M-Cache-2_60-GHz
+
+12 cores, 24 processors
+
+* http://ark.intel.com/products/81709/Intel-Xeon-Processor-E5-2670-v3-30M-Cache-2_30-GHz
+
+12 cores, 24 processors
+
+* http://ark.intel.com/products/75275/Intel-Xeon-Processor-E5-2670-v2-25M-Cache-2_50-GHz
+
+10 cores, 20 processors
+
+* http://ark.intel.com/products/64583/Intel-Xeon-Processor-E5-2680-%2820M-Cache-2_70-GHz-8_00-GTs-Intel-QPI%29
+
+8 cores, 16 processors
+
+* http://ark.intel.com/products/63697/Intel-Core-i7-3930K-Processor-12M-Cache-up-to-3_80-GHz
+
+6 cores, 12 processors
+
+* http://ark.intel.com/products/75123/Intel-Core-i7-4770K-Processor-8M-Cache-up-to-3_90-GHz
+
+4 cores, 8 processors
