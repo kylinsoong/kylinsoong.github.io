@@ -113,3 +113,12 @@ A following is a real samples for execute [test-mysql.sql]()
 ~~~
 mysql> source $PATH/test-mysql.sql
 ~~~
+
+## Perf related query
+
+~~~
+SELECT count(*) tables from information_schema.TABLES WHERE table_name = 'CUSTOMER';
+SELECT sum(table_rows) from information_schema.TABLES WHERE table_name = 'CUSTOMER';
+SELECT sum(data_length) from information_schema.TABLES WHERE table_name = 'CUSTOMER';
+SELECT sum(index_length) from information_schema.TABLES WHERE table_name = 'CUSTOMER';
+~~~
