@@ -121,7 +121,10 @@ Deserialize 90000 bytes spend time: 20 ms
 For example if deserialize 900 MB(900000 KB), 900000 = 9 * Math.pow(10, 5), so
 
 * per = 0.9
-
 * n = 5
 
-deserialize_time = Math.pow(4, 5) * 3.5 * (1 + 3 * 0.9) = 13260 ms, in other words, one hardware threads deserialize 1 GB size need abround 14 secs.
+deserialize_time = Math.pow(4, 5) * 3.5 * (1 + 3 * 0.9) = 13260 ms, in other words, one hardware thread deserialize 1 GB size need around 14 secs.
+
+If we have wall time is 1 secs, so deserialize 1 GB size's cpu cores can be caculate via below formular:
+
+wall_time = 14 /(cores * 2), we can count cores is 7, so we need at least 7 cores cpu.
