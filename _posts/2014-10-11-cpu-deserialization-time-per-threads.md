@@ -40,3 +40,88 @@ Execute the floowing sql can check total rows and total size in bytes:
 SELECT sum(table_rows) from information_schema.TABLES WHERE table_name = 'PERFTEST';
 SELECT sum(data_length) from information_schema.TABLES WHERE table_name = 'PERFTEST';
 ~~~
+
+## Deserialize log
+
+~~~
+Deserialize 100000000 bytes spend time: 530 ms
+Deserialize 90000000 bytes spend time: 490 ms
+Deserialize 90000000 bytes spend time: 489 ms
+Deserialize 90000000 bytes spend time: 485 ms
+Deserialize 80000000 bytes spend time: 443 ms
+Deserialize 80000000 bytes spend time: 446 ms
+Deserialize 80000000 bytes spend time: 454 ms
+Deserialize 70000000 bytes spend time: 416 ms
+Deserialize 70000000 bytes spend time: 407 ms
+Deserialize 70000000 bytes spend time: 403 ms
+Deserialize 60000000 bytes spend time: 361 ms
+Deserialize 60000000 bytes spend time: 358 ms
+Deserialize 60000000 bytes spend time: 355 ms
+Deserialize 50000000 bytes spend time: 317 ms
+Deserialize 50000000 bytes spend time: 317 ms
+Deserialize 50000000 bytes spend time: 312 ms
+Deserialize 40000000 bytes spend time: 271 ms
+Deserialize 40000000 bytes spend time: 275 ms
+Deserialize 40000000 bytes spend time: 269 ms
+Deserialize 30000000 bytes spend time: 237 ms
+Deserialize 30000000 bytes spend time: 237 ms
+Deserialize 30000000 bytes spend time: 234 ms
+Deserialize 20000000 bytes spend time: 186 ms
+Deserialize 20000000 bytes spend time: 192 ms
+Deserialize 20000000 bytes spend time: 192 ms
+Deserialize 10000000 bytes spend time: 149 ms
+Deserialize 10000000 bytes spend time: 149 ms
+Deserialize 10000000 bytes spend time: 149 ms
+Deserialize 9000000 bytes spend time: 141 ms
+Deserialize 9000000 bytes spend time: 160 ms
+Deserialize 9000000 bytes spend time: 140 ms
+Deserialize 9000000 bytes spend time: 144 ms
+Deserialize 8000000 bytes spend time: 147 ms
+Deserialize 8000000 bytes spend time: 140 ms
+Deserialize 8000000 bytes spend time: 150 ms
+Deserialize 8000000 bytes spend time: 147 ms
+Deserialize 8000000 bytes spend time: 138 ms
+Deserialize 8000000 bytes spend time: 139 ms
+Deserialize 6000000 bytes spend time: 145 ms
+Deserialize 6000000 bytes spend time: 129 ms
+Deserialize 6000000 bytes spend time: 129 ms
+Deserialize 6000000 bytes spend time: 135 ms
+Deserialize 4000000 bytes spend time: 131 ms
+Deserialize 4000000 bytes spend time: 128 ms
+Deserialize 4000000 bytes spend time: 120 ms
+Deserialize 2000000 bytes spend time: 108 ms
+Deserialize 2000000 bytes spend time: 105 ms
+Deserialize 2000000 bytes spend time: 111 ms
+Deserialize 1000000 bytes spend time: 91 ms
+Deserialize 1000000 bytes spend time: 91 ms
+Deserialize 1000000 bytes spend time: 93 ms
+Deserialize 900000 bytes spend time: 90 ms
+Deserialize 900000 bytes spend time: 87 ms
+Deserialize 900000 bytes spend time: 88 ms
+Deserialize 700000 bytes spend time: 77 ms
+Deserialize 700000 bytes spend time: 86 ms
+Deserialize 700000 bytes spend time: 88 ms
+Deserialize 500000 bytes spend time: 69 ms
+Deserialize 500000 bytes spend time: 76 ms
+Deserialize 500000 bytes spend time: 73 ms
+Deserialize 300000 bytes spend time: 57 ms
+Deserialize 300000 bytes spend time: 59 ms
+Deserialize 300000 bytes spend time: 49 ms
+Deserialize 100000 bytes spend time: 25 ms
+Deserialize 100000 bytes spend time: 23 ms
+Deserialize 100000 bytes spend time: 24 ms
+Deserialize 90000 bytes spend time: 24 ms
+Deserialize 90000 bytes spend time: 20 ms
+~~~
+
+## Conclusion
+
+![perf-mysql-conclusion]({{ site.baseurl }}/assets/blog/perf-mysql-conclusion.png)
+
+For example if deserialize 900 MB(900000 KB), 900000 = 9 * Math.pow(10, 5), so
+
+* per = 0.9
+
+* n = 5
+
+deserialize_time = Math.pow(4, 5) * 3.5 * (1 + 3 * 0.9) = 13260 ms, in other words, one hardware threads deserialize 1 GB size need abround 14 secs.
