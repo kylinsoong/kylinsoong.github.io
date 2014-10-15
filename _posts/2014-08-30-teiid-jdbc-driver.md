@@ -119,3 +119,31 @@ Start from left to right:
 
 ![teiid-server-hanlde-request]({{ site.baseurl }}/assets/blog/teiid-server-hanlde-request.png)
 
+* SSLAwareChannelHandler
+
+While Teiid Server Started, it will create a SocketListener which listen for new connection requests and create a SocketClientConnection for each connection request.
+
+The SocketListener bootstrap netty server worker threads with port number 31000, SSLAwareChannelHandler is the handler used by netty server side, it's `messageReceived()` can be thought as teiid server side entry point. Once a client request in, this method be first invoked. 
+
+* SocketClientInstance
+
+Sockets implementation of the communication framework class representing the server's view of a client connection. Implements the server-side of the sockets messaging protocol. The client side of the protocol is implemented in SocketServerInstance.
+
+It's `processMessagePacket()` method be invoked for handling income request message.
+
+* DQPWorkContext & ServerWorkItem
+
+ServerWorkItem is a runnable class, it encapulates income request message in it's constructor:
+
+~~~
+    public ServerWorkItem(ClientInstance socketClientInstance, Serializable messageKey, Message message, ClientServiceRegistryImpl server) {
+		this.socketClientInstance = socketClientInstance;
+		this.messageKey = messageKey;
+		this.message = message;
+		this.csr = server;
+	}
+~~~
+
+DQPWorkContext is a filed of SocketClientInstance, DQPWorkContext's `runInContext()` method be invoked, the constructed ServerWorkItem passed as a argument. Then ServerWorkItem's `run()` method be invoked. 
+
+
