@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "如何调试 EAP 6/WildFly Domain 模式"
+title:  "JBoss EAP/WildFly Domain 模式调试"
 date:   2014-08-03 17:57:12
 categories: jboss
 author: Kylin Soong
