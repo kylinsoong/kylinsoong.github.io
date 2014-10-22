@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "如何调试 EAP 6/WildFly Domain 模式"
+title:  "JBoss EAP/WildFly 配置使用Mysql数据库"
 date:   2014-10-22 11:40:12
 categories: jboss
 permalink: /jboss-mysql
