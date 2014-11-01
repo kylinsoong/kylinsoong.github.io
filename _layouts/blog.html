@@ -2,7 +2,20 @@
 layout: blogs
 ---
 
-          
+<h2 class="title">
+                 <a class="post-link" href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
+              </h2>
+ 
+<header class="post">
+              <div class="byline">
+                <span class="author">Posted by
+                <a href="/about">{{page.author}}</a> on</span>
+                <span class="dateinline">{{ page.date | date: "%b %-d, %Y" }}</span>
+		<i class="icon-tags"></i> categorized as <a class="tag" href="/categories/{{ page.categories }}">{{ page.categories }}</a>
+              </div>
+            </header>
+
+ 
 {{ content }}
 
 <br/>
