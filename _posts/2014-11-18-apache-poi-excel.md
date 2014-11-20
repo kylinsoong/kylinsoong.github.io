@@ -11,3 +11,5 @@ duoshuoid: ksoong2014111801
 This article depicts how use `POI-HSSF` and `POI-XSSF` To Access Microsoft Excel Format Files. HSSF is for legacy xls version(Excel '97(-2007) file formt), XSSF is for  the Excel 2007 OOXML (.xlsx) file format..
 
 [poi-examples](https://github.com/kylinsoong/data/tree/master/poi-examples)
+
+[poi-examples-teiid](https://github.com/kylinsoong/data/tree/master/poi-examples-teiid)

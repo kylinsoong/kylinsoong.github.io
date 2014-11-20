@@ -43,6 +43,28 @@ server.deployVDB(new FileInputStream(new File("src/vdb/marketdata-vdb.xml")));
 
 This document will dive into Teiid File Translator and Connector, and how vdb model be analysed by Teiid Engine.
 
+## Translator Procedure
+
+We can use the following code to to interpret the Translator Procedure:
+
+~~~
+import java.io.File;
+import org.teiid.core.types.ClobImpl;
+import org.teiid.core.types.InputStreamFactory.FileInputStreamFactory;
+
+public class TranslatorProcedure {
+
+	public static void main(String[] args) {
+		File file = new File("src/file/marketdata.csv");
+		FileInputStreamFactory isf = new FileInputStreamFactory(file);
+		isf.setLength(file.length());
+		ClobImpl clob = new ClobImpl(isf, -1);
+	}
+}
+~~~
+
+The `ClobImpl` and file name `marketdata.csv` be add to a list, then send back.
+
 ## File Translator
 
 The File Translator source code located in [https://github.com/teiid/teiid/tree/master/connectors/translator-file](https://github.com/teiid/teiid/tree/master/connectors/translator-file). The `FileExecutionFactory` extends the `ExecutionFactory` as below figure:
