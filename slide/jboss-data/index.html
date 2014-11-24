@@ -1,0 +1,229 @@
+---
+layout: presentation
+---
+
+<section>
+	<h2>JBoss Data Integration</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>24th, Nov</small>
+	</p>
+</section>
+
+<section>
+	<p>开源中国年终盛会</p>
+	<ul>
+                <li>SSDB</li>
+		<ul>
+			<li>A fast NoSQL database, an alternative to Redis</li>
+			<li>levelDB + cache layer</li>
+			<li><a href="git@github.com:ideawu/ssdb.git">git@github.com:ideawu/ssdb.git</a></li>
+			<li><a href="http://ssdb.io/">http://ssdb.io/</a></li>
+		</ul>
+                <li>JBoss Data Grid / Infinispan</li>
+		<li>JBoss Data Virtualization / Teiid</li>
+        </ul>
+</section>
+
+<section>
+        <h2>JBoss Data Grid / Infinispan</h2>
+</section>
+
+
+<section>
+    <section>
+        <h2>jGroups</h2>
+        <ul>
+                <li>JGroups is a toolkit for reliable messaging.</li>
+                <li>JGroups is a mature library, 50+ release, the underlying of JBossCache, infinispan, JBossCluster</li>
+                <li>belaban</li>
+                <li><a href="https://github.com/belaban/JGroups">https://github.com/belaban/JGroups</a></li>
+        </ul>
+    </section>
+    <section>
+        <img width="401" height="417" src ="{{ site.baseurl }}/assets/slide/architecture_of_jgroups.png" alt="jGroups Architecture">
+    </section>
+    <section>
+	<pre><code data-trim contenteditable>
+JChannel channel = new JChannel(); 
+channel.setName(“node1”);
+channel.setReceiver(ReceiverAdapter);
+channel.connect(“ChatDemo”);
+channel.send(msg);
+	</code></pre>
+	<pre><code data-trim contenteditable>
+JChannel channel = new JChannel();
+channel.setName(“node2”);
+channel.setReceiver(ReceiverAdapter);
+channel.connect(“ChatDemo”);
+channel.send(msg);
+        </code></pre>
+    </section>
+    <section>
+	<p>Examples: <a href="https://github.com/kylinsoong/cluster/tree/master/jgroups">https://github.com/kylinsoong/cluster/tree/master/jgroups</a></p>
+	<ol>
+		<li>Chat</li>
+		<li>TankWar</li>
+	</ol>
+    </section>
+</section>
+
+
+<section>
+    <section>
+	<h2>JBossCache</h2>
+	<ul>
+		<li>JBoss Cache is a tree-structured, clustered, transactional cache.</li>
+		<li>Build on top of jGroups</li>
+		<li>Ben Wang</li>
+		<li>Usage</li>
+		<ul>
+		    <li>JBoss 5 or older version's cluster(Web Session, EJB, JMS, etc)</li>
+                </ul>
+		<li>2 way to run:</li>
+		<ul>
+		    <li>Standalone</li>
+		    <li>Container</li>
+		</ul>
+	</ul>
+    </section>
+    <section>
+	<img width="625" height="345" src ="{{ site.baseurl }}/assets/slide/jbosscache_architecture.JPG" alt="jGroups Architecture">
+    </section>
+    <section>
+	<p>Examples: <a href="https://github.com/kylinsoong/cluster/tree/master/jbosscache">https://github.com/kylinsoong/cluster/tree/master/jbosscache</a></p>
+        <ol>
+                <li>JBossCache Replication Demo</li>
+        </ol>
+    </section>
+</section>
+
+<section>
+    <section>
+	<h2>Infinispan</h2>
+        <ul>
+	    <li>Transactional in-memory key/value NoSQL datastore</li>
+	    <li>Distributed data grid platform</li>
+	    <li>The 2nd generation JBossCache</li>
+	    <li>JSR 107, JSR 347</li>
+	</ul>
+    </section>
+    <section>
+	<p>Infinispan Distribution</p>
+        <ul>
+	    <li>Capacity = (memory * number) / numOwners</li>
+	    <li>Buddy Replication, Large Web Application cluster</li>
+        </ul>
+        <img width="598" height="442" src ="{{ site.baseurl }}/assets/slide/infinidpan-distribution.png" alt="Infinispan Distribution">
+    </section>
+    <section>
+	<p>Infinispan Replication</p>
+        <img width="670" height="460" src ="{{ site.baseurl }}/assets/slide/infinidpan-replication.png" alt="Infinispan Replication">
+    </section>
+    <section>
+	<p>Infinispan Invalidation</p>
+        <img width="631" height="378" src ="{{ site.baseurl }}/assets/slide/infinidpan-invalidation.png" alt="Infinispan Invalidation">
+    </section>
+    <section>
+        <p>Key Features</p>
+        <ul>
+            <li>Eviction</li>
+            <li>Expiration</li>
+	    <li>Cache Loader</li>
+        </ul>
+    </section>
+    <section>
+        <p>Client-Server Interface</p>
+        <ul>
+            <li>Asynchronous API</li>
+            <li>REST API</li>
+            <li>Memcached Interface</li>
+	    <li>Hot Rod Client(Java, C++, C#)</li>
+        </ul>
+    </section>
+    <section>
+        <p>Infinispan Query</p>
+        <ul>
+            <li>Query Values instead of Keys</li>
+            <li>Infinispan Query DSL</li>
+        </ul>
+    </section>
+    <section>
+        <p>Examples: <a href="https://github.com/kylinsoong/cluster/tree/master/infinispan">https://github.com/kylinsoong/cluster/tree/master/infinispan</a></p>
+        <ol>
+                <li>Infinispan Replication Demo</li>
+		<li>CarMart</li>
+		<li>Football</li>
+        </ol>
+    </section>
+</section>
+
+<section>
+        <h2>JBoss Data Virtualization / Teiid</h2>
+</section>
+
+<section>
+        <p>What's Teiid</p>
+        <ul>
+            <li>A Completed DataBase Implementation</li>
+            <li>Using JDBC + SQL access everthing(RDBMS, No-SQL, Saas, File/XML, Cache/Grid)</li>
+	    <li>Data Source Adapter</li>
+	    <li>Federation Between Data Source</li>
+        </ul>
+</section>
+
+<section>
+        <p>Teiid Architecure - I</p>
+        <img width="1000" height="700" src ="{{ site.baseurl }}/assets/slide/datavirt_red-hat-jboss-datavirt.png" alt="Teiid Architecure">
+</section>
+
+<section>
+        <p>Teiid Architecure - II</p>
+        <img width="600" height="600" src ="{{ site.baseurl }}/assets/slide/datavirt_red-hat-jboss-datavirt-2.png" alt="Teiid Architecure">
+</section>
+
+<section>
+        <p>Key Components</p>
+        <ul>
+            <li>Query Engine(netty server, DQP)</li>
+            <li>Embedded(easy-to-use JDBC Driver, embedded the Query Engine)</li>
+            <li>Server(Subsystem on jboss-as-7/wildfly)</li>
+            <li>Connectors(JCA/Resource Adapters)</li>
+	    <li>Client(jdbc Driver, REST, OData)</li>
+	    <li>Teiid Designer(web-based on processing)</li>
+	    <li>Admin Tools(Web Console, RHQ plugin, AdminShell)</li>
+        </ul>
+</section>
+
+<section>
+        <p>Examples</p>
+        <ul>
+            <li><a href="teiid-quickstarts">https://github.com/teiid/teiid-quickstarts</a></li>
+            <li><a href="teiid-embedded-samples">https://github.com/jbosschina/teiid-embedded-samples</a></li>
+        </ul>
+</section>
+
+
+<section>
+        <h2>Hands on</h2>
+        <ul>
+		<li><a href="https://github.com/Teiid-Designer/teiid-designer-samples/blob/master/metadata/marketdata.csv">Market Data</a></li>
+		<li><a href="https://github.com/Teiid-Designer/teiid-designer-samples/blob/master/metadata/customer-schema.sql">Account Information</a></li>
+		<li><a href="https://github.com/Teiid-Designer/teiid-designer-samples/blob/master/vdbs/portfolio-vdb.xml">Deploy VDB</a></li>
+		<li><a href="https://github.com/Teiid-Designer/teiid-designer-samples/blob/master/jdbc-client/src/main/java/com/jboss/teiid/client/PortfolioClient.java">Consume(JDBC Client)</a></li>
+		<li><a href="https://github.com/Teiid-Designer/teiid-designer-samples/blob/master/vdbs/dynamic-data-federation-example.md">step by step procedure</a></li>
+        </ul>
+</section>
+
+<section>
+        <p>Free Discussion</p>
+        <ul>
+            <li>实践</li>
+            <li>JBoss production(traditional enterprise prods) interact with Internet prods</li>
+        </ul>
+</section>
+
+
+<section>
+	<h1>THE END</h1>
+</section>
+
