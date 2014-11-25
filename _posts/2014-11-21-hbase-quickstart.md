@@ -49,3 +49,19 @@ Run [HbaseQuickStart](https://github.com/kylinsoong/data/blob/master/hbase-quick
 * delete table
 
 Run [BlogClient](https://github.com/kylinsoong/data/blob/master/hbase-quickstart/src/main/java/org/apache/hadoop/hbase/examples/BlogClient.java) will query all blog post, which we create in above section.
+
+## Phoenix on top of HBase
+
+Phoenix is an open source SQL skin for HBase. We can use JDBC Acess HBase data, here we demonstrate how to access `blog` table via JDBC and Phoenix Client Driver. Two Steps can do this:
+
+* Phoenix table to an existing HBase table 'blog'
+
+~~~
+create table "blog"(pk VARCHAR PRIMARY KEY, "content" VARCHAR, "info"."author" VARCHAR, "info"."category" VARCHAR);
+~~~
+
+* JDBC Client execute SQL Query
+
+~~~
+select * from "blog";
+~~~
