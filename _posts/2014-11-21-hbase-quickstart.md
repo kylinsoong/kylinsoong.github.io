@@ -50,7 +50,23 @@ Run [HbaseQuickStart](https://github.com/kylinsoong/data/blob/master/hbase-quick
 
 Run [BlogClient](https://github.com/kylinsoong/data/blob/master/hbase-quickstart/src/main/java/org/apache/hadoop/hbase/examples/BlogClient.java) will query all blog post, which we create in above section.
 
-## Phoenix on top of HBase
+## Apache ZooKeeper
+
+ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. [More details](http://zookeeper.apache.org/)
+
+### Overview
+
+![ZooKeeper Service]({{ site.baseurl }}/assets/blog/zkservice.jpg)
+
+* The servers that make up the ZooKeeper service must all know about each other. They maintain an in-memory image of state, along with a transaction logs and snapshots in a persistent store. As long as a majority of the servers are available, the ZooKeeper service will be available.
+* Clients connect to a single ZooKeeper server. The client maintains a TCP connection through which it sends requests, gets responses, gets watch events, and sends heart beats. If the TCP connection to the server breaks, the client will connect to a different server.
+
+
+## Apache Hadoop
+
+The Apache Hadoop software library is a framework that allows for the distributed processing of large data sets across clusters of computers using simple programming models. It is designed to scale up from single servers to thousands of machines, each offering local computation and storage. Rather than rely on hardware to deliver high-availability, the library itself is designed to detect and handle failures at the application layer, so delivering a highly-available service on top of a cluster of computers, each of which may be prone to failures. [More details](http://hadoop.apache.org/)
+
+## Apache Phoenix
 
 Phoenix is an open source SQL skin for HBase. We can use JDBC Acess HBase data, here we demonstrate how to access `blog` table via JDBC and Phoenix Client Driver. Two Steps can do this:
 
