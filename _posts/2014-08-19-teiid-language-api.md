@@ -10,6 +10,100 @@ duoshuoid: ksoong20140819
 
 This document introduce the Teiid language API with UML diagram and Junit Test code.
 
+## Hierarchy Architecture
+
+All these class under package [org.teiid.language](https://github.com/teiid/teiid/tree/master/api/src/main/java/org/teiid/language): 
+
+* `LanguageObject` is the root interface for all language object interfaces
+* The bold entity are interface
+
+~~~
+**LanguageObject**
+├── BaseLanguageObject
+│   ├── Argument
+│   ├── BatchedUpdates
+│   ├── Call
+│   ├── ColumnReference
+│   ├── Condition
+│   │   ├── AndOr
+│   │   ├── BaseInCondition
+│   │   │   ├── In
+│   │   │   └── SubqueryIn
+│   │   ├── Comparison
+│   │   ├── Exists
+│   │   ├── IsNull
+│   │   ├── Like
+│   │   ├── Not
+│   │   └── SubqueryComparison
+│   ├── Delete
+│   ├── DerivedColumn
+│   ├── DerivedTable
+│   ├── ExpressionValueSource
+│   ├── Function
+│   │   └── AggregateFunction
+│   ├── GroupBy
+│   ├── Insert
+│   ├── Join
+│   ├── Limit
+│   ├── Literal
+│   ├── NamedTable
+│   ├── OrderBy
+│   ├── Parameter
+│   ├── QueryExpression
+│   │   ├── Select
+│   │   └── SetQuery
+│   ├── ScalarSubquery
+│   ├── SearchedCase
+│   ├── SearchedWhenClause
+│   ├── SetClause
+│   ├── SortSpecification
+│   ├── Update
+│   ├── WindowFunction
+│   ├── WindowSpecification
+│   ├── With
+│   └── WithItem
+├── **Command**
+│   ├── BatchedUpdates
+│   ├── Call
+│   ├── QueryExpression
+│   │   ├── Select
+│   │   └── SetQuery
+│   └── **BatchedCommand**
+│       ├── Delete
+│       ├── Insert
+│       └── Update
+├── **Expression**
+│   ├── Array
+│   ├── ColumnReference
+│   ├── Condition
+│   │   ├── AndOr
+│   │   ├── BaseInCondition
+│   │   │   ├── In
+│   │   │   └── SubqueryIn
+│   │   ├── Comparison
+│   │   ├── Exists
+│   │   ├── IsNull
+│   │   ├── Like
+│   │   ├── Not
+│   │   └── SubqueryComparison
+│   ├── Function
+│   │   └── AggregateFunction
+│   ├── Literal
+│   ├── Parameter
+│   ├── ScalarSubquery
+│   ├── SearchedCase
+│   └── WindowFunction
+├── **InsertValueSource**
+│   ├── ExpressionValueSource
+│   └── QueryExpression
+│       ├── Select
+│       └── SetQuery
+└── **TableReference**
+    ├── DerivedTable
+    ├── Join
+    └── NamedTable
+~~~
+
 ### org.teiid.language.Call
 
 ![Teiid Language API Call]({{ site.baseurl }}/assets/blog/Call.gif)
@@ -36,3 +130,5 @@ A Junit code snippets for using above API:
 		assertNotNull(call.getArguments());
 	}
 ~~~
+
+### org.teiid.language.visitor.LanguageObjectVisitor
