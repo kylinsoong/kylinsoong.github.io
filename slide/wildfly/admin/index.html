@@ -1,0 +1,216 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Welcome to WildFly</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>29th, Nov</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Downloading and installing software prerequisite</li>
+		<li>Downloading and installing WildFly</li>
+		<li>Understand WildFly's directory structures</li>
+		<li>Running WildFly in standalone mode</li>
+		<li>Running WildFly in domain mode</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Downloading and installing software prerequisite</h3>
+        <ul>
+                <li>Downloading Java SE 1.7(WildFly need 1.7 + version)</li>
+		<ul>
+                    <li><a href="https://jdk7.java.net/download.html">OpenJDK</a></li>
+                    <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">OracleJDK</a></li>
+                </ul>
+	</ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Example of Install OpenJDK on Fedora or CentOS</p>
+	<pre>
+	    <code class="shell" data-trim contenteditable style="font-size: 18px;">
+// 
+
+$ tar zxvf jdk-7u60-ea-bin-b15-linux-x64-16_apr_2014.tar.gz -C ~/jdk7
+
+$ export JAVA_HOME=~/jdk7
+$ export PATH=$JAVA_HOME/bin:$PATH
+
+$ java -version
+java version “1.7.0_60”
+OpenJDK Runtime Environment (fedora-2.5.0.1.fc20-x86_64 u60-b30)
+openJDK 64-Bit Server VM (build 24.60-b09, mixed mode)
+            </code>
+	</pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Downloading and installing WildFly</h3>
+
+	<ul>
+                <li>Downloading from WildFly home page</li>
+                <ul>
+                    <li><a href="http://wildfly.org/downloads/">http://wildfly.org/downloads/</a></li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Unzip to install</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd && unzip ~/Downloads/wildfly-8.1.0.Final.zip
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Understand WildFly's directory structures</h3>
+
+	<pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd wildfly-8.2.0.Final
+$ ls -l
+total 412
+drwxr-xr-x. 3 kylin kylin   4096 Nov 20 22:43 appclient
+drwxr-xr-x. 5 kylin kylin   4096 Nov 20 22:43 bin
+-rw-r--r--. 1 kylin kylin   2451 Nov 20 22:43 copyright.txt
+drwxr-xr-x. 4 kylin kylin   4096 Nov 20 22:43 docs
+drwxr-xr-x. 5 kylin kylin   4096 Nov 20 22:43 domain
+-rw-r--r--. 1 kylin kylin 354682 Nov 20 22:43 jboss-modules.jar
+-rw-r--r--. 1 kylin kylin  26530 Nov 20 22:43 LICENSE.txt
+drwxr-xr-x. 3 kylin kylin   4096 Nov 20 22:43 modules
+-rw-r--r--. 1 kylin kylin   2356 Nov 20 22:43 README.txt
+drwxr-xr-x. 6 kylin kylin   4096 Nov 20 22:43 standalone
+drwxr-xr-x. 2 kylin kylin   4096 Nov 20 22:43 welcome-content
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+    <table>
+	<tbody>
+	    <tr>
+		<td>appclient</td>
+		<td>Configuration files, deployment content, and writable areas used by the application client container run from this installation.</td>
+	    <tr>
+	    <tr>
+		<td>bin</td>
+		<td>Start up scripts, start up configuration files, client jar and various command line</td>
+	    <tr>
+	    <tr>
+                <td>docs</td>
+                <td>XML schema definition files, example configuration files</td>
+            <tr>
+	    <tr>
+                <td>domain</td>
+                <td>Configuration files, deployment content, and writable areas used by the domain mode processes run from this installation.</td>
+            <tr>
+	    <tr>
+                <td>modules</td>
+                <td>WildFly 8 is based on a modular classloading architecture. The various modules used in the server are stored here.</td>
+            <tr>
+	    <tr>
+                <td>standalone</td>
+                <td>Configuration files, deployment content, and writable areas used by the single standalone server run from this installation.</td>
+            <tr>
+	    <tr>
+                <td>welcome-content</td>
+                <td>Default Welcome Page content.</td>
+            <tr>
+	</tbody>
+    </table>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h2>Running WildFly in standalone mode</h2>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Java Enterprise Edition 7 web profile and full profile</p>
+	
+	<table>
+        <tbody>
+            <tr>
+                <td>standalone.xml (default)</td>
+                <td>Java Enterprise Edition 7 web profile certified configuration with the required technologies.</td>
+            <tr>
+	    <tr>
+                <td>standalone-ha.xml</td>
+                <td>Java Enterprise Edition 7 web profile certified configuration with high availability.</td>
+            <tr>
+	    <tr>
+                <td>standalone-full.xml</td>
+                <td>Java Enterprise Edition 7 full profile certified configuration including all the required EE 7 technologies, including messaging – JMS.</td>
+            <tr>
+	    <tr>
+                <td>standalone-full-ha.xml</td>
+                <td>Java Enterprise Edition 7 full profile certified configuration with high availability.</td>
+            <tr>
+	</tbody>
+    </table>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Run WildFly in standalone mode with its default settings</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh
+            </code>
+	</pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	 <p>Add Management User</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./add-user.sh admin password1!
+Added user 'admin' to file '.../standalone/configuration/mgmt-users.properties'
+Added user 'admin' to file '.../domain/configuration/mgmt-users.properties'
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<ul>
+                <li>Login to management Page</li>
+                <ul>
+                    <li><a href="http://127.0.0.1:9990">http://127.0.0.1:9990</a></li>
+                    <li><a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h2>Running WildFly in domain mode</h2>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Run WildFly in domain mode with its default settings</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/domain.sh
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
