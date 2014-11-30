@@ -1,0 +1,226 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Running WildFly in Standalone Mode</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>30th, Nov</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Structure of the standalone.xml</li>
+		<li>Running WildFly from custom configuration folder</li>
+		<li>Binding WildFly on custom port</li>
+		<li>Binding WildFly on custom IP</li>
+		<li>Configuring multiple WildFly instances to run on the same machine with different ports</li>
+		<li>Configuring multiple WildFly instances to run on the same machine with different IPs</li>
+		<li>Managing applications using the deployments folder</li>
+		<li>Using Management CLI</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Structure of the standalone.xml</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<ul>
+                <li>4 pre-configured files</li>
+                <ul>
+                    <li>standalone.xml</li>
+		    <li>standalone-ha.xml</li>
+		    <li>standalone-full.xml</li>
+		    <li>standalone-full-ha.xml</li>
+                </ul>
+		<li>How do you choose the right profile?</li>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Structure of the standalone.xml</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<?xml version='1.0' encoding='UTF-8'?>
+
+<server xmlns="urn:jboss:domain:2.2">
+
+    <extensions>
+    </extensions>
+
+    <management>
+    </management>
+
+    <profile>
+    </profile>
+
+    <interfaces>
+    </interfaces>
+
+    <socket-binding-group>
+    </socket-binding-group>
+
+</server>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>extensions</li>
+                <ul>
+                    <li>Provide Java EE 7 specification, Each extension corresponds to a module</li>
+                </ul>
+		<li>management</li>
+                <ul>
+                    <li>security-realms, audit-log, management-interfaces and the access-control</li>
+                </ul>
+		<li>profile</li>
+                <ul>
+                    <li>define subsystems, each subsystem corresponding to its relative extension</li>
+                </ul>
+		<li>interfaces</li>
+                <ul>
+                    <li>server network interfaces</li>
+                </ul>
+		<li>socket-binging-group</li>
+                <ul>
+                    <li>define pretty much most of the ports</li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Running WildFly from custom configuration folder</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Why custom configuration folder</li>
+                <ul>
+                    <li>leave default directories unaltered</li>
+                    <li>specify a different configuration folder because of system administrators</li>
+                </ul>
+        </ul>
+    </section>
+
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+
+$ cp -r standalone/ /tmp/myServer
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=/tmp/myServer/
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Binding WildFly on custom port</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Why bind WildFly on a custom port</li>
+                <ul>
+                    <li>different service running on the same IP:PORT</li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p align="left">Using the Admin Console <br> <br>
+	<small>Login <a href="http://127.0.0.1:8080/console">Admin Console</a> <br></small>
+	<small>Configuration -> General Configuration -> Socket Binding -> View<br></small>
+	<small>Select http, edit, change 8080 to 9080, save, reload on Runtime tab<br></small>
+	</p>
+	
+	<p align="left">Using the CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/socket-binding-group=standard-sockets/socket-binding=http:write-attribute(name=port,value=9080)
+reload
+/socket-binding-group=standard-sockets/socket-binding=http:read-attribute(name=port)
+            </code>
+        </pre>
+
+	<p align="left">Using System Properties</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh -Djboss.http.port=9080
+$ ./bin/standalone.sh -Djboss.socket.binding.port-offset=1000
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Binding WildFly on custom IP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Why wildfly bind on a custom IP</li>
+                <ul>
+                    <li>bind WildFly to a different address(public IP, public hostname) rather than the default localhost</li>
+                </ul>
+        </ul>
+    </section>
+
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh -b 10.0.0.1
+
+$ ./bin/standalone.sh -Djboss.bind.address=10.0.0.1
+
+$ ./bin/standalone.sh -bmanagement=10.0.0.1
+
+$ ./bin/standalone.sh -Djboss.bind.address.management=10.0.0.1
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Configuring multiple WildFly instances to run on the same machine with different ports</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Why wildfly bind on a custom IP</li>
+                <ul>
+                    <li>bind WildFly to a different address(public IP, public hostname) rather than the default localhost</li>
+                </ul>
+        </ul>
+    </section>
+
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh -b 10.0.0.1
+
+$ ./bin/standalone.sh -Djboss.bind.address=10.0.0.1
+
+$ ./bin/standalone.sh -bmanagement=10.0.0.1
+
+$ ./bin/standalone.sh -Djboss.bind.address.management=10.0.0.1
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
