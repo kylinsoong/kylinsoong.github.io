@@ -196,9 +196,9 @@ $ ./bin/standalone.sh -Djboss.bind.address.management=10.0.0.1
     </section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
         <ul>
-                <li>Why wildfly bind on a custom IP</li>
+                <li>Why configure multiple WildFly instances to run on the same machine</li>
                 <ul>
-                    <li>bind WildFly to a different address(public IP, public hostname) rather than the default localhost</li>
+                    <li>In some cases, most of all cause of architecture reasons, you may need to run multiple WildFly's instances on a single server. You can do this by isolating each instance and giving it different bindings port.</li>
                 </ul>
         </ul>
     </section>
@@ -207,18 +207,166 @@ $ ./bin/standalone.sh -Djboss.bind.address.management=10.0.0.1
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-$ ./bin/standalone.sh -b 10.0.0.1
+$ cd $JBOSS_HOME
+$ cp -a standalone node-1
+$ cp -a standalone node-2
 
-$ ./bin/standalone.sh -Djboss.bind.address=10.0.0.1
+$ ./bin/standalone.sh -Djboss.server.base.dir=./node-1 -Djboss.http.port=8180 -Djboss.management.http.port=9991
+$ ./bin/standalone.sh -Djboss.server.base.dir=./node-2 -Djboss.http.port=8280 -Djboss.management.http.port=9992
 
-$ ./bin/standalone.sh -bmanagement=10.0.0.1
-
-$ ./bin/standalone.sh -Djboss.bind.address.management=10.0.0.1
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-1 -Djboss.socket.binding.port-offset=100
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-2 -Djboss.socket.binding.port-offset=200
             </code>
         </pre>
     </section>
 </section>
 
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Configuring multiple WildFly instances to run on the same machine with different IPs</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Why configure multiple WildFly instances to run on the same machine with different IPs</li>
+                <ul>
+                    <li>In some cases, most of all cause of architecture reasons, you may need to run multiple WildFly instances on a single server. You can do this by isolating each instance and giving it different bindings IPs</li>
+                </ul>
+        </ul>
+    </section>
+
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ sudo ifconfig YOUR_NIC:1 10.0.1.1 netmask 255.255.255.0
+$ sudo ifconfig YOUR_NIC:2 10.0.1.2 netmask 255.255.255.0
+
+$ cd $JBOSS_HOME
+$ cp -a standalone node-1
+$ cp -a standalone node-2
+
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-01 -Djboss.bind.address=10.0.0.1 -Djboss.bind.address.management=10.0.0.1
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-02 -Djboss.bind.address=10.0.0.2 -Djboss.bind.address.management=10.0.0.2
+
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-01 -b 10.0.0.1 -bmanagement=10.0.0.1
+$ ./bin/standalone.sh -Djboss.serever.base.dir=./node-02 -b 10.0.0.2 -bmanagement=10.0.0.2
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Managing applications using the deployments folder</li>
+                <ul>
+                    <li>.dodeploy</li>
+		    <li>.skipdeploy</li>
+		    <li>.isdeploying</li>
+		    <li>.deployed</li>
+		    <li>.failed</li>
+                    <li>.isundeploying</li>
+                    <li>.undeployed</li>
+                    <li>.pending</li>
+                </ul>
+        </ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Using Management CLI</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Connecting to the CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ ./bin/jboss-cli.sh
+
+[disconnected /] connect
+[standalone@localhost:9990 /]
+[standalone@localhost:9990 /] ls
+[standalone@localhost:9990 /] ls subsystem=
+
+$ ./bin/jboss-cli.sh --gui
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Checking the server-status via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+[standalone@localhost:9990 /] :read-attribute(name=server-state)
+{
+    "outcome" => "success",
+    "result" => "running"
+}
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Deploy an application via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+[standalone@localhost:9990 /] deploy /path/example.war
+
+[standalone@localhost:9990 /] deployment-info --name=example.war
+NAME        RUNTIME-NAME PERSISTENT ENABLED STATUS
+example.war example.war  true       true    OK 
+
+[standalone@localhost:9990 /] deploy example.war --disabled
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Undeploy an application via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//          
+[standalone@localhost:9990 /] undeploy example.war
+
+[standalone@localhost:9990 /] undeploy -l
+NAME        RUNTIME-NAME ENABLED STATUS
+example.war example.war  true    OK     
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Executing commands in batch-mode via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//         
+[standalone@localhost:9990 /] batch
+[standalone@localhost:9990 / #] deploy example.war
+[standalone@localhost:9990 / #] deploy simple.war
+[standalone@localhost:9990 / #] run-batch
+The batch executed successfully
+[standalone@localhost:9990 /] 
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Reloading a server configuration via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//         
+[standalone@localhost:9990 /] reload 
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Shutting down and restarting an instance via CLI</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+[standalone@localhost:9990 /] shutdown
+[standalone@localhost:9990 /] shutdown --restart=true
+            </code>
+        </pre>
+    </section>
+</section>
 
 <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
 	<h1>THE END</h1>
