@@ -143,7 +143,17 @@ The log output are same.
 
 Log4j should be most be used logging framework, a extend of java util logging, add more handlers and formatters.
 
-//coming soon
+### API to quick involve Logging
+
+There are some occasion which we need quick configure log4j for debug convenient, below code show this:
+
+~~~
+Logger.getLogger("org.apache.hadoop.hbase.client").setLevel(Level.DEBUG);
+String pattern = "[%d{ABSOLUTE}] [%t] %5p (%F:%L) - %m%n";
+PatternLayout layout = new PatternLayout(pattern);
+ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+Logger.getRootLogger().addAppender(consoleAppender);  
+~~~
 
 ## JBoss logging
 
