@@ -1,0 +1,254 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Running WildFly in Domain Mode</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>1st, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Running Domain mode – Domain Controller and Host Controller</li>
+		<li>Running domain and host controllers locally</li>
+		<li>Running domain and host controllers remotely</li>
+		<li>Stopping and starting your server-groups via Web Console</li>
+		<li>Stopping and starting your server-groups via CLI</li>
+		<li>Stopping and starting your servers via CLI</li>
+		<li>Deploying and undeploying an application to a specific server-group via Web Console</li>
+		<li>Deploying and undeploying an application to a specific server-group via CLI</li>
+		<li>Checking server-status via CLI</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Running Domain mode</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Server groups in domain.xml</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+    <server-groups>
+        <server-group name="main-server-group" profile="full">
+            <jvm name="default">
+                <heap size="64m" max-size="512m"/>
+            </jvm>
+            <socket-binding-group ref="full-sockets"/>
+        </server-group>
+        <server-group name="other-server-group" profile="full-ha">
+            <jvm name="default">
+                <heap size="64m" max-size="512m"/>
+            </jvm>
+            <socket-binding-group ref="full-ha-sockets"/>
+        </server-group>
+    </server-groups>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Servers in host.xml</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+    <servers>
+        <server name="server-one" group="main-server-group">
+        </server>
+        <server name="server-two" group="main-server-group" auto-start="true">
+            <socket-bindings port-offset="150"/>
+        </server>
+        <server name="server-three" group="other-server-group" auto-start="false">
+            <socket-bindings port-offset="250"/>
+        </server>
+    </servers>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Start Domain Mode</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ ./bin/domain.sh
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>4 JVM be started</li>
+                <ul>
+                    <li>Process Controller</li>
+                    <li>Host Controller</li>
+                    <li>Server:server-one</li>
+                    <li>Server:server-two</li>
+                </ul>
+		<li>Host Controller can be configured as Domain Controller</li>
+        </ul>
+
+    </section> 
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Running domain and host controllers locally</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a domain dc-hc-local
+$ ./bin/domain.sh -Djboss.domain.base.dir=dc-hc-local
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Running domain and host controllers remotely</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>What's run domain and host controllers remotely</li>
+                <ul>
+                    <li>slaves in a different machine from where the DC is located</li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a domain master
+$ cp -a domain slave-1
+$ cp -a domain slave-2
+$ mv slave-1/configuration/domain.xml slave-1/configuration/domain.xml.unused
+$ mv slave-2/configuration/domain.xml slave-2/configuration/domain.xml.unused
+
+$ ./bin/domain.sh -Djboss.domain.base.dir=master
+
+$ ./bin/domain.sh -Djboss.domain.base.dir=slave-1 -Djboss.domain.master.address=127.0.0.1
+$ ./bin/domain.sh -Djboss.domain.base.dir=slave-2 -Djboss.domain.master.address=127.0.0.1
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Stopping and starting your server-groups via Web Console</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<small>Login <a href="http://127.0.0.1:9990/console">Admin Console</a> <br></small> <br>
+	<small>Runtime -> Groups  -> Start Group <br></small><br>
+        <small>Runtime -> Groups  -> Stop Group <br></small>
+    </section>
+
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<server name="REST-server-one" group="server-group-REST-app" auto-start="true">
+    <jvm name="default">
+    <heap size="64m" max-size="256m"/>
+</jvm>
+</server>
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Stopping and starting your server-groups via CLI</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/jboss-cli.sh
+[disconnected /] connect
+[domain@localhost:9990 /] /server-group=server-group:stop-servers()
+[domain@localhost:9990 /] /server-group=server-group:start-servers()
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Stopping and starting your servers via CLI</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/jboss-cli.sh
+[disconnected /] connect
+[domain@localhost:9990 /] /host=slave-1/server-config=server-one:stop()
+[domain@localhost:9990 /] /host=slave-1/server-config=server-one:read-resource(include-runtime=true)
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Deploying and undeploying an application to a specific server-group via Web Console</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <small>Login <a href="http://127.0.0.1:9990/console">Admin Console</a> <br></small><br>
+        <small>Runtime -> Manage Deployments  -> Add -> Assign <br></small>
+	<small>Runtime -> Server Groups  -> View <br></small>
+	<small>Runtime -> Manage Deployments  -> Remove<br></small>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Deploying and undeploying an application to a specific server-group via CLI</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/jboss-cli.sh
+[disconnected /] connect
+
+[domain@localhost:9990 /] deploy example.war
+[domain@localhost:9990 /] deployment-info
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Checking server-status via CLI</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/jboss-cli.sh
+[disconnected /] connect
+
+[domain@localhost:9990 /] /host=slave-1/server-config=server-one:read-resource(include-runtime=true)
+[domain@localhost:9990 /] /host=slave-1:read-resource(include-runtime=true)
+
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
