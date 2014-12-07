@@ -1,0 +1,239 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Clustering WildFly</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>7th, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Creating a cluster in standalone mode</li>
+		<li>Creating separate clusters in standalone mode</li>
+		<li>Creating a cluster in domain mode</li>
+		<li>Creating separate clusters in domain mode</li>
+		<li>Creating a cluster via TCP</li>
+		<li>Testing UDP protocol with “jgroups” tool</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating a cluster in standalone mode</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone cl-std-node-1
+$ cp -a standalone cl-std-node-2
+
+$ cp cluster-test.war cl-std-node-1/deployments/
+$ cp cluster-test.war cl-std-node-2/deployments/
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-1 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=100 -Djboss.node.name=node-1
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-2 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=200 -Djboss.node.name=node-2
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://localhost:8180/cluster-test/">http://localhost:8180/cluster-test/</a></li>
+                    <li><a href="http://localhost:8280/cluster-test/">http://localhost:8280/cluster-test/</a></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating separate clusters in standalone mode</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone cl-std-node-A1
+$ cp -a standalone cl-std-node-A2
+$ cp -a standalone cl-std-node-B1
+$ cp -a standalone cl-std-node-B2
+
+$ cp cluster-test.war cl-std-node-A1/deployments/
+$ cp cluster-test.war cl-std-node-A2/deployments/
+$ cp cluster-test.war cl-std-node-B1/deployments/
+$ cp cluster-test.war cl-std-node-B2/deployments/
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-A1 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=100 -Djboss.node.name=node-A1
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-A2 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=200 -Djboss.node.name=node-A2
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-B1 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=300 -Djboss.node.name=node-B1 -Djboss.default.multicast.address=230.0.0.5
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-node-B2 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=400 -Djboss.node.name=node-B2 -Djboss.default.multicast.address=230.0.0.5
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://localhost:8180/cluster-test/">http://localhost:8180/cluster-test/</a></li>
+                    <li><a href="http://localhost:8280/cluster-test/">http://localhost:8280/cluster-test/</a></li>
+		    <li><a href="http://localhost:8380/cluster-test/">http://localhost:8380/cluster-test/</a></li>
+		    <li><a href="http://localhost:8480/cluster-test/">http://localhost:8480/cluster-test/</a></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating a cluster in domain mode</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a domain cl-dmn-master
+$ cp -a domain cl-dmn-slave
+
+$ ./bin/domain.sh -Djboss.domain.base.dir=cl-dmn-master
+$ ./bin/domain.sh -Djboss.domain.base.dir=cl-dmn-slave -Djboss.domain.master.address=127.0.0.1
+
+[domain@localhost:9990 /] deploy cluster-test.war --server-groups=cluster-REST-app
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://localhost:8180/cluster-test/">http://localhost:8180/cluster-test/</a></li>
+                    <li><a href="http://localhost:8280/cluster-test/">http://localhost:8280/cluster-test/</a></li>
+		    <li><a href="http://localhost:8380/cluster-test/">http://localhost:8380/cluster-test/</a></li>
+                    <li><a href="http://localhost:8480/cluster-test/">http://localhost:8480/cluster-test/</a></li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating separate clusters in domain mode</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a domain cl-dmn-master
+$ cp -a domain cl-dmn-host-1
+$ cp -a domain cl-dmn-host-2
+
+$ ./bin/domain.sh -Djboss.domain.base.dir=cl-dmn-master
+$ ./bin/domain.sh -Djboss.domain.base.dir=cl-dmn-host-1 -Djboss.domain.master.address=127.0.0.1
+$ ./bin/domain.sh -Djboss.domain.base.dir=cl-dmn-host-2 -Djboss.domain.master.address=127.0.0.1
+
+[domain@localhost:9990 /] deploy cluster-test.war --server-groups=cluster-REST-app
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://localhost:8180/cluster-test/">http://localhost:8180/cluster-test/</a></li>
+                    <li><a href="http://localhost:8280/cluster-test/">http://localhost:8280/cluster-test/</a></li>
+		    <li><a href="http://localhost:8380/cluster-test/">http://localhost:8380/cluster-test/</a></li>
+                    <li><a href="http://localhost:8480/cluster-test/">http://localhost:8480/cluster-test/</a></li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating a cluster via TCP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone cl-std-tcp-node-1
+$ cp -a standalone cl-std-tcp-node-2
+
+$ cp cluster-test.war cl-std-tcp-node-1/deployments/
+$ cp cluster-test.war cl-std-tcp-node-2/deployments/
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//Change default-stack to tcp
+
+<subsystem xmlns="urn:jboss:domain:jgroups:2.0" default-stack="tcp">
+
+Opional, replase MPING with TCPPING
+
+<protocol type="TCPPING">
+	<property name="initial_hosts">
+		127.0.0.1[7700],127.0.0.1[7800]
+	</property>
+	<property name="num_initial_members">
+        </property>
+	<property name="port_range">
+		0
+	</property>
+	<property name="timeout">
+		2000
+	</property>
+</protocol>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-tcp-node-1 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=100 -Djboss.node.name=node-1
+$ ./bin/standalone.sh -Djboss.server.base.dir=cl-std-tcp-node-2 --server-config=standalone-ha.xml 
+-Djboss.socket.binding.port-offset=200 -Djboss.node.name=node-2
+
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://localhost:8180/cluster-test/">http://localhost:8180/cluster-test/</a></li>
+                    <li><a href="http://localhost:8280/cluster-test/">http://localhost:8280/cluster-test/</a></li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
