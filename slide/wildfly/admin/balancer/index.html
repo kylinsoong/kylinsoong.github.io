@@ -1,0 +1,614 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Balancing WildFly</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>12th, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Installing and configuring Apache HTTPD</li>
+		<li>Installing and configuring “mod-cluster” for Apache</li>
+		<li>Balancing WildFly using auto advertising – UDP</li>
+		<li>Balancing WildFly using a list of available balancers – TCP</li>
+		<li>Balancing using HTTP connector instead of AJP</li>
+		<li>Preserver WildFly workers while restarting Apache</li>
+		<li>Balancing same context for different applications</li>
+		<li>Doing rolling updates</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Installing and configuring Apache HTTPD</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Download</p>
+        <ul>
+		<li>Download <code>httpd-2.2.29.tar.gz</code> from <a href="http://httpd.apache.org/download.cgi">http://httpd.apache.org/download.cgi</a></li>
+                <li>Download <code>apr-1.5.1.tar.gz</code> and <code>apr-util-1.5.4.tar.gz</code> from <a href="http://apr.apache.org/download.cgi">http://apr.apache.org/download.cgi</a></li>
+		<li>Download all the software into the “/opt” folder</li>
+      uster-1.2.6.Final-linux2-x64-so.tar.gz/ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Install</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd /opt
+$ sudo tar zxvf httpd-2.2.29.tar.gz
+
+$ cd /opt/httpd-2.2.29
+$ sudo ./configure --prefix=/opt/httpd --with-mpm=worker --enable-mods-shared=most --enable-maintainer-mode 
+--with-expat=builtin --enable-ssl --enable-proxy --enable-proxy-http --enable-proxy-ajp --disable-proxy-balancer 
+--with-included-apr
+
+$ sudo make
+
+$ sudo make install
+
+//Edit the “/opt/httpd/conf/httpd.conf” file, replace “#ServerName www.example.com:80” with
+ServerName balancer-one.com:80
+
+//Edit the “/etc/hosts” file, add
+127.0.0.1 balancer-one.com
+
+$ cd /opt/httpd/bin
+$ ./httpd -k start -f /opt/httpd/conf/httpd.conf
+            </code>
+        </pre>
+    </section>
+     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Verify installation <a href="http://balancer-one.com/">http://balancer-one.com/</a></p>
+	<img width="749" height="509" src ="{{ site.baseurl }}/assets/slide/httpdd-intalll.png" alt="httpd install">	
+    </section>
+
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Installing and configuring “mod-cluster” for Apache</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Download</p>
+        <ul>
+                <li>Download <code>mod_cluster-1.2.6.Final-linux2-x64-so.tar.gz</code> from <a href="http://mod-cluster.jboss.org/downloads/1-2-6-Final-bin">http://mod-cluster.jboss.org/downloads/1-2-6-Final-bin</a></li>
+                <li>Download all the software into the “/opt/httpd/modules” folder</li>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Install</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd /opt/httpd/modules
+$ tar zxvf mod_cluster-1.2.6.Final-linux2-x64-so.tar.gz
+mod_advertise.so
+mod_manager.so
+mod_proxy_cluster.so
+mod_slotmem.so
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+         <p align="left"><small>Create a private network interface</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ sudo ifconfig eth0:1 10.0.0.1 netmask 255.255.255.0
+            </code>
+        </pre>
+	<p align="left"><small>Comment out mod_proxy_balancer.so(only for yum install)</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+// Edit the “/opt/httpd/conf/httpd.conf” file, comment out the following line 
+#LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+            </code>
+        </pre>
+	<p align="left"><small>Create “mod_cluster.conf” under “/opt/httpd/conf/extra”</small></p>
+	<pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ touch /opt/httpd/conf/extra/mod_cluster.conf
+            </code>
+        </pre>
+	<p align="left"><small>Edit “mod_cluster.conf” with content</small></p>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+LoadModule slotmem_module modules/mod_slotmem.so
+LoadModule manager_module modules/mod_manager.so
+LoadModule proxy_cluster_module modules/mod_proxy_cluster.so
+LoadModule advertise_module modules/mod_advertise.so
+
+Listen 10.0.0.1:6666
+
+<VirtualHost 10.0.0.1:6666 >
+        <Directory />
+                Order deny,allow
+                Deny from all
+                Allow from all
+        </Directory>
+        <Location /mod_cluster-manager >
+                SetHandler mod_cluster-manager
+                Order deny,allow
+                Allow from all
+        </Location>
+        ServerAdvertise on http://10.0.0.1:6666
+        EnableMCPMReceive
+</VirtualHost>
+            </code>
+        </pre>
+	<p><small><a href="/assets/libreoffice-pdf-export.pdf">Download mod_cluster.conf</a></small></p>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p align="left"><small>Edit again the “httpd.conf” file and add the following</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+# ModCluster settings
+Include conf/extra/mod_cluster.conf
+            </code>
+        </pre>
+	<p align="left"><small>Restart/Start httpd</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd /opt/httpd/bin
+$ sudo ./httpd -k start -f /opt/httpd/conf/httpd.conf
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Verify installation <a href="http://10.0.0.1:6666/mod_cluster-manager">http://10.0.0.1:6666/mod_cluster-manager</a></small></p>
+        <img width="684" height="316" src ="{{ site.baseurl }}/assets/slide/modcluster-intalll.png" alt="mode_cluster install">
+    </section>
+
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Balancing WildFly using auto advertising – UDP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone bl-std-node-1
+$ cp -a standalone bl-std-node-2
+
+$ cp balancing-test.war bl-std-node-1/deployments/
+$ cp balancing-test.war bl-std-node-2/deployments/
+
+$ sudo ifconfig eth0:2 10.0.1.1 netmask 255.255.255.0
+$ sudo ifconfig eth0:3 10.0.1.2 netmask 255.255.255.0
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-std-node-1 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.1 -Djboss.management.http.port=19990 -Djboss.node.name=node-1
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-std-node-2 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.2 -Djboss.management.http.port=29990 -Djboss.node.name=node-2
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://balancer-one.com/balancing-test">http://balancer-one.com/balancing-test</a></li>
+		    <li><a href="http://10.0.0.1/balancing-test">http://10.0.0.1/balancing-test</a></li>
+		    <li><a href="http://10.0.1.1:8080/balancing-test/">http://10.0.1.1:8080/balancing-test/</a></li>
+		    <li><a href="http://10.0.1.2:8080/balancing-test/">http://10.0.1.2:8080/balancing-test/</a></li>
+		    <li><a href="http://10.0.0.1:6666/mod_cluster-manager">http://10.0.0.1:6666/mod_cluster-manager</a></li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Balancing and clustering communication with UDP</small></p>
+        <img width="700" height="837" src ="{{ site.baseurl }}/assets/slide/modcluster-udp.png" alt="mode_cluster udp">
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Balancing WildFly using a list of available balancers – TCP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone bl-tcp-std-node-1
+$ cp -a standalone bl-tcp-std-node-2
+
+$ cp balancing-test.war bl-tcp-std-node-1/deployments/
+$ cp balancing-test.war bl-tcp-std-node-2/deployments/
+
+$ sudo ifconfig eth0:1 10.0.1.1 netmask 255.255.255.0
+$ sudo ifconfig eth0:2 10.0.1.2 netmask 255.255.255.0
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p><small>Update mod_cluster configuration</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<VirtualHost 10.0.0.1:6666>
+    <Directory />
+	Order deny,allow
+	Deny from all
+	Allow from 10.0.0.1
+    </Directory>
+    ServerAdvertise off
+    EnableMCPMReceive
+</VirtualHost>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure modcluster in Widfly</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<subsystem xmlns="urn:jboss:domain:modcluster:1.2">
+    <mod-cluster-config advertise-socket="modcluster" advertise="false" proxy-list="10.0.0.1:6666" connector="ajp">
+	<dynamic-load-provider>
+	    <load-metric type="cpu"/>
+	</dynamic-load-provider>
+    </mod-cluster-config>
+</subsystem>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Start Cluster nodes</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-tcp-std-node-1 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.1 -Djboss.management.http.port=19990 -Djboss.node.name=node-1
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-tcp-std-node-2 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.2 -Djboss.management.http.port=29990 -Djboss.node.name=node-2              
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://balancer-one.com/balancing-test">http://balancer-one.com/balancing-test</a></li>
+                    <li><a href="http://10.0.0.1/balancing-test">http://10.0.0.1/balancing-test</a></li>
+                    <li><a href="http://10.0.1.1:8080/balancing-test/">http://10.0.1.1:8080/balancing-test/</a></li>
+                    <li><a href="http://10.0.1.2:8080/balancing-test/">http://10.0.1.2:8080/balancing-test/</a></li>
+                    <li><a href="http://10.0.0.1:6666/mod_cluster-manager">http://10.0.0.1:6666/mod_cluster-manager</a></li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Balancing and clustering communication with TCP</small></p>
+        <img width="666" height="837" src ="{{ site.baseurl }}/assets/slide/modcluster-tcp.png" alt="mode_cluster tcp">
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Balancing using HTTP connector instead of AJP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone bl-http-std-node-1
+$ cp balancing-test.war bl-http-std-node-1/deployments/
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure undertow subsystem</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<subsystem xmlns="urn:jboss:domain:undertow:1.1">
+    <buffer-cache name="default"/>
+    <server name="default-server">
+        <http-listener name="http" socket-binding="http" enabled="true"/>
+        <ajp-listener name="ajp" socket-binding="ajp" enabled="false"/>
+        <host name="default-host" alias="localhost">
+            <location name="/" handler="welcome-content"/>
+            <filter-ref name="server-header"/>
+            <filter-ref name="x-powered-by-header"/>
+        </host>
+    </server>
+    <servlet-container name="default">
+        <jsp-config/>
+    </servlet-container>
+    <handlers>
+	<file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+    </handlers>
+    <filters>
+	<response-header name="server-header" header-name="Server" header-value="WildFly/8"/>
+	<response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
+    </filters>
+</subsystem>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure modcluster subsystem</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//          
+<subsystem xmlns="urn:jboss:domain:modcluster:1.2">
+    <mod-cluster-config advertise-socket="modcluster" connector="http">
+	<dynamic-load-provider>
+	    <load-metric type="cpu"/>
+	</dynamic-load-provider>
+    </mod-cluster-config>
+</subsystem>
+            </code>
+        </pre>
+    </section>
+     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure remoting subsystem</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<subsystem xmlns="urn:jboss:domain:remoting:2.0">
+    <endpoint worker="default"/>
+    <http-connector name="http-remoting-connector" connector-ref="http" security-realm="ApplicationRealm"/>
+</subsystem>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Start WildFly</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-http-std-node-1 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.1 -Djboss.management.http.port=19990 -Djboss.node.name=node-1
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="http://balancer-one.com/balancing-test">http://balancer-one.com/balancing-test</a></li>
+                    <li><a href="http://10.0.0.1/balancing-test">http://10.0.0.1/balancing-test</a></li>
+                    <li><a href="http://10.0.1.1:8080/balancing-test/">http://10.0.1.1:8080/balancing-test/</a></li>
+                    <li><a href="http://10.0.0.1:6666/mod_cluster-manager">http://10.0.0.1:6666/mod_cluster-manager</a></li>
+                </ul>
+        </ul>
+    </section>
+
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Preserve WildFly workers while restarting Apache</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone bl-persist-std-node-1
+$ cp balancing-test.war bl-persist-std-node-1/deployments/
+
+$ sudo ifconfig eth0:1 10.0.1.1 netmask 255.255.255.0
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-persist-std-node-1 --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.1 -Djboss.management.http.port=19990 -Djboss.node.name=node-1
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p><small>Configure PersistSlots on in mod_cluster</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+...
+Listen 10.0.0.1:6666
+PersistSlots On
+<VirtualHost 10.0.0.1:80>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Restart Apache, check apache log</li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Balancing same context for different applications</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone bl-std-node-bar
+$ cp -a standalone bl-std-node-foo
+
+$ cp app-bar-with-this-context.war bl-std-node-bar/deployments/
+$ cp app-foo-with-this-context.war bl-std-node-foo/deployments/
+
+$ sudo ifconfig eth0:1 10.0.1.1 netmask 255.255.255.0
+$ sudo ifconfig eth0:2 10.0.1.2 netmask 255.255.255.0
+$ sudo ifconfig eth0:3 10.0.0.1 netmask 255.255.255.0
+$ sudo ifconfig eth0:4 10.0.0.2 netmask 255.255.255.0
+$ sudo ifconfig eth0:5 10.0.0.3 netmask 255.255.255.0
+
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure mod_cluster in Apache</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+LoadModule slotmem_module modules/mod_slotmem.so
+LoadModule manager_module modules/mod_manager.so
+LoadModule proxy_cluster_module modules/mod_proxy_cluster.so
+LoadModule advertise_module modules/mod_advertise.so
+
+PersistSlots On
+ServerAdvertise Off
+
+Listen 10.0.0.3:80
+<VirtualHost 10.0.0.3:80>
+
+        ServerName mcm.com
+
+        <Location />
+                SetHandler mod_cluster-manager
+                Order deny,allow
+                Deny from all
+                Allow from all
+        </Location>
+
+</VirtualHost>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure mod_cluster in Apache</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+Listen 10.0.0.1:80
+<VirtualHost 10.0.0.1:80>
+
+        ServerName bar.com
+
+        <Directory />
+                Order deny,allow
+                Deny from all
+                Allow from all
+        </Directory>
+
+        EnableMCPMReceive On
+
+        CreateBalancers 1
+        ProxyPass / balancer://barBalancer/this
+
+</VirtualHost>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure mod_cluster in Apache</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+Listen 10.0.0.2:80
+<VirtualHost 10.0.0.2:80>
+
+        ServerName foo.com
+
+        <Directory />
+                Order deny,allow
+                Deny from all
+                Allow from all
+        </Directory>
+
+        EnableMCPMReceive On
+
+        CreateBalancers 1
+        ProxyPass / balancer://fooBalancer/this
+</VirtualHost>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Mapping app in hosts</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+10.0.0.3 mcm.com
+10.0.0.1 bar.com
+10.0.0.2 foo.com
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure node-bar</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<subsystem xmlns="urn:jboss:domain:modcluster:1.2">
+    <mod-cluster-config advertise-socket="modcluster" advertise="false" proxy-list="${proxy.list}" connector="ajp" balancer="${balancer.name}">
+        <dynamic-load-provider>
+            <load-metric type="cpu"/>
+        </dynamic-load-provider>
+    </mod-cluster-config>
+</subsystem>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Start node-bar</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-std-node-bar --server-config=standalone-ha.xml 
+-Djboss.bind.address=10.0.1.1 -Djboss.management.http.port=19990 -Djboss.node.name=node-bar -Dbalancer.name=barBalancer 
+-Dproxy.list=10.0.0.1:80 -Djboss.default.multicast.address=230.0.1.4
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Configure node-foo</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<subsystem xmlns="urn:jboss:domain:modcluster:1.2">
+    <mod-cluster-config advertise-socket="modcluster" advertise="false" proxy-list="${proxy.list}" connector="ajp" balancer="${balancer.name}">
+        <dynamic-load-provider>
+            <load-metric type="cpu"/>
+        </dynamic-load-provider>
+    </mod-cluster-config>
+</subsystem>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p><small>Start node-foo</small></p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ ./bin/standalone.sh -Djboss.server.base.dir=bl-std-node-foo --server-config=standalone-ha.xml -Djboss.bind.address=10.0.1.2
+-Djboss.management.http.port=29990 -Djboss.node.name=node-foo -Dbalancer.name=fooBalancer 
+-Dproxy.list=10.0.0.2:80 -Djboss.default.multicast.address=230.0.2.4
+           </code>
+        </pre>
+    </section>
+
+</section>
+
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
