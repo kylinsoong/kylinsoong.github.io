@@ -30,6 +30,49 @@ mysql> use northwind;
 mysql> source /home/kylin/project/data/sql/northwind.sql
 ~~~
 
+## SQL Statements
+
+* SQL `GROUP BY` Statement
+
+Aggregate functions often need an added `GROUP BY` statement. The `GROUP BY` statement is used in conjunction with the aggregate functions to group the result-set by one or more columns.
+
+~~~
+mysql> SELECT COUNT(orders.OrderID) AS NumberOfOrders FROM orders LEFT JOIN shippers ON orders.ShipVia = shippers.ShipperID WHERE shippers.CompanyName='Federal Shipping';
+mysql> SELECT COUNT(orders.OrderID) AS NumberOfOrders FROM orders LEFT JOIN shippers ON orders.ShipVia = shippers.ShipperID WHERE shippers.CompanyName='Speedy Express';
+mysql> SELECT COUNT(orders.OrderID) AS NumberOfOrders FROM orders LEFT JOIN shippers ON orders.ShipVia = shippers.ShipperID WHERE shippers.CompanyName='United Package';
+
+mysql> SELECT shippers.CompanyName, COUNT(orders.OrderID) AS NumberOfOrders FROM orders LEFT JOIN shippers ON orders.ShipVia = shippers.ShipperID GROUP BY CompanyName;
+~~~
+
+## SQL Operators
+
+* SQL `AND & OR` Operators
+
+The `AND & OR` operators are used to filter records based on more than one condition.
+
+~~~
+mysql> SELECT * FROM customers WHERE Country = 'Germany' AND City = 'Berlin';
+mysql> SELECT * FROM customers WHERE Country = 'Germany' OR City = 'München';
+mysql> SELECT * FROM customers WHERE Country = 'Germany' AND (City = 'Berlin' OR City = 'München');
+~~~
+
+* SQL `IN` Operator
+
+The `IN` operator allows you to specify multiple values in a WHERE clause.
+
+~~~
+mysql> SELECT * FROM customers  WHERE City IN ('Paris','London'); 
+~~~
+
+* SQL `LIKE` Operator
+
+The `LIKE` operator is used in a WHERE clause to search for a specified pattern in a column.
+
+~~~
+mysql> SELECT * FROM customers  WHERE City LIKE '%s';
+mysql> SELECT * FROM customers WHERE Country LIKE '%land%';
+~~~
+
 ## SQL Functions
 
 * SQL `AVG()` Function
