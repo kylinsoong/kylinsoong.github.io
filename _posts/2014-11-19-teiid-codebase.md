@@ -10,6 +10,30 @@ duoshuoid: ksoong20141119
 
 [Teiid](https://github.com/teiid/teiid) is the codebase for teiid project, this article will guide you how to look over the complete Teiid code.
 
+## Externalizable, Serializable
+
+The following class are implement Externalizable:
+
+* [org.teiid.net.socket.Message](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/Message.java)
+* [org.teiid.net.socket.Handshake](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/Handshake.java)
+* [org.teiid.net.socket.ServiceInvocationStruct](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/ServiceInvocationStruct.java)
+* [org.teiid.client.ResultsMessage](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/ResultsMessage.java)
+* [org.teiid.client.RequestMessage](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/RequestMessage.java)
+* [org.teiid.client.xa.XidImpl](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/xa/XidImpl.java)
+* [org.teiid.client.plan.Annotation](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/plan/Annotation.java)
+* [org.teiid.client.plan.PlanNode](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/plan/PlanNode.java)
+* [org.teiid.client.metadata.MetadataResult](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/metadata/MetadataResult.java)
+* [org.teiid.client.metadata.ParameterInfo](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/metadata/ParameterInfo.java)
+* [org.teiid.client.security.LogonResult](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/security/LogonResult.java)
+* [org.teiid.client.security.SessionToken](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/security/SessionToken.java)
+* [org.teiid.client.lob.LobChunk](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/lob/LobChunk.java)
+* [org.teiid.core.types.ArrayImpl](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/types/ArrayImpl.java)
+* [org.teiid.core.types.Streamable](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/types/Streamable.java)
+* [org.teiid.core.types.BaseLob](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/types/BaseLob.java)
+* [org.teiid.dqp.message.RequestID](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/message/RequestID.java)
+* [org.teiid.dqp.message.AtomicRequestID](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/message/AtomicRequestID.java)
+* [org.teiid.replication.jgroups.AddressWrapper](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/AddressWrapper.java)
+
 ## Teiid Client
 
 [Teiid JDBC Client]({{ site.baseurl }}/teiid-jdbc-client) have detailed analysis, including:
