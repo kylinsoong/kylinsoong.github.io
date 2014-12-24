@@ -1,0 +1,343 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Commanding the CLI</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>24th, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Invoking CLI commands</li>
+		<li>Checking WildFly version</li>
+		<li>Checking WildFly operational mode</li>
+		<li>Getting OS version</li>
+		<li>Getting JVM version</li>
+		<li>Checking JVM option</li>
+		<li>Checking JVM memories – heap-size and all</li>
+		<li>Checking server status</li>
+		<li>Checking JNDI tree view</li>
+		<li>Invoking CLI commands declared into an external file</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Invoking CLI commands</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=logging/file-handler=wildflycookbook-fh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
+"path"=>"wildflycookbook-fh.log"}, append=false, autoflush=true)
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-fh"])
+
+/subsystem=logging/file-handler=wildflycookbook-fh:read-resource(include-runtime=true)
+
+/subsystem=logging/file-handler=wildflycookbook-fh:write-attribute(name=level,value=DEBUG)
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:write-attribute(name=level,value=DEBUG)
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="xml" data-trim contenteditable style="font-size: 18px;">
+//
+<file-handler name="wildflycookbook-fh" autoflush="true">
+   <level name="INFO"/>
+   <file relative-to="jboss.server.log.dir" path="wildflycookbook-fh.log"/>
+   <append value="false"/>
+</file-handler>
+
+<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
+    <handlers>
+	<handler name="wildflycookbook-fh"/>
+    </handlers>
+</logger>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
+                    <li><a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a></li>
+                    <li>Check the log file <small>wildflycookbook-fh.log</small></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating a periodic-rotating-file-handler</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=logging/periodic-rotating-file-handler=wildflycookbook-prfh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
+"path"=>"wildflycookbook-prfh.log"}, append=false, autoflush=true, suffix=".yyyy-MM-dd-HH-mm")
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:add-handler(name=wildflycookbook-prfh)
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-prfh"])
+
+/subsystem=logging/periodic-rotating-file-handler=wildflycookbook-prfh:read-resource(include-runtime=true)
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<periodic-rotating-file-handler name="wildflycookbook-prfh" autoflush="true">
+    <level name="INFO"/>
+    <file relative-to="jboss.server.log.dir" path="wildflycookbook-prfh.log"/>
+    <suffix value=".yyyy-MM-dd-HH-mm"/>
+    <append value="false"/>
+</periodic-rotating-file-handler>
+
+<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
+    <handlers>
+	<handler name="wildflycookbook-prfh"/>
+    </handlers>
+</logger>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
+                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> twice with more than 1 minitue interval</li>
+                    <li>Check the log file <small>wildflycookbook-prfh.log</small></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating a size-rotating-file-handler</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=logging/size-rotating-file-handler=wildflycookbook-srfh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
+"path"=>"wildflycookbook-srfh.log"}, append=false, autoflush=true, rotate-size=1k, max-backup-index=5)
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:add-handler(name=wildflycookbook-srfh)
+
+/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-srfh"])
+
+/subsystem=logging/size-rotating-file-handler=wildflycookbook-srfh:read-resource(include-runtime=true)
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<size-rotating-file-handler name="wildflycookbook-srfh" autoflush="true">
+    <level name="INFO"/>
+    <file relative-to="jboss.server.log.dir" path="wildflycookbook-srfh.log"/>
+    <rotate-size value="1k"/>
+    <max-backup-index value="5"/>
+    <append value="false"/>
+</size-rotating-file-handler>
+
+<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
+    <handlers>
+        <handler name="wildflycookbook-srfh"/>
+    </handlers>
+</logger>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
+                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> some times</li>
+                    <li>Check the log file <small>wildflycookbook-srfh.log</small></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating an async-handler</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=logging/async-handler=wildflycookbook-afh:add(level=INFO, queue-length=1024, overflow-action=BLOCK)
+/subsystem=logging/async-handler=wildflycookbook-afh:assign-subhandler(name=wildflycookbook-prfh)
+/subsystem=logging/async-handler=wildflycookbook-afh:assign-subhandler(name=wildflycookbook-fh)
+
+/subsystem=logging/async-handler=wildflycookbook-afh:read-resource(recursive=true, include-runtime=true, include-defaults=true)
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<async-handler name="wildflycookbook-afh">
+    <level name="INFO"/>
+    <queue-length value="1024"/>
+    <overflow-action value="block"/>
+</async-handler>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
+                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> some times</li>
+                    <li>Check the log file </li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Managing your logs – listing and reading files</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=logging:list-log-files
+
+/subsystem=logging:read-log-file(name=server.log)
+
+/subsystem=logging:read-log-file(name=server.log, tail=false)
+
+/subsystem=logging:read-log-file(name=server.log, lines=20)
+
+/subsystem=logging:read-log-file(skip=5, name=server.log)
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating and removing a datasource</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-java-5.1.30.jar --dependencies=javax.api,javax.transaction.api
+
+/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlDataSource)
+
+/subsystem=datasources/jdbc-driver=mysql:read-resource
+
+/subsystem=datasources/data-source=MysqlDS:add(jndi-name="java:jboss/datasources/mysqlDS",connection-url="jdbc:mysql://localhost:3306/jdv60",driver-name=mysql,user-name=jdv_user,password=jdv_pass)
+
+/subsystem=datasources/data-source=MysqlDS:read-resource
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Checking datasource connection</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=datasources/data-source=MysqlDS:test-connection-in-pool()
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Reading datasource's statistics</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=datasources/data-source=MysqlDS/statistics=jdbc:read-resource(include-runtime=true)
+
+/subsystem=datasources/data-source=MysqlDS/statistics=pool:read-resource(include-runtime=true)
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Setting a connection pool</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//      
+/subsystem=datasources/data-source=MysqlDS:write-attribute(name="min-pool-size", value="10")
+
+/subsystem=datasources/data-source=MysqlDS:write-attribute(name="max-pool-size", value="20")
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Creating and removing a XA-datasource</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/subsystem=datasources/xa-data-source=XAMysqlDS:add(driver-name=mysql,jndi-name=java:jboss/XAMysqlDS,use-java-context=true,
+new-connection-sql="select 1 from dual",no-tx-separate-pool=true,
+valid-connection-checker-class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker",
+stale-connection-checker-class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLStaleConnectionChecker",min-pool-size=10,
+max-pool-size=25,track-statements=true,prepared-statements-cache-size=25, xa-datasource-class=”com.mysql.jdbc.jdbc2.optional.MysqlXADataSource”)
+
+/subsystem=datasources/xa-data-source=XAMysqlDS
+
+/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=URL:add(value="jdbc:mysql://localhost:3306/wildflycookbook")
+/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=User:add(value="root")
+/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=Password:add(value="password-root")
+
+/subsystem=datasources/xa-data-source=XAMysqlDS:remove()
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+

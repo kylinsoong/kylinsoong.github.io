@@ -30,6 +30,19 @@ git branch -a
 git checkout master
 ~~~
 
+* Delete a exist branch
+
+~~~
+git push origin --delete new
+~~~
+
+* Create a new branch
+
+~~~
+git checkout -b EAP-6.x
+git push origin EAP-6.x
+~~~
+
 ### A git revert example
 
 ~~~
@@ -48,4 +61,5 @@ git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.gi
 git fetch upstream
 git checkout master
 git merge upstream/master
+git push origin master
 ~~~
