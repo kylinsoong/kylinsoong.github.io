@@ -1,0 +1,162 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Hardening WildFly Communication</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>27th, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Securing your application using HTTPS</li>
+		<li>Securing specific application using HTTPS</li>
+		<li>Securing WildFly Console using HTTPS</li>
+		<li>Securing Domain and Host controllers communication using HTTPS</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing your application using HTTPS</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone sec-std-node-1
+$ cd sec-std-node-1/configuration
+$ keytool -v -genkey -alias wildfly.ssl -keyalg RSA -keysize 2048 -sigalg SHA1withRSA -keystore wildfly.ssl.keystore
+$ keytool -list -v -keystore wildfly.ssl.keystore
+
+/core-service=management/security-realm=SSLRealm:add()
+/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path=wildfly.ssl.keystore, keystore-relative-to=jboss.server.config.dir,keystore-password=redhat, alias=wildfly.ssl, key-password=redhat)
+:reload()
+
+/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=SSLRealm)
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Deploy ssl-example.war</li>
+                    <li>Test via <a href="https://localhost:8443/ssl-example/">https://localhost:8443/ssl-example/</a></li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing specific application using HTTPS</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone sec-std-node-2
+$ keytool -v -genkey -alias wildfly.ssl.app -keyalg RSA -keysize 2048 -sigalg SHA1withRSA -keystore wildfly.ssl.app.keystore
+$ keytool -list -v -keystore wildfly.ssl.app.keystore
+
+/core-service=management/security-realm=SSLRealm:add()
+/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path=wildfly.ssl.app.keystore, keystore-relative-to=jboss.server.config.dir,keystore-password=redhat, alias=wildfly.ssl.app, key-password=redhat)
+:reload()
+
+/subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=SSLRealm)
+
+            <server name="secure-server" default-host="secure-host">
+                <https-listener name="https" socket-binding="https" security-realm="SSLRealm"/>
+                <host name="secure-host">
+                    <filter-ref name="server-header"/>
+                    <filter-ref name="x-powered-by-header"/>
+                </host>
+            </server>
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+		    <li>jboss-web.xml</li>
+    		    <li>Deploy ssl-example.war</li>
+		    <li>Test via <a href="https://localhost:8443/ssl-example/">https://localhost:8443/ssl-example/</a></li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing WildFly console using HTTPS</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone sec-std-node-mgmt
+$ cd sec-std-node-mgmt/configuration
+$ keytool -v -genkey -alias wildfly.management -keyalg RSA -keysize 2048 -sigalg SHA1withRSA -keystore wildfly.management.keystore
+$ keytool -list -v -keystore wildfly.management.keystore
+
+/core-service=management/security-realm=SecureManagementRealm:add()
+/core-service=management/security-realm=SecureManagementRealm/authentication=local:add(skip-group-loading=true, default-user="$local")
+/core-service=management/security-realm=SecureManagementRealm/authentication=properties:add(path=mgmt-users.properties, relative-to=jboss.server.config.dir)
+/core-service=management/security-realm=SecureManagementRealm/authorization=properties:add(path=mgmt-groups.properties, relative-to=jboss.server.config.dir)
+/core-service=management/security-realm=SecureManagementRealm:write-attribute(name=map-groups-to-roles,value=false)
+/core-service=management/security-realm=SecureManagementRealm/server-identity=ssl:add(keystore-path=wildfly.management.keystore, keystore-relative-to=jboss.server.config.dir,keystore-password=redhat, alias=wildfly.management, key-password=redhat)
+
+/core-service=management/management-interface=http-interface:write-attribute(name=security-realm,value=SecureManagementRealm)
+/core-service=management/management-interface=http-interface:write-attribute(name=socket-binding,value=management-https)
+:reload()
+
+$ java -cp modules/system/layers/base/org/jboss/sasl/main/jboss-sasl-1.0.4.Final.jar org.jboss.sasl.util.UsernamePasswordHashUtil securewildfly SecureManagementRealm redhat >> sec-std-node-mgmt/configuration/mgmt-users.properties
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li><a href="https://localhost:9993/">https://localhost:9993/</a></li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing DC and HC communication using HTTPS</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a domain sec-dmn-master
+$ cp -a domain sec-dmn-node-1
+$ cp -a domain sec-dmn-node-2
+
+$ mv sec-dmn-master/configuration/host-master.xml sec-dmn-master/configuration/host.xml
+$ mv sec-dmn-node-1/configuration/domain.xml sec-dmn-node-1/configuration/domain.xml.unused
+$ mv sec-dmn-node-1/configuration/host-slave.xml sec-dmn-node-1/configuration/host.xml
+$ mv sec-dmn-node-2/configuration/domain.xml sec-dmn-node-2/configuration/domain.xml.unused
+$ mv sec-dmn-node-2/configuration/host-slave.xml sec-dmn-node-2/configuration/host.xml
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+

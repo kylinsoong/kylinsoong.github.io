@@ -18,226 +18,33 @@ layout: presentation
 		<li>Getting OS version</li>
 		<li>Getting JVM version</li>
 		<li>Checking JVM option</li>
-		<li>Checking JVM memories – heap-size and all</li>
+		<li>Checking JVM memories</li>
 		<li>Checking server status</li>
 		<li>Checking JNDI tree view</li>
-		<li>Invoking CLI commands declared into an external file</li>
+		<li>Invoking server stop|start|reload</li>
+		<li>Invoking server-group stop|start|restart|reload</li>
+		<li>Creating server-group</li>
+		<li>Creating server<li>
+		<li>Managing an application – deploy, undeploy</li>
 	</ul>
 </section>
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Invoking CLI commands</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Invoking CLI commands</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-/subsystem=logging/file-handler=wildflycookbook-fh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
-"path"=>"wildflycookbook-fh.log"}, append=false, autoflush=true)
+cp -a standalone std-commands
 
-/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-fh"])
+$ ./bin/standalone.sh -Djboss.server.base.dir=std-commands -bmanagement=192.168.1.106
 
-/subsystem=logging/file-handler=wildflycookbook-fh:read-resource(include-runtime=true)
+$ ./bin/jboss-cli.sh -c --controller=192.168.1.106 --user=admin --password=password1!
 
-/subsystem=logging/file-handler=wildflycookbook-fh:write-attribute(name=level,value=DEBUG)
+:read-attribute(name=release-codename)
 
-/subsystem=logging/logger=com.packtpub.wildflycookbook:write-attribute(name=level,value=DEBUG)
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="xml" data-trim contenteditable style="font-size: 18px;">
-//
-<file-handler name="wildflycookbook-fh" autoflush="true">
-   <level name="INFO"/>
-   <file relative-to="jboss.server.log.dir" path="wildflycookbook-fh.log"/>
-   <append value="false"/>
-</file-handler>
-
-<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
-    <handlers>
-	<handler name="wildflycookbook-fh"/>
-    </handlers>
-</logger>
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <ul>
-                <li>Test & Verify</li>
-                <ul>
-                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
-                    <li><a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a></li>
-                    <li>Check the log file <small>wildflycookbook-fh.log</small></li>
-                </ul>
-        </ul>
-
-    </section>
-</section>
-
-<section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Creating a periodic-rotating-file-handler</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-/subsystem=logging/periodic-rotating-file-handler=wildflycookbook-prfh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
-"path"=>"wildflycookbook-prfh.log"}, append=false, autoflush=true, suffix=".yyyy-MM-dd-HH-mm")
-
-/subsystem=logging/logger=com.packtpub.wildflycookbook:add-handler(name=wildflycookbook-prfh)
-
-/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-prfh"])
-
-/subsystem=logging/periodic-rotating-file-handler=wildflycookbook-prfh:read-resource(include-runtime=true)
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-<periodic-rotating-file-handler name="wildflycookbook-prfh" autoflush="true">
-    <level name="INFO"/>
-    <file relative-to="jboss.server.log.dir" path="wildflycookbook-prfh.log"/>
-    <suffix value=".yyyy-MM-dd-HH-mm"/>
-    <append value="false"/>
-</periodic-rotating-file-handler>
-
-<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
-    <handlers>
-	<handler name="wildflycookbook-prfh"/>
-    </handlers>
-</logger>
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <ul>
-                <li>Test & Verify</li>
-                <ul>
-                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
-                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> twice with more than 1 minitue interval</li>
-                    <li>Check the log file <small>wildflycookbook-prfh.log</small></li>
-                </ul>
-        </ul>
-
-    </section>
-</section>
-
-<section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Creating a size-rotating-file-handler</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-/subsystem=logging/size-rotating-file-handler=wildflycookbook-srfh:add(level=INFO, file={"relative-to"=>"jboss.server.log.dir", 
-"path"=>"wildflycookbook-srfh.log"}, append=false, autoflush=true, rotate-size=1k, max-backup-index=5)
-
-/subsystem=logging/logger=com.packtpub.wildflycookbook:add-handler(name=wildflycookbook-srfh)
-
-/subsystem=logging/logger=com.packtpub.wildflycookbook:add(use-parent-handlers=false,handlers=["wildflycookbook-srfh"])
-
-/subsystem=logging/size-rotating-file-handler=wildflycookbook-srfh:read-resource(include-runtime=true)
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-<size-rotating-file-handler name="wildflycookbook-srfh" autoflush="true">
-    <level name="INFO"/>
-    <file relative-to="jboss.server.log.dir" path="wildflycookbook-srfh.log"/>
-    <rotate-size value="1k"/>
-    <max-backup-index value="5"/>
-    <append value="false"/>
-</size-rotating-file-handler>
-
-<logger category="com.packtpub.wildflycookbook" use-parent-handlers="false">
-    <handlers>
-        <handler name="wildflycookbook-srfh"/>
-    </handlers>
-</logger>
-            </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <ul>
-                <li>Test & Verify</li>
-                <ul>
-                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
-                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> some times</li>
-                    <li>Check the log file <small>wildflycookbook-srfh.log</small></li>
-                </ul>
-        </ul>
-
-    </section>
-</section>
-
-<section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Creating an async-handler</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-/subsystem=logging/async-handler=wildflycookbook-afh:add(level=INFO, queue-length=1024, overflow-action=BLOCK)
-/subsystem=logging/async-handler=wildflycookbook-afh:assign-subhandler(name=wildflycookbook-prfh)
-/subsystem=logging/async-handler=wildflycookbook-afh:assign-subhandler(name=wildflycookbook-fh)
-
-/subsystem=logging/async-handler=wildflycookbook-afh:read-resource(recursive=true, include-runtime=true, include-defaults=true)
-           </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-<async-handler name="wildflycookbook-afh">
-    <level name="INFO"/>
-    <queue-length value="1024"/>
-    <overflow-action value="block"/>
-</async-handler>
-           </code>
-        </pre>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <ul>
-                <li>Test & Verify</li>
-                <ul>
-                    <li>Deploy  <a href="https://github.com/jbosschina/wildfly-cookbook/tree/master/logging">logging.war</a></li>
-                    <li>Access <a href="http://localhost:8080/logging/">http://localhost:8080/logging/</a> some times</li>
-                    <li>Check the log file </li>
-                </ul>
-        </ul>
-
-    </section>
-</section>
-
-<section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Managing your logs – listing and reading files</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <pre>
-            <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//
-/subsystem=logging:list-log-files
-
-/subsystem=logging:read-log-file(name=server.log)
-
-/subsystem=logging:read-log-file(name=server.log, tail=false)
-
-/subsystem=logging:read-log-file(name=server.log, lines=20)
-
-/subsystem=logging:read-log-file(skip=5, name=server.log)
+curl --digest --user admin http://192.168.1.106:9990/management/?operation=attribute\&name=release-codename
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/?operation=attribute\&name=release-codename
             </code>
         </pre>
     </section>
@@ -245,21 +52,14 @@ layout: presentation
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Creating and removing a datasource</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Checking the WildFly version</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-java-5.1.30.jar --dependencies=javax.api,javax.transaction.api
+:read-attribute(name=release-version)
 
-/subsystem=datasources/jdbc-driver=mysql:add(driver-name=mysql,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlDataSource)
-
-/subsystem=datasources/jdbc-driver=mysql:read-resource
-
-/subsystem=datasources/data-source=MysqlDS:add(jndi-name="java:jboss/datasources/mysqlDS",connection-url="jdbc:mysql://localhost:3306/jdv60",driver-name=mysql,user-name=jdv_user,password=jdv_pass)
-
-/subsystem=datasources/data-source=MysqlDS:read-resource
+curl --digest --user admin http://192.168.1.106:9990/management/?operation=attribute\&name=release-version
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/?operation=attribute\&name=release-version
             </code>
         </pre>
     </section>
@@ -267,13 +67,99 @@ module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-j
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Checking datasource connection</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Checking WildlyFly operational mode</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-/subsystem=datasources/data-source=MysqlDS:test-connection-in-pool()
+:read-attribute(name=launch-type)
+
+curl --digest --user admin http://192.168.1.106:9990/management/?operation=attribute\&name=launch-type
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/?operation=attribute\&name=launch-type
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Getting OS version</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/core-service=platform-mbean/type=operating-system:read-resource(include-runtime=true,include-defaults=true)
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/core-service/platform-mbean/type/operating-system?operation=resource\&include-runtime=true\&include-defaults=true\&json.pretty=true
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Getting JVM version</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/core-service=platform-mbean/type=runtime:read-attribute(name=spec-version)
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/core-service/platform-mbean/type/runtime?operation=attribute\&name=spec-version
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Checking JVM options</p>
+         <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/core-service=platform-mbean/type=runtime:read-attribute(name=input-arguments,include-defaults=true)
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/core-service/platform-mbean/type/runtime?operation=attribute\&name=input-arguments\&include-defaults=true\&json.pretty=true
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Checking JVM memories</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/core-service=platform-mbean/type=memory:read-attribute(name=non-heap-memory-usage,include-defaults=true)
+
+/core-service=platform-mbean/type=memory-pool/name=PS_Eden_Space:read-resource(include-runtime=true, include-defaults=true)
+/core-service=platform-mbean/type=memory-pool/name=PS_Eden_Space:read-attribute(name=usage,include-defaults=true)
+
+/core-service=platform-mbean/type=memory-pool/name=PS_Old_Gen:read-resource(include-runtime=true,include-defaults=true)
+/core-service=platform-mbean/type=memory-pool/name=PS_Old_Gen:read-attribute(name=usage,include-defaults=true)
+
+/core-service=platform-mbean/type=memory-pool/name=PS_Survivor_Space:read-resource(include-runtime=true,include-defaults=true)
+/core-service=platform-mbean/type=memory-pool/name=PS_Survivor_Space:read-attribute(name=usage,include-defaults=true)
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/core-service/platform-mbean/type/memory?operation=attribute\&name=heap-memory-usage
+
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Checking server status</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+:read-attribute(name=server-state)
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/?operation=attribute\&name=server-state
             </code>
         </pre>
     </section>
@@ -281,15 +167,12 @@ module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-j
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Reading datasource's statistics</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Checking JNDI tree view</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-/subsystem=datasources/data-source=MysqlDS/statistics=jdbc:read-resource(include-runtime=true)
+/subsystem=naming:jndi-view
 
-/subsystem=datasources/data-source=MysqlDS/statistics=pool:read-resource(include-runtime=true)
             </code>
         </pre>
     </section>
@@ -297,15 +180,15 @@ module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-j
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Setting a connection pool</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Invoking server using stop, start, and reload</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
-//      
-/subsystem=datasources/data-source=MysqlDS:write-attribute(name="min-pool-size", value="10")
+//
+:shutdown(restart=false)
+:shutdown(restart=true)
+:reload()
 
-/subsystem=datasources/data-source=MysqlDS:write-attribute(name="max-pool-size", value="20")
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/ -X POST -H "Content-Type: application/json" -d '{"operation":"reload"}'
             </code>
         </pre>
     </section>
@@ -313,25 +196,67 @@ module add --name=com.mysql --resources=/home/kylin/tools/jars/mysql-connector-j
 
 <section>
     <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
-        <h3>Creating and removing a XA-datasource</h3>
-    </section>
-    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Invoking server-group using stop, start, restart, and reload</p>
         <pre>
             <code class="shell" data-trim contenteditable style="font-size: 18px;">
 //
-/subsystem=datasources/xa-data-source=XAMysqlDS:add(driver-name=mysql,jndi-name=java:jboss/XAMysqlDS,use-java-context=true,
-new-connection-sql="select 1 from dual",no-tx-separate-pool=true,
-valid-connection-checker-class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker",
-stale-connection-checker-class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLStaleConnectionChecker",min-pool-size=10,
-max-pool-size=25,track-statements=true,prepared-statements-cache-size=25, xa-datasource-class=”com.mysql.jdbc.jdbc2.optional.MysqlXADataSource”)
+/server-group=main-server-group:stop-servers()
+/server-group=main-server-group:start-servers()
+/server-group=main-server-group:restart-servers()
 
-/subsystem=datasources/xa-data-source=XAMysqlDS
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/ -X POST -H "Content-Type: application/json" -d '{"operation" : "composite", "address" : [], "steps" : [{"operation" : "add", "address" : {"server-group" : "next-server-group"}, "profile" : "ha", "socket-binding-group" : "ha-sockets"}]}'
+            </code>
+        </pre>
+    </section>
+</section>
 
-/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=URL:add(value="jdbc:mysql://localhost:3306/wildflycookbook")
-/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=User:add(value="root")
-/subsystem=datasources/xa-data-source=XAMysqlDS/xa-datasource-properties=Password:add(value="password-root")
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Creating a server-group</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/server-group=next-server-group:add(profile=ha,socket-binding-group=ha-sockets)
 
-/subsystem=datasources/xa-data-source=XAMysqlDS:remove()
+/server-group=next-server-group:remove()
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/ -X POST -H "Content-Type: application/json" -d '{"operation" : "composite", "address" : [], "steps" : [{"operation" : "add", "address" : {"server-group" : "next-server-group"}, "profile" : "ha", "socket-binding-group" : "ha-sockets"}]}'
+	    </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Creating a server</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+/host=master/server-config=server-four:add(group=main-server-group, auto-start=true, socket-binding-port-offset=450
+
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/ -X POST -H "Content-Type: application/json" -d '{"operation" : "composite", "address" : [], "steps" : [{"operation" : "add", "address" : [{"host" : "master"},{"server-config" : "server-four"}], "group" : "main-server-group", "auto-start" : "true", "socket-binding-port-offset" : "450"}]}'
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>Managing an application – deploy, undeploy</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+deploy example.war
+deploy example.war --server-groups=main-server-group
+
+undeploy example.war
+undeploy example.war --all-relevant-server-groups
+
+deployment-info example.war
+
+curl  --digest --user admin:password1! http://192.168.1.106:9990/management -X POST -H "Content-Type: application/json" -d '{"content":[{"hash": {"BYTES_VALUE" : "eqfGfLVOCv+p1gz5gjDgwX79ERk="}}], "address": [{"deployment":"example.war"}], "server-groups":"main-server-group", "runtime-name":"example.war", "operation":"add", "enabled":"true"}'
+curl --digest --user admin:password1! http://192.168.1.106:9990/management/ -X POST -H "Content-Type: application/json" -d '{"address" : [{"deployment":"example.war"}],"operation":"undeploy"}'
             </code>
         </pre>
     </section>
