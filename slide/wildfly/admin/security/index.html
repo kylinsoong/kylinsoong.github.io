@@ -1,0 +1,203 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Hardening WildFly Configuration</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>1st, Dec</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Delivering your configuration using property files</li>
+		<li>Securing your configuration hashing passwords</li>
+		<li>Securing and protecting passwords using a vault</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Delivering your configuration using property files</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone sec-std-cfg-node-1
+
+create a property file named “wildflycookbook.properties”, and add the following property and value:
+jboss.bind.address=10.0.0.1
+
+# sudo ifconfig em1:1 10.0.0.1 netmask 255.255.255.0
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=sec-std-cfg-node-1 -P wildflycookbook.properties
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Search log like 'Undertow HTTP listener default listening on /10.0.0.1:8080'</li>
+                </ul>
+        </ul>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Usage example: Split DB connection parameters from DataSource configuration</p>
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<datasources>
+    <datasource jndi-name="java:jboss/MySqlDS" pool-name="MySqlDS">
+    <connection-url>${db.prod.conn.url}</connection-url>
+    <driver>mysql</driver>
+    <security>
+	<user-name>${db.prod.uid}</user-name>
+	<password>${db.prod.pwd}</password>
+    </security>
+    </datasource>
+    <drivers/>
+</datasources>
+
+The following added in a properties:
+    db.prod.conn.url=jdbc:mysql://mysql-prod-cluster-node-1:3306/store
+    db.prod.uid=root
+    dp.prod.pwd=password
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing your configuration hashing passwords</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone sec-std-cfg-node-2
+
+$ java -cp modules/system/layers/base/org/picketbox/main/picketbox-4.0.21.Final.jar 
+org.picketbox.datasource.security.SecureIdentityLoginModule password
+Encoded password: 5dfc52b51bd35553df8592078de921bc
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<p>Create a security domain</p>  
+      <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<security-domain name="encrypted-security-domain" cache-type="default">
+    <authentication>
+	<login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+	    <module-option name="username" value="root"/>
+	    <module-option name="password" value="5dfc52b51bd35553df8592078de921bc"/>
+	</login-module>
+    </authentication>
+</security-domain>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>reference the security domain</p>
+      <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+<datasource jndi-name="java:jboss/MySqlDS" pool-name="MySqlDS">
+    <connection-url>jdbc:mysql://mysql-prod-cluster-node-1:3306/store</connection-url>
+    <driver>mysql</driver>
+    <security>
+        <security-domain>encrypted-security-domain</security-domain>
+    </security>
+</datasource>
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>More Usage Senario</li>
+                <ul>
+		    <li>login-module</li>
+    		    <li>JMS Queues and Topics</li>
+                </ul>
+        </ul>
+
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Securing and protecting password using a vault</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cd $JBOSS_HOME
+$ cp -a standalone sec-std-cfg-node-3
+
+$ cd sec-std-node-3/configuration
+$ mkdir vault
+$ cd vault
+$ keytool -v -genkey -alias wildfly.vault -keyalg RSA -keysize 2048 -sigalg SHA1withRSA -keystore wildfly.vault.keystore
+$ keytool -list -v -keystore wildfly.vault.keystore
+$ ../../../bin/vault.sh -a PASSWORD -x password -b DB-PROD -i 50 -k wildfly.vault.keystore -p redhat -s 86427531 -v wildfly.vault
+
+<datasource jndi-name="java:jboss/MySqlDS" pool-name="MySqlDS">
+    <connection-url>jdbc:mysql://mysql-prod-cluster-node-1:3306/store</connection-url>
+    <driver>mysql</driver>
+    <security>
+        <user-name>root</user-name>
+        <password>${VAULT::DB-PROD::PASSWORD::1}</password>
+    </security>
+</datasource>
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=sec-std-cfg-node-3
+
+            </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <p>More about valt commands</p>
+      <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ ./bin/vault.sh --help
+usage: vault.sh <empty> |  [-a <arg>] [-b <arg>] -c | -h | -x <arg> [-e
+       <arg>]  [-i <arg>] [-k <arg>] [-p <arg>] [-s <arg>] [-v <arg>]
+ -a,--attribute <arg>           Attribute name
+ -b,--vault-block <arg>         Vault block
+ -c,--check-sec-attr            Check whether the secured attribute
+                                already exists in the Vault
+ -e,--enc-dir <arg>             Directory containing encrypted files
+ -h,--help                      Help
+ -i,--iteration <arg>           Iteration count
+ -k,--keystore <arg>            Keystore URL
+ -p,--keystore-password <arg>   Keystore password
+ -s,--salt <arg>                8 character salt
+ -v,--alias <arg>               Vault keystore alias
+ -x,--sec-attr <arg>            Secured attribute value (such as
+                                password)to store
+           </code>
+        </pre>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <ul>
+                <li>Test & Verify</li>
+                <ul>
+                    <li>Start Wildfly Use Cli check the db connection</li>
+                </ul>
+        </ul>
+    </section>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
