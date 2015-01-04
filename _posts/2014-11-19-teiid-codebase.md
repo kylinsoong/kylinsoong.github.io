@@ -10,6 +10,117 @@ duoshuoid: ksoong20141119
 
 [Teiid](https://github.com/teiid/teiid) is the codebase for teiid project, this article will guide you how to look over the complete Teiid code.
 
+## Java concurrent 
+
+Teiid use quite a lot of `java.util.concurrent` class for multiple threads, lock, etc. The following give the quick link for these codes:
+
+**Executor Service**
+
+* [org.teiid.jdbc.ConnectionImpl](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/ConnectionImpl.java)
+* [org.teiid.jdbc.EnhancedTimer](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/EnhancedTimer.java)
+* [org.teiid.core.util.ExecutorUtils](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/util/ExecutorUtils.java)
+* [org.teiid.core.util.NamedThreadFactory](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/util/NamedThreadFactory.java)
+* [org.teiid.dqp.internal.process.ThreadReuseExecutor](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/ThreadReuseExecutor.java)
+* [org.teiid.dqp.internal.process.Request](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/Request.java)
+* [org.teiid.dqp.internal.process.TeiidExecutor](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/TeiidExecutor.java)
+* [org.teiid.dqp.internal.process.DQPCore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DQPCore.java)
+* [org.teiid.query.util.CommandContext](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/util/CommandContext.java)
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+* [org.teiid.deployers.VDBStatusChecker](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/VDBStatusChecker.java)
+* [org.teiid.runtime.EmbeddedServer](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/runtime/EmbeddedServer.java)
+* [org.teiid.runtime.MaterializationManager](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/runtime/MaterializationManager.java)
+* [org.teiid.runtime.EmbeddedConfiguration](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/runtime/EmbeddedConfiguration.java)
+* [org.teiid.transport.SocketListener](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/transport/SocketListener.java)
+* [org.teiid.replication.jgroups.JGroupsObjectReplicator](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/JGroupsObjectReplicator.java)
+
+**Future and FutureTask**
+
+* [org.teiid.jdbc.EnhancedTimer](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/EnhancedTimer.java)
+* [org.teiid.client.util.ResultsFuture](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/util/ResultsFuture.java)
+* [org.teiid.client.lob.StreamingLobChunckProducer](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/client/lob/StreamingLobChunckProducer.java)
+* [org.teiid.net.socket.SocketServerConnectionFactory](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerConnectionFactory.java)
+* [org.teiid.net.socket.OioOjbectChannelFactory](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/OioOjbectChannelFactory.java)
+* [org.teiid.net.socket.ObjectChannel](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/ObjectChannel.java)
+* [org.teiid.net.socket.SocketServerConnection](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerConnection.java)
+* [org.teiid.resource.adapter.ws.WSConnectionImpl](https://github.com/teiid/teiid/blob/master/connectors/connector-ws/src/main/java/org/teiid/resource/adapter/ws/WSConnectionImpl.java)
+* [org.teiid.dqp.internal.process.DataTierTupleSource](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DataTierTupleSource.java)
+* [org.teiid.dqp.internal.process.FutureWork](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/FutureWork.java)
+* [org.teiid.dqp.internal.process.DataTierManagerImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DataTierManagerImpl.java)
+* [org.teiid.dqp.internal.process.DQPWorkContext](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DQPWorkContext.java)
+* [org.teiid.dqp.internal.process.RequestWorkItem](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/RequestWorkItem.java)
+* [org.teiid.dqp.internal.process.DQPCore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DQPCore.java)
+* [org.teiid.query.tempdata.TempTableDataManager](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/tempdata/TempTableDataManager.java)
+* [org.teiid.transport.SSLAwareChannelHandler](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/transport/SSLAwareChannelHandler.java)
+* [org.teiid.transport.LocalServerConnection](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/transport/LocalServerConnection.java)
+
+**ReentrantReadWriteLock, ReentrantLock and Condition**
+
+* [org.teiid.jdbc.EnhancedTimer](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/EnhancedTimer.java)
+* [org.teiid.query.tempdata.TempTable](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/tempdata/TempTable.java)
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+* [org.teiid.common.buffer.impl.BlockStore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BlockStore.java)
+
+* [org.teiid.common.buffer.STree](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/STree.java)
+* [org.teiid.common.buffer.impl.BufferManagerImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferManagerImpl.java)
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+* [java.org.teiid.deployers.VDBRepository](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/VDBRepository.java)
+* [java.org.teiid.replication.jgroups.JGroupsInputStream](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/JGroupsInputStream.java)
+
+
+* [org.teiid.common.buffer.impl.BufferManagerImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferManagerImpl.java)
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+* [org.teiid.deployers.VDBRepository](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/VDBRepository.java)
+* [org.teiid.replication.jgroups.JGroupsInputStream](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/JGroupsInputStream.java)
+
+**Semaphore**
+
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+
+**ConcurrentHashMap, ConcurrentSkipListMap, ConcurrentLinkedQueue, SynchronousQueue, CopyOnWriteArrayList, ConcurrentSkipListSet, LinkedBlockingQueue**
+
+* [org.teiid.logging.JavaLogger](https://github.com/teiid/teiid/blob/master/api/src/main/java/org/teiid/logging/JavaLogger.java)
+* [org.teiid.jdbc.ConnectionImpl](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/ConnectionImpl.java)
+* [org.teiid.net.socket.SocketServerInstanceImpl](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerInstanceImpl.java)
+* [org.teiid.net.socket.SocketServerConnection](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerConnection.java)
+* [org.teiid.translator.mongodb.MongoDBSelectVisitor](https://github.com/teiid/teiid/blob/master/connectors/translator-mongodb/src/main/java/org/teiid/translator/mongodb/MongoDBSelectVisitor.java)
+* [org.teiid.translator.coherence.util.ObjectSourceMethodManager](https://github.com/teiid/teiid/blob/master/connectors/sandbox/translator-coherence/src/main/java/org/teiid/translator/coherence/util/ObjectSourceMethodManager.java)
+* [org.teiid.dqp.internal.datamgr.TranslatorRepository](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/datamgr/TranslatorRepository.java)
+* [org.teiid.dqp.internal.datamgr.ConnectorManager](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/datamgr/ConnectorManager.java)
+* [org.teiid.dqp.internal.datamgr.ConnectorManagerRepository](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/datamgr/ConnectorManagerRepository.java)
+* [org.teiid.dqp.internal.process.multisource.MultiSourceMetadataWrapper](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/multisource/MultiSourceMetadataWrapper.java)
+* [org.teiid.dqp.internal.process.DQPCore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DQPCore.java)
+* [org.teiid.dqp.service.TransactionContext](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/service/TransactionContext.java)
+* [org.teiid.query.tempdata.GlobalTableStoreImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/tempdata/GlobalTableStoreImpl.java)
+* [org.teiid.query.tempdata.TempTableStore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/tempdata/TempTableStore.java)
+* [org.teiid.common.buffer.impl.MemoryStorageManager](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/MemoryStorageManager.java)
+* [org.teiid.common.buffer.impl.BufferManagerImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferManagerImpl.java)
+* [org.teiid.common.buffer.impl.SizeUtility](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/SizeUtility.java)
+* [org.teiid.common.buffer.impl.BufferFrontedFileStoreCache](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferFrontedFileStoreCache.java)
+* [org.teiid.jboss.JBossLogger](https://github.com/teiid/teiid/blob/master/jboss-integration/src/main/java/org/teiid/jboss/JBossLogger.java)
+* [org.teiid.deployers.EventDistributorImpl](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/EventDistributorImpl.java)
+* [org.teiid.deployers.VDBRepository](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/VDBRepository.java)
+* [org.teiid.services.SessionServiceImpl](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/services/SessionServiceImpl.java)
+* [org.teiid.runtime.EmbeddedServer](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/runtime/EmbeddedServer.java)
+* [org.teiid.transport.SSLAwareChannelHandler](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/transport/SSLAwareChannelHandler.java)
+* [org.teiid.replication.jgroups.JGroupsObjectReplicator](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/JGroupsObjectReplicator.java)
+
+* [org.teiid.metadata.AbstractMetadataRecord](https://github.com/teiid/teiid/blob/master/api/src/main/java/org/teiid/metadata/AbstractMetadataRecord.java)
+* [org.teiid.query.tempdata.TempTableStore](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/tempdata/TempTableStore.java)
+* [org.teiid.common.buffer.impl.LrfuEvictionQueue](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/LrfuEvictionQueue.java)
+* [org.teiid.deployers.VDBRepository](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/deployers/VDBRepository.java)
+* [org.teiid.runtime.AbstractVDBDeployer](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/runtime/AbstractVDBDeployer.java)
+
+* [org.teiid.common.queue.TestThreadReuseExecutor](https://github.com/teiid/teiid/blob/master/engine/src/test/java/org/teiid/common/queue/TestThreadReuseExecutor.java)
+* [org.teiid.transport.ODBCClientInstance](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/transport/ODBCClientInstance.java)
+
+* [org.teiid.core.util.ExecutorUtils](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/util/ExecutorUtils.java)
+* [org.teiid.dqp.internal.process.ThreadReuseExecutor](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/ThreadReuseExecutor.java)
+
+* [org.teiid.adminapi.impl.DataPolicyMetadata](https://github.com/teiid/teiid/blob/master/admin/src/main/java/org/teiid/adminapi/impl/DataPolicyMetadata.java)
+
+* [org.teiid.jdbc.EnhancedTimer](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/jdbc/EnhancedTimer.java)
+
+* [org.teiid.core.util.ExecutorUtils](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/util/ExecutorUtils.java)
 
 ## Dynamic Proxy
 
