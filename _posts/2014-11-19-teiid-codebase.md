@@ -10,6 +10,25 @@ duoshuoid: ksoong20141119
 
 [Teiid](https://github.com/teiid/teiid) is the codebase for teiid project, this article will guide you how to look over the complete Teiid code.
 
+## ThreadLocal
+
+The following are ThreadLocal be used in teiid codebases:
+
+* [org.teiid.resource.spi.ConnectionContext](https://github.com/teiid/teiid/blob/master/api/src/main/java/org/teiid/resource/spi/ConnectionContext.java)
+* [org.teiid.net.socket.OioOjbectChannelFactory](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/OioOjbectChannelFactory.java)
+* [org.teiid.core.util.TimestampWithTimezone](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/util/TimestampWithTimezone.java)
+* [org.teiid.core.types.XMLType](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/types/XMLType.java)
+* [org.teiid.core.types.StandardXMLTranslator](https://github.com/teiid/teiid/blob/master/common-core/src/main/java/org/teiid/core/types/StandardXMLTranslator.java)
+* [org.teiid.translator.jdbc.JDBCExecutionFactory](https://github.com/teiid/teiid/blob/master/connectors/translator-jdbc/src/main/java/org/teiid/translator/jdbc/JDBCExecutionFactory.java)
+* [org.teiid.dqp.internal.process.DQPWorkContext](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/DQPWorkContext.java)
+* [org.teiid.dqp.internal.process.RequestWorkItem](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/RequestWorkItem.java)
+* [org.teiid.query.optimizer.relational.RelationalPlanner](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/optimizer/relational/RelationalPlanner.java)
+* [org.teiid.query.util.CommandContext](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/util/CommandContext.java)
+* [org.teiid.query.function.source.XMLSystemFunctions](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/function/source/XMLSystemFunctions.java)
+* [org.teiid.query.parser.QueryParser](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/query/parser/QueryParser.java)
+* [org.teiid.common.buffer.impl.BufferManagerImpl](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/common/buffer/impl/BufferManagerImpl.java)
+* [org.teiid.odata.ODataServletContainerDispatcher](https://github.com/teiid/teiid/blob/master/odata/src/main/java/org/teiid/odata/ODataServletContainerDispatcher.java)
+
 ## Java concurrent 
 
 Teiid use quite a lot of `java.util.concurrent` class for multiple threads, lock, etc. The following give the quick link for these codes:
