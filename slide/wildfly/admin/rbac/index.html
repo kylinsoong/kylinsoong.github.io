@@ -1,0 +1,107 @@
+---
+layout: presentation
+---
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h2>Role-based Access Control with WildFly</h2>
+	<p>
+		<small>Created by <a href="ksoong.org">kylin.</a>11th, Jan</small>
+	</p>
+</section>
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Agenda</h3>
+	<ul>
+		<li>Switching between “simple” and “rbac” providers</li>
+		<li>Managing users, groups and their role mapping</li>
+		<li>Setting a predefined role to all authenticated users</li>
+		<li>Integrating with LDAP</li>
+	</ul>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Switching between “simple” and “rbac” providers</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone rbac-std-node-1
+
+$ ./bin/standalone.sh -Djboss.server.base.dir=rbac-std-node-1
+
+/core-service=management/access=authorization:read-attribute(name=provider)
+/core-service=management/access=authorization:write-attribute(name=provider,value=rbac)
+:reload()
+
+/core-service=management/access=authorization/role-mapping=SuperUser/include=wildfly:add(name=wildfly, realm=ManagementRealm,type=USER)
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Managing users, groups and their role mapping</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone rbac-std-node-2
+
+/core-service=management/access=authorization:write-attribute(name=provider,value=rbac)
+:reload()
+/core-service=management/access=authorization/role-mapping=SuperUser/include=wildfly:add(name=wildfly,realm=ManagementRealm,type=USER)
+
+$ ./add-user.sh --silent=true user1 password1! -sc ../rbac-std-node-2/configuration/
+$ ./add-user.sh --silent=true user2 password1! -sc ../rbac-std-node-2/configuration/
+$ ./add-user.sh --silent=true user3 password1! -sc ../rbac-std-node-2/configuration/
+$ ./add-user.sh --silent=true user4 password1! -sc ../rbac-std-node-2/configuration/
+
+           </code>
+        </pre>
+    </section>
+</section>
+
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Setting a predefined role to all authenticated users</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+$ cp -a standalone rbac-std-node-3
+
+/core-service=management/access=authorization:write-attribute(name=provider,value=rbac)
+:reload()
+/core-service=management/access=authorization/role-mapping=SuperUser/include=wildfly:add(name=wildfly,realm=ManagementRealm,type=USER)
+
+
+            </code>
+        </pre>
+    </section>
+</section>
+
+<section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <h3>Integrating with LDAP</h3>
+    </section>
+    <section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+        <pre>
+            <code class="shell" data-trim contenteditable style="font-size: 18px;">
+//
+
+            </code>
+        </pre>
+    </section>
+</section>
+
+
+<section data-transition="slide" data-background="#4d7e65" data-background-transition="slide">
+	<h1>THE END</h1>
+</section>
+
