@@ -8,7 +8,7 @@ author: Kylin Soong
 duoshuoid: ksoong2015011502
 ---
 
-The [TestPhoenixDML](https://github.com/kylinsoong/data/blob/master/phoenix-quickstart/src/test/java/org/apache/phoenix/teiid/TestPhoenixDML.java) Contain a series DML unit test, including:
+[Apache Phoenix](http://phoenix.apache.org/)is a relational database layer over HBase delivered as a client-embedded JDBC driver targeting low latency queries over HBase data. ]The [TestPhoenixDML](https://github.com/kylinsoong/data/blob/master/phoenix-quickstart/src/test/java/org/apache/phoenix/teiid/TestPhoenixDML.java) use Phoenix to execute a series DML unit test, including:
 
 * testMetaData
 * testInsert
