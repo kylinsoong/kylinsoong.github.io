@@ -122,3 +122,9 @@ SELECT sum(table_rows) from information_schema.TABLES WHERE table_name = 'CUSTOM
 SELECT sum(data_length) from information_schema.TABLES WHERE table_name = 'CUSTOMER';
 SELECT sum(index_length) from information_schema.TABLES WHERE table_name = 'CUSTOMER';
 ~~~
+
+## List all constraints for one particular database
+
+~~~
+select * from information_schema.table_constraints where constraint_schema = 'DB_NAME';
+~~~
