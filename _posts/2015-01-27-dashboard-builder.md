@@ -48,23 +48,26 @@ The following directory fields be added to `org.jboss.dashboard.Application`:
 
 **Hibernate cfg**
 
-* ./modules/dashboard-commons/src/main/resources/org/jboss/dashboard/cluster/ClusterNode.hbm.xml
-* ./modules/dashboard-commons/src/main/resources/org/jboss/dashboard/database/InstalledModule.hbm.xml
-* ./modules/dashboard-commons/src/main/resources/org/jboss/dashboard/database/DataSourceEntry.hbm.xml
+~~~
+org/jboss/dashboard/ui/resources/GraphicElement.hbm.xml
+org/jboss/dashboard/workspace/Workspace.hbm.xml
+org/jboss/dashboard/workspace/PanelParameter.hbm.xml
+org/jboss/dashboard/workspace/Panel.hbm.xml
+org/jboss/dashboard/workspace/PanelInstance.hbm.xml
+org/jboss/dashboard/workspace/Section.hbm.xml
+org/jboss/dashboard/database/InstalledModule.hbm.xml
+org/jboss/dashboard/database/DataSourceEntry.hbm.xml
+org/jboss/dashboard/cluster/ClusterNode.hbm.xml
+org/jboss/dashboard/security/PermissionDescriptor.hbm.xml
+org/jboss/dashboard/ui/panel/advancedHTML/HtmlCode.hbm.xml
+org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceTableEntry.hbm.xml
+org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceColumnEntry.hbm.xml
+org/jboss/dashboard/provider/DataProvider.hbm.xml
+org/jboss/dashboard/kpi/KPI.hbm.xml
+~~~
 
-* ./modules/dashboard-security/src/main/resources/org/jboss/dashboard/security/PermissionDescriptor.hbm.xml
+## HibernateInitializer
 
-* ./modules/dashboard-providers/dashboard-provider-core/src/main/resources/org/jboss/dashboard/provider/DataProvider.hbm.xml
+[org.jboss.teiid.dashboard.hibernate.HibernateInitializerTest](https://github.com/kylinsoong/teiid-samples/blob/master/dashboard/src/main/java/org/jboss/teiid/dashboard/hibernate/HibernateInitializerTest.java)
 
-* ./modules/dashboard-displayers/dashboard-displayer-core/src/main/resources/org/jboss/dashboard/kpi/KPI.hbm.xml
 
-* ./modules/dashboard-ui/dashboard-ui-panels/src/main/resources/org/jboss/dashboard/ui/panel/advancedHTML/HtmlCode.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-panels/src/main/resources/org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceColumnEntry.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-panels/src/main/resources/org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceTableEntry.hbm.xml
-
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/ui/resources/GraphicElement.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/workspace/Section.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/workspace/PanelInstance.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/workspace/PanelParameter.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/workspace/Panel.hbm.xml
-* ./modules/dashboard-ui/dashboard-ui-core/src/main/resources/org/jboss/dashboard/workspace/Workspace.hbm.xml
