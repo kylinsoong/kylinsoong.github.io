@@ -17,6 +17,11 @@ This article show some viewpoints for how [dashboard-builder](https://github.com
 * Execute Maven command `mvn clean install -Dfull -DskipTests` under `builder` directory will generate `dashbuilder-6.3.0-SNAPSHOT-wildfly8.war`
 * Deploy `dashbuilder-6.3.0-SNAPSHOT-wildfly8.war` to WildFly.
 
+## Use Mysql with dashboard-builder
+
+* [Step by step procedure](https://github.com/droolsjbpm/dashboard-builder/blob/master/builder/src/main/wildfly8/README.md)
+* [Set up Datasource](https://github.com/jbosschina/wildfly-dev-cookbook/blob/master/persistence/create-ds-mysql.cli)
+
 ## ControllerServlet init
 
 ControllerServlet is the entry point for UI request, all request as below will go to ControllerServlet, this section dive into ControllerServlet init
