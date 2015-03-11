@@ -6,6 +6,7 @@ categories: teiid
 permalink: /teiid-deploy-jboss
 author: Kylin Soong
 duoshuoid: ksoong2015031102
+excerpt: This article talk about how Teiid upstream be deployed on JBoss Application Platform.
 ---
 
 ## Deploy Teiid upstream on JBoss
