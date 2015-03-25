@@ -21,14 +21,18 @@ java -jar jvm-highcpu-identify.jar
 使用 JDK jps 命令
 
 ~~~
-jps -l
+$ jps -l
+5010 jvm-highcpu-identify.jar
 ~~~
 
 或使用操系统的命令，如 Linux 下使用
 
 ~~~
-ps -aux | grep java
+$ ps -aux | grep java
+kylin    5010  102  9.1 3605104 718440 pts/2  Sl+  21:53   1:43 java -jar jvm-highcpu-identify.jar
 ~~~
+
+**5010** 为 High CPU 进程号 PID
 
 ### 步骤二: 找出 High CPU 线程 ID
 
@@ -40,7 +44,7 @@ top -H -p <PID>
 
 NOTE: -H: Threads toggle. Starts top with the last remembered H state reversed. When this toggle is On, all individual threads will be displayed. Otherwise, top displays a summation of all threads in a process. 
 
-下图为上面示例中top命令的结果输出:
+例如下图为 Linux 下 `top -H -p 5010` 命令的结果输出:
 
 ![Top High CPU output]({{ site.baseurl }}/assets/blog/jvm-cpu-1.PNG)
 
@@ -66,7 +70,7 @@ NOTE: -H: Threads toggle. Starts top with the last remembered H state reversed. 
 
 **139b** 为 Hexadecimal High CPU 线程 ID
 
-### 步骤四: 收集 JVM 线程 Dump 找出 High CPU 线程
+### 步骤四: 找出 High CPU 线程 stacktrace 
 
 收集 JVM 线程 Dump（JVM 的 `jstack -l <PID>` 命令可以收集线程 Dump），在线程 Dump 中查找 Hexadecimal High CPU 线程 ID，如下为 High CPU 线程:
 
@@ -82,3 +86,7 @@ NOTE: -H: Threads toggle. Starts top with the last remembered H state reversed. 
 ~~~
 
 **lab-cpu-heavyThread** 为 High CPU 线程.
+
+### 步骤五: 找出 High CPU 原因
+
+分析 High CPU 线程 stacktrace 分析相关代码，找出 High CPU 原因.
