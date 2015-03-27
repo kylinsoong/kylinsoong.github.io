@@ -10,10 +10,18 @@ duoshuoid: ksoong2014092301
 
 This docs contain a series useful commands for administrate Teiid Server.
 
-## Operate VDB
+### Operate VDB
 
 ~~~
-/subsystem=teiid:get-vdb(vdb-name="ModeShape",vdb-version="1")
-/subsystem=teiid:change-vdb-connection-type(vdb-name="ModeShape", vdb-version=1,connection-type="ANY")
-/subsystem=teiid:restart-vdb(vdb-name="ModeShape", vdb-version=1)
+/subsystem=teiid:list-vdbs()
+/subsystem=teiid:get-vdb(vdb-name=AdminAPITestVDB,vdb-version=1)
+
+~~~
+
+### Operate Source
+
+~~~
+/subsystem=teiid:add-source(vdb-name=AdminAPITestVDB, vdb-version=1, source-name=text-connector-test, translator-name=file, model-name=TestModel, ds-name=java:/test-file)
+/subsystem=teiid:remove-source(vdb-name=AdminAPITestVDB, vdb-version=1, source-name=text-connector-test, model-name=TestModel)
+/subsystem=teiid:update-source(vdb-name=AdminAPITestVDB, vdb-version=1, source-name=text-connector-test, translator-name=file, ds-name=java:/marketdata-file)
 ~~~
