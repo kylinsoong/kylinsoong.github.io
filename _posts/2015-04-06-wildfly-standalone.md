@@ -122,3 +122,11 @@ ServerService 启动了 Controller Boot Thread，该线程负责启动一系列 
 我们可以在 `org.jboss.as.controller.AbstractControllerService` start 方法中添加断点，调式 Controller Boot Thread 的启动和运行：
 
 ![standalone startup controller boot]({{ site.baseurl }}/assets/blog/standalone-start-controller-boot.png)
+
+## 总结
+
+如下图所示
+
+![standalone startup process]({{ site.baseurl }}/assets/blog/standalone-start-process.png)
+
+WildFly 启动过程是启动了一系列 Services，这些 Services 通过 JBoss MSC 管理.
