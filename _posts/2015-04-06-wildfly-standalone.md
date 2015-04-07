@@ -100,6 +100,25 @@ Maven 项目中添加如下依赖：
 
 ## Controller Boot Thread
 
-ServerService 启动了 Controller Boot Thread, 我们可以在 `org.jboss.as.controller.AbstractControllerService` start 方法中添加端点，调式 Controller Boot Thread 的启动和运行：
+ServerService 启动了 Controller Boot Thread，该线程负责启动一系列 Services 包括：
+
+* jboss.deployment.extension-index(org.jboss.as.server.moduleservice.ExtensionIndexService)
+* jboss.server.suspend-controller(org.jboss.as.server.suspend.SuspendController)
+* jboss.server.graceful-shutdown-service(org.jboss.as.server.GracefulShutdownService)
+* jboss.http.listener.registry(org.jboss.as.remoting.HttpListenerRegistryService)
+
+* Model Defined Services
+
+在 Controller Boot Thread 完成启动所有 Services 后会日志输出启动了多少个 Service，以及多少个是 lazy 的，如下为一示例:
+
+~~~
+16:19:33,431 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: WildFly 8.2.0.Final "Tweek" started in 4334ms - Started 313 of 374 services (102 services are lazy, passive or on-demand)
+~~~
+
+如上为默认 WildFly 启动的所有 services 的个数为 374，其中大多数 services 是 Model Defined Services（配置文件中定义的，JEE 相关的 services）。
+
+**调式Controller Boot Thread**
+
+我们可以在 `org.jboss.as.controller.AbstractControllerService` start 方法中添加断点，调式 Controller Boot Thread 的启动和运行：
 
 ![standalone startup controller boot]({{ site.baseurl }}/assets/blog/standalone-start-controller-boot.png)
