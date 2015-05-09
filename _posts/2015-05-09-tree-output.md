@@ -10,27 +10,28 @@ duoshuoid: ksoong2015060901
 
 In Linux System, tree command will dump a tree layout output, for example:
 
-~~~
 .
 ├── a
 │   └── b
 │       └── c
 ├── d
 └── e
-~~~
 
 This article will look up the Algorithm for forming a tree layout output.
 
 Assume there are 3 l3holder:
+
 * l3holder_1 - "├──"
 * l3holder_2 - "└──"
 * l3holder_3 - "   "
 
 and 2 l2holder
+
 * l1holder_1 - "│"
 * l1holder_2 = " "
 
 Algorithm used for count prefix: 
+
 ~~~
 prefix = (index -1) * (l1holder + l3holder_3) +  (l3holder + l1holder_2)
 ~~~
