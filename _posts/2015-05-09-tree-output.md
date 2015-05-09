@@ -10,12 +10,14 @@ duoshuoid: ksoong2015060901
 
 In Linux System, tree command will dump a tree layout output, for example:
 
+~~~
 .
 ├── a
 │   └── b
 │       └── c
 ├── d
 └── e
+~~~
 
 This article will look up the Algorithm for forming a tree layout output.
 
