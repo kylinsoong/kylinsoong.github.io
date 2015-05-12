@@ -99,7 +99,7 @@ From left to right:
 
 Corresponding to above 5 StorageManager implementation, StorageManager interface also have a `createFileStore()` method which return a FileStore, there also are FileStore implementation as below:
 
-![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-buffer-filestore.png)
+![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-filestore.png)
 
 NOTE: BufferManager's default implementation use SplittableFileStore.
   
