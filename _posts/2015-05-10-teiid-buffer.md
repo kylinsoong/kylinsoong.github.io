@@ -69,3 +69,37 @@ stree.insert(Arrays.asList(1), InsertMode.NEW, logSize);
 TupleBrowser tb = new TupleBrowser(stree, new CollectionTupleSource(Collections.singletonList(Arrays.asList(i)).iterator()), true);
 tb.nextTuple();
 ~~~
+
+## LRFU Eviction Queue
+
+Teiid BufferManager use LRFU Eviction Queue in Cache Eviction, which LRFU means **Least Recently Used (LRU)** and **Least-Frequently Used (LFU)**, both of them are common Cache algorithms, more details from [Wikipedia](http://en.wikipedia.org/wiki/Cache_algorithms).
+
+An usage example of LRFU Eviction Queue:
+
+~~~
+LrfuEvictionQueue<CacheEntry> queue = new LrfuEvictionQueue<CacheEntry>(new AtomicLong());
+queue.add(new CacheEntry(1000L));
+queue.touch(new CacheEntry(1000L));
+queue.remove(new CacheEntry(1000L));
+~~~
+
+## StorageManager
+
+Excepting BufferManager implementing StorageManager, there are some others implemeentation:
+
+![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-buffer-storemanager.png)
+
+From left to right:
+
+* **BufferFrontedFileStoreCache** - Implements storage against a FileStore abstraction using a fronting memory buffer with a filesystem paradigm. All objects must go through the memory (typically off-heap) buffer so that they can be put into their appropriately sized storage bucket. 
+* **MemoryStorageManager**
+* **SplittableStorageManager** - A storage manager that combines smaller files into a larger logical file. The buffer methods assume that buffers cannot go beyond single file boundaries.
+* **FileStorageManager** - Implements file storage that automatically splits large files and limits the number of open files.
+* **EncryptedStorageManager** - Implements a block AES cipher over a regular filestore. 
+
+Corresponding to above 5 StorageManager implementation, StorageManager interface also have a `createFileStore()` method which return a FileStore, there also are FileStore implementation as below:
+
+![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-buffer-filestore.png)
+
+NOTE: BufferManager's default implementation use SplittableFileStore.
+  
