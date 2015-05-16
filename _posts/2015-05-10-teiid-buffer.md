@@ -102,4 +102,37 @@ Corresponding to above 5 StorageManager implementation, StorageManager interface
 ![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-filestore.png)
 
 NOTE: BufferManager's default implementation use SplittableFileStore.
-  
+ 
+## BufferManager usage cases
+
+BufferManager be used in DQPCore as below:
+
+* org.teiid.dqp.internal.process.Request's initialize
+
+~~~
+public ResultsFuture<ResultsMessage> executeRequest(long reqID,RequestMessage requestMsg) throws TeiidProcessingException{
+    Request request = null;
+    ...
+    request.initialize(requestMsg, bufferManager,dataTierMgr, transactionService, state.sessionTables, workContext, this.prepPlanCache);
+}
+~~~
+
+* org.teiid.dqp.internal.process.DataTierManagerImpl's constructor
+
+~~~
+public void start(DQPConfiguration theConfig){
+    ...
+    DataTierManagerImpl processorDataManager = new DataTierManagerImpl(this, this.bufferManager, this.config.isDetectingChangeEvents());
+    ...
+}
+~~~
+
+* org.teiid.query.tempdata.TempTableDataManager's constructor
+
+~~~
+public void start(DQPConfiguration theConfig){
+    ...
+    dataTierMgr = new TempTableDataManager(processorDataManager, this.bufferManager, this.rsCache);
+    ...
+}
+~~~ 
