@@ -1,0 +1,65 @@
+---
+layout: default
+---
+
+<br/>
+
+<div class="container" id="content">
+    <div class="container-fluid"> 		
+		
+        <div class="row-fluid">
+            <div class="carousel slide" id="myCarousel">
+	        <ol class="carousel-indicators">
+		    <li class="" data-slide-to="0" data-target="#myCarousel"></li>
+		    <li class="active" data-slide-to="1" data-target="#myCarousel"></li>
+                    <li class="" data-slide-to="2" data-target="#myCarousel"></li>
+		</ol>
+		<div class="carousel-inner">
+		    <div class="item">
+			<a href="/blog"> <img src="/assets/dog.png"></a>
+		    </div>
+		    <div class="item active">
+			<a href="/blog"><img src="/assets/quickstart-tutorials.png"></a>
+		    </div>
+                    <div class="item">
+                        <a href="/blog"><img src="/assets/iwantyou.jpg"></a>
+                    </div>
+		</div>
+		<a class="carousel-control left" data-slide="prev" href="#myCarousel">‹</a> <a class="carousel-control right" data-slide="next" href="#myCarousel">›</a>
+	    </div>			
+	</div>
+    </div>
+    <div class="container-fluid">
+	<div class="row-fluid">
+	    <div class="span5 well">
+	        <h2>Latest Posts</h2>	
+	            <div id="feed">
+                            {% for post in site.posts offset: 0 limit: 5 %}
+                               <hr/>
+                                <h5 class="title">
+                                  <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                                </h5>
+                                <small>{{ post.date | date: "%b %-d, %Y" }}</small>
+                                <p>
+                                  {{ post.excerpt | truncatewords:10}} <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">more</a>
+                                </p>
+                            {% endfor %}
+                    </div> 
+	    </div>
+            <div class="span5 well">
+                          <h2>Latest Events</h2> 				
+	                  <div id="feed">
+                            <small>No Events</small>
+                          </div>
+	    </div>
+<!--
+	    <div class="span4">
+		<div id="weibo">
+		    <iframe width="300" height="1000"  scrolling="no" frameborder="0" src="http://service.weibo.com/staticjs/weiboshow.swf?verifier=5089da68&uid=1803641581&width=300&height=1000&fansRow=1&isTitle=1&isWeibo=1&isFans=0&noborder=0&ptype=1&colors=cfe1f3,fafcff,444444,5093d5"></iframe>
+		</div>
+-->	    </div>
+			
+	</div>
+    </div>
+</div>
+
