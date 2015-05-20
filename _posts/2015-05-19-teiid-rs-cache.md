@@ -25,7 +25,7 @@ Follow the following steps to run the examples:
 
 In my test I have insert 100 MB size data in Mysql `PERFTEST` table(CREATE TABLE PERFTEST(id INTEGER, col_a CHAR(16), col_b CHAR(40), col_c CHAR(40))).
 
-NOTE: int type is 4 bytes, char(n) is n bytes, so each row's size = 4 + 16 + 40 + 40, in other words, each rows size is 100 bytes.
+> NOTE: int type is 4 bytes, char(n) is n bytes, so each row's size = 4 + 16 + 40 + 40, in other words, each rows size is 100 bytes.
 
 So for insert 100 MB into Mysql, we need inser 1<<20(MB) rows. Query from Mysql Comman Line, the result:
 

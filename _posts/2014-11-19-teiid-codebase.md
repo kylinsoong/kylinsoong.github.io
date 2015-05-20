@@ -184,10 +184,6 @@ The following class are implement Externalizable:
 * [org.teiid.dqp.message.AtomicRequestID](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/message/AtomicRequestID.java)
 * [org.teiid.replication.jgroups.AddressWrapper](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/AddressWrapper.java)
 
-## Teiid Client
-
-[Teiid JDBC Client]({{ site.baseurl }}/teiid-jdbc-client).
-
 ## Teiid Language
 
 [Teiid Language API]({{ site.baseurl }}/teiid-language-api).
