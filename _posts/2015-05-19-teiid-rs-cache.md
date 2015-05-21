@@ -9,17 +9,17 @@ duoshuoid: ksoong2015051901
 excerpt: Teiid Results Caching Example
 ---
 
-Let's start from an eample, there are 100 MB size data exist in Mysql Data Base, then we create View in Teiid VDB query against these data, the result as figure: 
+Let's start from a performance comparison diagram
 
 ![Teiid rs cache]({{ site.baseurl }}/assets/blog/teiid-perf-resultset.png)
 
-In the Figure, the left histogram is query without cache, the right histogram is with cache, we can get the conclusion: **enable Results Caching is 1000 times fast than without caching**.
+the left histogram is the query time without cache(1066 milliseconds), the right histogram is the query time with cache(almost 1 millisecond), we can get the conclusion: **enable Results Caching is 1000 times fast than disable caching**.
 
 More details about Results Caching refer to [https://docs.jboss.org/author/display/TEIID/Results+Caching](https://docs.jboss.org/author/display/TEIID/Results+Caching).
 
-## How to run 
+## How to run  
 
-Follow the following steps to run the examples:
+With the following steps to run the performance comparison examples:
 
 * **Step.1 Add test data to MySQL**
 

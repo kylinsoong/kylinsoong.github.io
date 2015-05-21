@@ -8,13 +8,12 @@ author: Kylin Soong
 duoshuoid: ksoong2014112701
 ---
 
-The content of in article including:
+This article first will talk some basic concepts in Java Util Logging, then give 2 examples: 
 
-* java util logging
-* log4j
-* jboss logging
+* **Setting the Logging Configuration with configuration file**
+* **Setting the Logging Configuration Programmatically** 
 
-## java util logging
+## Concepts
 
 Java contains the Java Logging API. This logging API allows you to configure which message types are written. Individual classes can use this logger to write messages to the configured log files.
 
@@ -25,6 +24,8 @@ import java.util.logging.Logger;
 
 private final static Logger logger = Logger.getLogger(MyLoggerTestClass.class.getName()); 
 ~~~
+
+### Logger Level
 
 The log levels define the severity of a message. The `java.util.logging.Level` class is used to define which messages should be written to the log. The levels in descending order are:
 
@@ -51,37 +52,79 @@ Each handler's output can be configured with a formatter, by default, java util 
 * SimpleFormatter: Generate all messages as text 
 * XMLFormatter: Generates XML output for the log messages 
 
-The following is a sample to build a customized formatter:
+Below is is a sample to build a customized formatter:
 
 ~~~
 class MyFormatter extends Formatter {
 	
-	SimpleDateFormat format = new SimpleDateFormat("MMM dd,yyyy HH:mm");
+	SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm SSS");
 
 	public String format(LogRecord record) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(format.format(new Date(record.getMillis())) + " ");
-		sb.append(record.getLevel() + " ");
-		sb.append("[" + record.getLoggerName() + "] ");
-		sb.append(record.getMessage());
+		sb.append(getLevelString(record.getLevel()) + " ");
+		sb.append("[" + record.getLoggerName() + "]  (");
+		sb.append(Thread.currentThread().getName() + ") ");
+		sb.append(record.getMessage() + "\n");
 		return sb.toString();
+	}
+
+	private String getLevelString(Level level) {
+		String name = level.toString();
+		int size = name.length();
+		for(int i = size; i < 7 ; i ++){
+			name += " ";
+		}
+		return name;
 	}
 }
 ~~~
 
-### An example for using java util logging
+## Setting the Logging Configuration with configuration file
 
-Run the following code snippets:
+Setting the Logging Configuration need a `logging properties`, and including it via VM argument:
+
+~~~
+-Djava.util.logging.config.file="logging.properties" 
+~~~
+
+> Note that there is a sample properties under jre/lib
+
+Base on jre/lib/logging.properties, change the following 2 lines:
+
+~~~
+.level= FINEST
+java.util.logging.ConsoleHandler.formatter = MyFormatter
+~~~
+
+## Setting the Logging Configuration Programmatically
+
+Below is a sample for setting the Logging Configuration Programmatically:
+
+~~~
+Logger rootLogger = Logger.getLogger("");
+for(Handler handler : rootLogger.getHandlers()){
+	// use customized MyFormatter, change rootLogger's level from INFO to SEVERE
+	handler.setFormatter(new MyFormatter());
+	handler.setLevel(Level.SEVERE);
+}
+
+Logger logger = Logger.getLogger("com.mylogger");
+logger.setLevel(Level.FINEST);
+ConsoleHandler handler = new ConsoleHandler();
+handler.setFormatter(new MyFormatter());
+handler.setLevel(Level.FINEST);
+logger.addHandler(handler);
+logger.setUseParentHandlers(false);
+~~~
+
+## An example for using above setting
+
+Run below code
 
 ~~~
 public static void main(String[] args) {
-	Logger logger = Logger.getLogger("java.util.logging.TEST");
-	logger.setLevel(Level.FINEST);
-	ConsoleHandler handler = new ConsoleHandler();
-	handler.setLevel(Level.FINEST);
-	handler.setFormatter(new MyFormatter());
-	logger.setUseParentHandlers(false);
-	logger.addHandler(handler);
+	Logger logger = Logger.getLogger("com.mylogger.x.y");
 			
 	logger.finest("This is finest test message");
 	logger.finer("This is finer test message");
@@ -93,70 +136,15 @@ public static void main(String[] args) {
 }
 ~~~
 
-The following output in console:
+will out put
 
 ~~~
-Nov 27,2014 14:34 FINEST [java.util.logging.TEST] This is finest test message
-Nov 27,2014 14:34 FINER [java.util.logging.TEST] This is finer test message
-Nov 27,2014 14:34 FINE [java.util.logging.TEST] This is fine test message
-Nov 27,2014 14:34 CONFIG [java.util.logging.TEST] This is config test message
-Nov 27,2014 14:34 INFO [java.util.logging.TEST] This is info test message
-Nov 27,2014 14:34 WARNING [java.util.logging.TEST] This is warning test message
-Nov 27,2014 14:34 SEVERE [java.util.logging.TEST] This is severe test message
+2015-05-21 16:39 331 FINEST  [com.mylogger.x.y] (main) This is finest test message
+2015-05-21 16:39 332 FINER   [com.mylogger.x.y] (main) This is finer test message
+2015-05-21 16:39 332 FINE    [com.mylogger.x.y] (main) This is fine test message
+2015-05-21 16:39 332 CONFIG  [com.mylogger.x.y] (main) This is config test message
+2015-05-21 16:39 332 INFO    [com.mylogger.x.y] (main) This is info test message
+2015-05-21 16:39 333 WARNING [com.mylogger.x.y] (main) This is warning test message
+2015-05-21 16:39 333 SEVERE  [com.mylogger.x.y] (main) This is severe test message
 ~~~
 
-### Configure java util logging globally 
-
-Configure java util logging globally need a logging properties, and including this properties via VM argument:
-
-~~~
--Djava.util.logging.config.file="logging.properties" 
-~~~
-
-> Note that there is a sample properties under jre/lib
-
-Base on jre/lib/logging.properties, we change the following 2 lines:
-
-~~~
-.level= FINEST
-java.util.logging.ConsoleHandler.formatter = com.teiid.quickstart.log.MyFormatter
-~~~
-
-then above example can simplify like:
-
-~~~
-public static void main(String[] args) {
-	Logger logger = Logger.getLogger("java.util.logging.TEST");
-	logger.finest("This is finest test message");
-	logger.finer("This is finer test message");
-	logger.fine("This is fine test message");
-	logger.config("This is config test message");
-	logger.info("This is info test message");
-	logger.warning("This is warning test message");
-	logger.severe("This is severe test message");
-}
-~~~
-
-The log output are same.
-
-## Log4j
-
-Log4j should be most be used logging framework, a extend of java util logging, add more handlers and formatters.
-
-### API to quick involve Logging
-
-There are some occasion which we need quick configure log4j for debug convenient, below code show this:
-
-~~~
-Logger.getLogger("org.apache.hadoop.hbase.client").setLevel(Level.DEBUG);
-String pattern = "[%d{ABSOLUTE}] [%t] %5p (%F:%L) - %m%n";
-PatternLayout layout = new PatternLayout(pattern);
-ConsoleAppender consoleAppender = new ConsoleAppender(layout);
-Logger.getRootLogger().addAppender(consoleAppender);  
-~~~
-
-## JBoss logging
-
-[https://docs.jboss.org/author/display/AS72/Logging+Configuration](https://docs.jboss.org/author/display/AS72/Logging+Configuration)
-
-[https://github.com/jboss-logging](https://github.com/jboss-logging)
