@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Teiid Code Analysis"
+title:  "Teiid Code Analysis - Overview"
 date:   2015-05-20 21:00:00
 categories: teiid
 permalink: /teiid-code
@@ -184,11 +184,9 @@ The following class are implement Externalizable:
 * [org.teiid.dqp.message.AtomicRequestID](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/message/AtomicRequestID.java)
 * [org.teiid.replication.jgroups.AddressWrapper](https://github.com/teiid/teiid/blob/master/runtime/src/main/java/org/teiid/replication/jgroups/AddressWrapper.java)
 
-## Teiid Language
+## Links
 
-[Teiid Language API]({{ site.baseurl }}/teiid-language-api).
-
-## Teiid Translator
-
-[Teiid Translator API]({{ site.baseurl }}/teiid-translator-api).
-
+* [Teiid Language API]({{ site.baseurl }}/teiid-language-api).
+* [Teiid Translator API]({{ site.baseurl }}/teiid-translator-api).
+* [Teiid Metadata API]({{ site.baseurl }}/teiid-metadata-api).
+* [Teiid BufferManager]({{ site.baseurl }}/teiid-buffer).
