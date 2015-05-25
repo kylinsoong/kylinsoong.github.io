@@ -101,3 +101,10 @@ Disable User Query Cache Result:
 ~~~
 
 ## How it work
+
+In this section we discuss why 1000 times performance take place. As below sequence diagram, RequestWorkItem process first will get result from RssultSetCache, if result exist, get result from cache and return, this is the reson why 1000 times performance take place.
+
+![Result From Cache]({{ site.baseurl }}/assets/blog/teiid-cache.png)
+
+> Note that: more detailed logic about RequestWorkItem get results from cache please look at processNew() method in [RequestWorkItem.java](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/RequestWorkItem.java) 
+

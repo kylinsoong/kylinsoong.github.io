@@ -14,3 +14,7 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ![RequestWorkItem]({{ site.baseurl }}/assets/blog/teiid-requestWorkItem.png)
 
 
+## org.teiid.dqp.internal.process.ThreadReuseExecutor
+
+![ThreadReuseExecutor]({{ site.baseurl }}/assets/blog/teiid-threadreuseexecutor.png)
+
