@@ -108,3 +108,34 @@ In this section we discuss why 1000 times performance take place. As below seque
 
 > Note that: more detailed logic about RequestWorkItem get results from cache please look at processNew() method in [RequestWorkItem.java](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/RequestWorkItem.java) 
 
+## Cached Virtual Procedure
+
+Cached virtual procedure results are used automatically when a matching set of parameter values is detected for the same procedure execution. Use the Cache Hints can enable cache virtual procedure results, below as an example:
+
+~~~
+CREATE VIRTUAL PROCEDURE PERFTPROCE2()
+AS
+/*+ cache */
+BEGIN 
+	SELECT A.id, A.col_a, A.col_b, A.col_c FROM Accounts.PERFTEST AS A;
+END
+~~~
+
+In my test there also is a `PERFTPROCE1()` which cache is diabaled, the test results show there also have thousands of times performance improve, the comparison result as below:
+
+~~~
++--------------------+--------------------+
+| call PERFTPROCE1() | call PERFTPROCE2() |
++--------------------+--------------------+
+|        3622        |        3355        |
+|        3236        |          1         |
+|        3219        |          1         |
+|        3233        |          1         |
+|        3207        |          1         |
+|        3207        |          1         |
+|        3596        |          1         |
+|        3192        |          1         |
+|        3198        |          1         |
+|        3180        |          1         |
++--------------------+--------------------+
+~~~
