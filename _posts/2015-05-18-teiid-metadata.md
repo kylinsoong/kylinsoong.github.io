@@ -13,3 +13,8 @@ Teiid MetaData API Hierarchy Diagram:
 
 ![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadata.png)
 
+## MetadataRepository
+
+MetadataRepository is a hook for externalizing view, procedure, and other metadata, it's UML diagram as below:
+
+![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadatarepo.png)

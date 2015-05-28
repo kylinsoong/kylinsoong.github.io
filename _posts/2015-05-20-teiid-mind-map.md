@@ -16,6 +16,7 @@ The Mind Map in this article including:
 * Statement execute Query
 * Teiid Embedded Server Initialization
 * Teiid Embedded Server startup
+* Teiid Embedded Server deployVDB
 
 ## TeiidDriver create a Connection
 
@@ -130,3 +131,16 @@ Combine with previous EmbeddedServer Initialization, total 16 threads created so
 * TimeTask in **new SessionServiceImpl()** and **getBufferService()** relevant 2 daemon threads up
 * Infinispan Cachemanager start 3 local cache `resultset`, `resultset-repl`, `preparedplan` cause 3 transaction clean up threads and 1 eviction thread up
 * Netty's **new NioServerSocketChannelFactory()** start up 8 `New I/O worker ` threads and 1 accept thread `New I/O server boss`
+
+## Teiid Embedded Server deployVDB
+
+Teiid Embedded Server deploy vdb:
+
+~~~
+server.deployVDB("vdb.xml");
+~~~
+
+The Mind Map for Embedded Server deploy VDB
+
+![Teiid EmbededServer deployVDB]({{ site.baseurl }}/assets/blog/teiid-deployvdb.png)
+
