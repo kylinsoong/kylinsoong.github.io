@@ -1,27 +1,41 @@
 ---
 layout: blog
-title:  "Teiid Results Caching Usage Example"
+title:  "Teiid Results Caching Comparison Example"
 date:   2015-05-19 21:20:00
 categories: teiid
 permalink: /teiid-rs-cache
 author: Kylin Soong
 duoshuoid: ksoong2015051901
-excerpt: Teiid Results Caching Example
+excerpt: A comparison example(native query, query without cache, query with cache) show how Results Caching improve thousands of performance
 ---
 
-Let's start from a performance comparison diagram
+## Teiid Results Caching Comparison Example
 
-![Teiid rs cache]({{ site.baseurl }}/assets/blog/teiid-perf-resultset.png)
+There are 3 sections in Results Caching Comparison Example:
 
-the left histogram is the query time without cache(1066 milliseconds), the right histogram is the query time with cache(almost 1 millisecond), we can get the conclusion: **enable Results Caching is 1000 times fast than disable caching**.
+* Overview
+* Run
+* Conclusion
 
-More details about Results Caching refer to [https://docs.jboss.org/author/display/TEIID/Results+Caching](https://docs.jboss.org/author/display/TEIID/Results+Caching).
+### Overview
 
-## How to run  
+Teiid Results Caching Comparison Example is a Performance conparison example, **PERFTEST** table exist in RDBMS, which contains 100 MB data in RDBMS. **PERFTESTVIEW** is a View which mapped to **PERFTEST** table, it be defined in a Teiid VDB. There are 3 different query:
 
-With the following steps to run the performance comparison examples:
+* Native Query(SELECT * FROM PERFTEST) - Connection be created by RDBMS JDBC Driver, Repeated query 10 times, record query time 
+* Query Without Results Caching(SELECT * FROM PERFTESTVIEW) - Connection be created by Teiid JDBC Driver, Repeated query 10 times, record query time
+* Query With Results Caching(/*+ cache */ SELECT * FROM PERFTESTVIEW) - Connection be created by Teiid JDBC Driver, Repeated query 10 times, record query time
 
-* **Step.1 Add test data to MySQL**
+The Comparison result will show how Results Caching are critical for query performance.
+
+More details about Results Caching: [https://docs.jboss.org/author/display/TEIID/Results+Caching](https://docs.jboss.org/author/display/TEIID/Results+Caching).
+
+[Results Caching Example Source Code](https://github.com/teiid/teiid-embedded-examples/blob/master/embedded-caching/src/main/java/org/teiid/example/ResultsCachingExample.java).
+
+### Run  
+
+With the following steps to run the performance comparison example:
+
+* **Step.1 Add test data to Mysql**
 
 In my test I have insert 100 MB size data in Mysql `PERFTEST` table(CREATE TABLE PERFTEST(id INTEGER, col_a CHAR(16), col_b CHAR(40), col_c CHAR(40))).
 
@@ -58,47 +72,40 @@ The View in my test like:
 </model>
 ~~~
 
-* **Query against PERFTESTVIEW**
+* **Step.3 Run example**
 
-Implement select all query 10 times with enable and disable User Query Cache.
-
-Enable User Query Cache Result:
+Run each queries('SELECT * FROM PERFTEST', 'SELECT * FROM PERFTESTVIEW', '/*+ cache */ SELECT * FROM PERFTESTVIEW') 10 times, record query time, it should looks
 
 ~~~
-+-----------------------------------------+
-| /*+ cache */ SELECT * FROM PERFTESTVIEW |
-+-----------------------------------------+
-|                                    1077 |
-|                                      11 |
-|                                       1 |
-|                                       1 |
-|                                       1 |
-|                                       2 |
-|                                       1 |
-|                                       0 |
-|                                       1 |
-|                                       0 |
-+-----------------------------------------+
++------------------------+----------------------------+-----------------------------------------+
+| SELECT * FROM PERFTEST | SELECT * FROM PERFTESTVIEW | /*+ cache */ SELECT * FROM PERFTESTVIEW |
++------------------------+----------------------------+-----------------------------------------+
+|          1869          |            1553            |                   1448                  |
+|          1379          |            1347            |                    1                    |
+|          1333          |            1359            |                    0                    |
+|          1342          |            1363            |                    1                    |
+|          1370          |            1326            |                    0                    |
+|          1351          |            1392            |                    1                    |
+|          1539          |            1348            |                    1                    |
+|          1346          |            1350            |                    0                    |
+|          1358          |            1326            |                    1                    |
+|          1375          |            1381            |                    1                    |
++------------------------+----------------------------+-----------------------------------------+
 ~~~
 
-Disable User Query Cache Result:
+### Conclusion
 
-~~~
-+-----------------------------------------+
-|         SELECT * FROM PERFTESTVIEW      |
-+-----------------------------------------+
-|                                    1252 |
-|                                    1226 |
-|                                    1005 |
-|                                     995 |
-|                                    1005 |
-|                                     983 |
-|                                    1042 |
-|                                    1089 |
-|                                    1025 |
-|                                    1047 |
-+-----------------------------------------+
-~~~
+Converting above step.3 result to a performance comparison diagram
+
+![Teiid rs cache]({{ site.baseurl }}/assets/blog/teiid-perf-resultset.png)
+
+From top to bottom
+
+* The top histogram show Query With Results Caching, it spent 1 millisecond if result be cached
+* The middle histogram show Query Without Results Caching, it spend 1300 milliseconds each time
+* The bottom histogram show Native query, it spend 1300 milliseconds each time
+
+We can get the conclusion: **enable Results Caching is 1000 times fast than disable caching**.
 
 ## How it work
 
@@ -113,7 +120,7 @@ In this section we discuss why 1000 times performance take place. As below seque
 Cached virtual procedure results are used automatically when a matching set of parameter values is detected for the same procedure execution. Use the Cache Hints can enable cache virtual procedure results, below as an example:
 
 ~~~
-CREATE VIRTUAL PROCEDURE PERFTPROCE2()
+CoREATE VIRTUAL PROCEDURE PERFTPROCE2()
 AS
 /*+ cache */
 BEGIN 
