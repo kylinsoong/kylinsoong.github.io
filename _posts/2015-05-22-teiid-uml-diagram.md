@@ -32,3 +32,11 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ### org.teiid.query.optimizer.capabilities.CapabilitiesFinder
 
 ![CapabilitiesFinder]({{ site.baseurl }}/assets/blog/teiid-capabilitiesfinder.png)
+
+### org.teiid.query.resolver.CommandResolver
+
+![CommandResolver]({{ site.baseurl }}/assets/blog/teiid-commandresolver.png)
+
+### org.teiid.query.processor.ProcessorPlan
+
+![processPlan]({{ site.baseurl }}/assets/blog/teiid-processplan.png)
