@@ -25,3 +25,10 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 ![ThreadReuseExecutor]({{ site.baseurl }}/assets/blog/teiid-threadreuseexecutor.png)
 
+### org.teiid.query.metadata.QueryMetadataInterface
+
+![QueryMetadataInterface]({{ site.baseurl }}/assets/blog/teiid-querymetadatainterface.png)
+
+### org.teiid.query.optimizer.capabilities.CapabilitiesFinder
+
+![CapabilitiesFinder]({{ site.baseurl }}/assets/blog/teiid-capabilitiesfinder.png)
