@@ -40,3 +40,7 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ### org.teiid.query.processor.ProcessorPlan
 
 ![processPlan]({{ site.baseurl }}/assets/blog/teiid-processplan.png)
+
+### org.teiid.query.processor.ProcessorDataManager
+
+![ProcessorDataManager]({{ site.baseurl }}/assets/blog/teiid-processordatamanager.png)

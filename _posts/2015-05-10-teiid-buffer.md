@@ -15,48 +15,117 @@ As below figure, the Key Interface of Teiid BufferManager is `BufferManager`, it
 
 The buffer manager controls how memory is used and how data flows through the system. It uses `StorageManager` to retrieve data, store data, and transfer data. The buffer manager has algorithms that tell it when and how to store data. The buffer manager should also be aware of memory management issues.
 
-## TupleSource and TupleBuffer
+## Tuple, TupleBatch, TupleSource and TupleBuffer
 
 As the depiction of Key Interface diagram, there are several methods related with TupleSource and TupleBuffer, like 
 
 * createTupleBuffer(List elements, String groupName, TupleSourceType tupleSourceType)
 * getTupleBuffer(String id)
 
-In this section we will look it more.
+A `Tuple` in Teiid is equivalent to a list data structure, `TupleBuffer` has the 'addTuple()' method, that means add a list data. The data type in list be defined with ElementSymbol list, we will show this in example in example section.
+
+A `TupleBatch` in Teiid is a list of `Tuple`, it's structure like
+
+~~~
+List<List<?>> tuples;
+~~~
+
+`TupleBuffer` also has `addTupleBatch()` method, it used to add a list of `Tuple`, we will show this in example section.
 
 A `TupleSource` is a cursored source of tuples. The implementation will likely be closely bound to a `BufferManager`, below figure showing TupleSource implementation in Teiid:
 
-![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-tuplesource.png) 
+![TupleSource]({{ site.baseurl }}/assets/blog/teiid-tuplesource.png) 
 
-An usage example of TupleSource and TupleBuffer
+A `TupleBuffer` is a interactive interface for BufferManager, as the depiction of BufferManager UML diagram, there are several methods related with TupleBuffer, like
 
 ~~~
-ElementSymbol x = new ElementSymbol("x");
-x.setType(DataTypeManager.DefaultDataClasses.INTEGER);
-List<ElementSymbol> schema = Arrays.asList(x);
+TupleBuffer createTupleBuffer(List elements, String groupName, TupleSourceType tupleSourceType) throws TeiidComponentException;
+TupleBuffer getTupleBuffer(String id);
+~~~
 
-BufferManager bm = new BufferManagerImpl();
-TupleBuffer tb = bm.createTupleBuffer(schema, "x", TupleSourceType.PROCESSOR)
-tb.addTuple(Arrays.asList(1, 2, 3));
-tb.addTuple(Arrays.asList(2, 3, 4));
-TupleBufferTupleSource tupleSource = tb.createIndexedTupleSource();
-tupleSource.setReverse(true);
+A typical usage of TupleBuffer is like: 
+
+* Create TupleBuffer
+* Add Tuple or TupleBatch to TupleBuffer
+* Create TupleSource via TupleBuffer
+* Iterator Tuple data in TupleSource
+
+### Examples
+
+This section contain examples for Tuple, TupleBatch, TupleSource and TupleBuffer, assume 'PRODUCTView' under 'Test' model, it's DDL like: CREATE VIEW PRODUCTView (product_id integer, symbol string) AS ... , it has 6 rows data as below figure:
+
+![Tuple Example]({{ site.baseurl }}/assets/blog/teiid-buffer-example.png)
+
+#### Example.1 TupleBuffer with Tuple and TupleSource
+
+This example how use TupleBuffer add Tuple and iterator data via TupleSource. 
+
+~~~
+BufferManager bm = BufferManagerFactory.getStandaloneBufferManager();
+List<ElementSymbol> elements = new ArrayList<>();
+ElementSymbol id = new ElementSymbol("Test.PRODUCTView.product_id");
+id.setType(DataTypeManager.DefaultDataClasses.INTEGER);
+ElementSymbol symbol = new ElementSymbol("Test.PRODUCTView.symbol");
+symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+elements.add(id);
+elements.add(symbol);
 		
+TupleBuffer buffer = bm.createTupleBuffer(elements, "ConnectionId", TupleSourceType.PROCESSOR);
+buffer.setForwardOnly(false);
+buffer.addTuple(Arrays.asList(100, "IBM"));
+buffer.addTuple(Arrays.asList(101, "DELL"));
+buffer.addTuple(Arrays.asList(102, "HPQ"));
+buffer.addTuple(Arrays.asList(103, "GE"));
+buffer.addTuple(Arrays.asList(104, "SAP"));
+buffer.addTuple(Arrays.asList(105, "TM"));
+		
+TupleBufferTupleSource tupleSource = buffer.createIndexedTupleSource();
+tupleSource.setReverse(true);	
 while(tupleSource.hasNext()) {
-	int index = tupleSource.getCurrentIndex();
-	List<?> source = tupleSource.nextTuple();
-	System.out.println(index + ": " + source);
+	System.out.println(tupleSource.nextTuple());
 }
-		
 tupleSource.closeSource();
 ~~~
 
-Run above example code will output like
+Run above code will output
 
 ~~~
-2: [2, 3, 4]
-1: [1, 2, 3]
+[105, TM]
+[104, SAP]
+[103, GE]
+[102, HPQ]
+[101, DELL]
+[100, IBM]
 ~~~
+
+#### Example.2 TupleBuffer with TupleBatch and TupleSource
+
+This example how use TupleBuffer add TupleBatch and iterator data via TupleSource.
+
+~~~
+BufferManager bm = BufferManagerFactory.getStandaloneBufferManager();
+List<ElementSymbol> elements = new ArrayList<>();
+ElementSymbol id = new ElementSymbol("Test.PRODUCTView.product_id");
+id.setType(DataTypeManager.DefaultDataClasses.INTEGER);
+ElementSymbol symbol = new ElementSymbol("Test.PRODUCTView.symbol");
+symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+elements.add(id);
+elements.add(symbol);
+		
+TupleBuffer buffer = bm.createTupleBuffer(elements, "ConnectionId", TupleSourceType.PROCESSOR);
+buffer.setForwardOnly(false);
+TupleBatch batch = new TupleBatch(0, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ"), Arrays.asList(103, "GE"), Arrays.asList(104, "SAP"), Arrays.asList(105, "TM")));
+buffer.addTupleBatch(batch, true);
+		
+TupleBufferTupleSource tupleSource = buffer.createIndexedTupleSource();
+tupleSource.setReverse(true);
+while(tupleSource.hasNext()) {
+	System.out.println(tupleSource.nextTuple());
+}
+tupleSource.closeSource();
+~~~
+
+Run above code will output the same result as Example.1.
 
 ## STree
 

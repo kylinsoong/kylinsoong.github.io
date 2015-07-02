@@ -11,7 +11,7 @@ excerpt: Java Timer and ScheduledExecutorService
 
 ## Java Timer
 
-[JavaSE 8 api doc](https://docs.oracle.com/javase/8/docs/api/java/util/Timer.html)。
+[JavaSE 8 api doc](https://docs.oracle.com/javase/8/docs/api/java/util/Timer.html)
 
 Timer 用于执行一个 scheduled task，它提供了如下 schedule 方法:
 
@@ -37,7 +37,6 @@ TimerTask 的实现如下，它的任务是输出当前时间戳:
 ~~~
 public class TestTimerTask extends TimerTask {
 
-	@Override
 	public void run() {
 		System.out.println(System.currentTimeMillis());
 	}
@@ -101,11 +100,10 @@ scheduledExecutorService.setExecuteExistingDelayedTasksAfterShutdownPolicy(false
 for(int i = 0 ; i < 4 ; i ++) {
 	scheduledExecutorService.scheduleAtFixedRate(new Runnable(){
 
-		@Override
 		public void run() {
 			System.out.println(Thread.currentThread().getName() + ": " + System.currentTimeMillis());
 		}}, 5, 2, TimeUnit.SECONDS);
-        }
+}
 ~~~
 
 ScheduledExecutorService 将会在 5 秒钟之后周期性的执行  4 个 Runnable Task，且每两个 Task 之间的时间间隔为 2 秒钟，Runnable Task 没有被执行时状态如下:
