@@ -21,6 +21,9 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 ![RequestWorkItem]({{ site.baseurl }}/assets/blog/teiid-requestWorkItem.png)
 
+* RequestWorkItem - Compiles results and other information for the client.  There is quite a bit of logic surrounding forming batches to prevent buffer growth, send multiple batches at a time, partial batches, etc.  There is also special handling for the update count case, which needs to read the entire result before sending it back to the client.
+* AbstractWorkItem - Represents a task that performs work that may take more than one processing pass to complete. During processing the WorkItem may receive events asynchronously through the moreWork method.
+
 ### org.teiid.dqp.internal.process.ThreadReuseExecutor
 
 ![ThreadReuseExecutor]({{ site.baseurl }}/assets/blog/teiid-threadreuseexecutor.png)
@@ -41,6 +44,17 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 ![processPlan]({{ site.baseurl }}/assets/blog/teiid-processplan.png)
 
+* ProcessorPlan - This class represents a processor plan. It is generic in that it abstracts the interface to the plan by the processor, meaning that the actual implementation of the plan or the types of processing done by the plan is not important to the processor. 
+
 ### org.teiid.query.processor.ProcessorDataManager
 
 ![ProcessorDataManager]({{ site.baseurl }}/assets/blog/teiid-processordatamanager.png)
+
+* TempTableDataManager - A proxy ProcessorDataManager used to handle temporary tables. This isn't handled as a connector because of the temporary metadata and  the create/drop handling (which doesn't have push down support).
+* DataTierManagerImpl - A full ProcessorDataManager implementation that controls access to ConnectorManager and handles system queries.
+
+### org.teiid.dqp.internal.datamgr.ConnectorWork
+
+![ConnectorWork]({{ site.baseurl }}/assets/blog/teiid-connectorwork.png)
+
+* ConnectorWork - Represents a connector execution in batched form. 

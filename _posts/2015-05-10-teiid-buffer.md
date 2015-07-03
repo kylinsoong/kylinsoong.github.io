@@ -17,14 +17,9 @@ The buffer manager controls how memory is used and how data flows through the sy
 
 ## Tuple, TupleBatch, TupleSource and TupleBuffer
 
-As the depiction of Key Interface diagram, there are several methods related with TupleSource and TupleBuffer, like 
+* A `Tuple` in Teiid is equivalent to a list data structure, `TupleBuffer` has the 'addTuple()' method, that means add a list data. The data type in list be defined with ElementSymbol list, we will show this in example in example section.
 
-* createTupleBuffer(List elements, String groupName, TupleSourceType tupleSourceType)
-* getTupleBuffer(String id)
-
-A `Tuple` in Teiid is equivalent to a list data structure, `TupleBuffer` has the 'addTuple()' method, that means add a list data. The data type in list be defined with ElementSymbol list, we will show this in example in example section.
-
-A `TupleBatch` in Teiid is a list of `Tuple`, it's structure like
+* A `TupleBatch` in Teiid is a list of `Tuple`, it's structure like
 
 ~~~
 List<List<?>> tuples;
@@ -32,11 +27,11 @@ List<List<?>> tuples;
 
 `TupleBuffer` also has `addTupleBatch()` method, it used to add a list of `Tuple`, we will show this in example section.
 
-A `TupleSource` is a cursored source of tuples. The implementation will likely be closely bound to a `BufferManager`, below figure showing TupleSource implementation in Teiid:
+* A `TupleSource` is a cursored source of tuples. The implementation will likely be closely bound to a `BufferManager`, below figure showing TupleSource implementation in Teiid:
 
 ![TupleSource]({{ site.baseurl }}/assets/blog/teiid-tuplesource.png) 
 
-A `TupleBuffer` is a interactive interface for BufferManager, as the depiction of BufferManager UML diagram, there are several methods related with TupleBuffer, like
+* A `TupleBuffer` is a interactive interface for BufferManager, as the depiction of BufferManager UML diagram, there are several methods related with TupleBuffer, like
 
 ~~~
 TupleBuffer createTupleBuffer(List elements, String groupName, TupleSourceType tupleSourceType) throws TeiidComponentException;

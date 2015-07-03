@@ -9,15 +9,15 @@ duoshuoid: ksoong2015051901
 excerpt: A comparison example(native query, query without cache, query with cache) show how Results Caching improve thousands of performance
 ---
 
-## Teiid Results Caching Comparison Example
-
-There are 3 sections in Results Caching Comparison Example:
+There are 5 sections in Results Caching Comparison Example:
 
 * Overview
 * Run
 * Conclusion
+* How it work
+* Advanced Concepts
 
-### Overview
+## Overview
 
 Teiid Results Caching Comparison Example is a Performance conparison example, **PERFTEST** table exist in RDBMS, which contains 100 MB data in RDBMS. **PERFTESTVIEW** is a View which mapped to **PERFTEST** table, it be defined in a Teiid VDB. There are 3 different query:
 
@@ -31,7 +31,7 @@ More details about Results Caching: [https://docs.jboss.org/author/display/TEIID
 
 [Results Caching Example Source Code](https://github.com/teiid/teiid-embedded-examples/blob/master/embedded-caching/src/main/java/org/teiid/example/ResultsCachingExample.java).
 
-### Run  
+## Run  
 
 With the following steps to run the performance comparison example:
 
@@ -76,24 +76,9 @@ The View in my test like:
 
 Run each queries('SELECT * FROM PERFTEST', 'SELECT * FROM PERFTESTVIEW', '/*+ cache */ SELECT * FROM PERFTESTVIEW') 10 times, record query time, it should looks
 
-~~~
-+------------------------+----------------------------+-----------------------------------------+
-| SELECT * FROM PERFTEST | SELECT * FROM PERFTESTVIEW | /*+ cache */ SELECT * FROM PERFTESTVIEW |
-+------------------------+----------------------------+-----------------------------------------+
-|          1869          |            1553            |                   1448                  |
-|          1379          |            1347            |                    1                    |
-|          1333          |            1359            |                    0                    |
-|          1342          |            1363            |                    1                    |
-|          1370          |            1326            |                    0                    |
-|          1351          |            1392            |                    1                    |
-|          1539          |            1348            |                    1                    |
-|          1346          |            1350            |                    0                    |
-|          1358          |            1326            |                    1                    |
-|          1375          |            1381            |                    1                    |
-+------------------------+----------------------------+-----------------------------------------+
-~~~
+![Teiid rs cache example result]({{ site.baseurl }}/assets/blog/teiid-perf-example-rsult.png)
 
-### Conclusion
+## Conclusion
 
 Converting above step.3 result to a performance comparison diagram
 
@@ -115,7 +100,9 @@ In this section we discuss why 1000 times performance take place. As below seque
 
 > Note that: more detailed logic about RequestWorkItem get results from cache please look at processNew() method in [RequestWorkItem.java](https://github.com/teiid/teiid/blob/master/engine/src/main/java/org/teiid/dqp/internal/process/RequestWorkItem.java) 
 
-## Cached Virtual Procedure
+## Advanced Concepts
+
+###Cached Virtual Procedure
 
 Cached virtual procedure results are used automatically when a matching set of parameter values is detected for the same procedure execution. Use the Cache Hints can enable cache virtual procedure results, below as an example:
 
