@@ -28,7 +28,6 @@ excerpt: This article contains the description of WildFly Controller API
 * XmlConfigurationPersister - A configuration persister which uses an XML file for backing storage.
 * BackupXmlConfigurationPersister - An XML configuration persister which backs up the old file before overwriting it.
 
-
 ### org.jboss.as.controller.registry.ManagementResourceRegistration
 
 ![ManagementResourceRegistration]({{ site.baseurl }}/assets/blog/wildfly-contorller-resourceregistration.png)
@@ -36,3 +35,10 @@ excerpt: This article contains the description of WildFly Controller API
 * ImmutableManagementResourceRegistration - Read-only view of a 'ManagementResourceRegistration'
 * ManagementResourceRegistration - A registration for a management resource which consists of a resource description plus registered operation handlers.
 * ConcreteResourceRegistration/AbstractResourceRegistration - internal implementation for root registration
+
+### org.jboss.as.controller.ModelController
+
+![ModelController]({{ site.baseurl }}/assets/blog/wildfly-contorller-modelcontroller.png)
+
+* ModelController - Controls reads of and modifications to a management model.
+* ModelControllerImpl - Default 'ModelController' implementation.
