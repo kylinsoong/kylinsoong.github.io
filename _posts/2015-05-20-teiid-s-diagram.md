@@ -21,7 +21,7 @@ Statement stmt = conn.createStatement();
 stmt.executeQuery("SELECT * FROM Marketdata");
 ~~~
 
-The below sequence diagram shows how query sql `SELECT * FROM Marketdata` be send to Teiid Server
+the below sequence diagram shows how query sql `SELECT * FROM Marketdata` be sent to Teiid Server
 
 ![teiid-execute-query]({{ site.baseurl }}/assets/blog/teiid-execute-query.png)
 
