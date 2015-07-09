@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Hadoop Introduction"
+title:  "Hadoop 介绍"
 date:   2015-07-07 15:40:00
 categories: data
 permalink: /hadoop-intro
@@ -17,37 +17,52 @@ Google's revolutionary Big Data concepts `MapReduce`, `BigTable`, `GFS` has beco
 * [BigTable](http://static.googleusercontent.com/media/research.google.com/en/us/archive/bigtable-osdi06.pdf)
 * [GFS](http://static.googleusercontent.com/media/research.google.com/en/us/archive/gfs-sosp2003.pdf)
 
-Base on Google's Big Data concepts, the Open Source Community developed a series of products, which the core produce named **Hadoop**, it mainly implement the `MapReduce` and `GFS`, another core product named **HBase**, it mainly implement the `BigTable`. Aslo there are some additional products like **Hive** which is a data warehouse infrastructure for data summarization and querying, **Spark** which is mainly a fast conputing layer for Hadoop data.
+Base on these concepts, the Open Source Community developed a series of Big Data products, which the core produce named **Hadoop**, it mainly implement the `MapReduce` and `GFS`. Another core product named **HBase**, which mainly implement the `BigTable`. 
 
-[http://hadoop.apache.org/](http://hadoop.apache.org/)
+Aslo there are some additional products like **Hive** which is a data warehouse infrastructure for data summarization and querying, **Spark** which is mainly a fast conputing layer for Hadoop data.
 
-[http://hbase.apache.org/](http://hbase.apache.org/)
+Quick link for these products:
 
-[http://hive.apache.org/](http://hive.apache.org/)
+- [http://hadoop.apache.org/](http://hadoop.apache.org/)
+- [http://hbase.apache.org/](http://hbase.apache.org/)
+- [http://hive.apache.org/](http://hive.apache.org/)
+- [http://spark.apache.org/](http://spark.apache.org/)
 
-[http://spark.apache.org/](http://spark.apache.org/)
+## Installation
 
-## Installation, configuration, Single Node Setup
+This section including step by step procedures for installing 'Hadoop 1.2.1' to RHEL 6, and configuring a Single Node Setup.
 
-The following steps demonstrate installation, configuration and Single Node Setup with Hadoop 1.2.1 and Linux System.
-
-### Installation
+#### Step.1 Prerequisites
 
 ~~~
+$ uname -a
+Linux kylin.xx.com 2.6.32-431.20.3.el6.x86_64 #1 SMP Fri Jun 6 18:30:54 EDT 2014 x86_64 x86_64 x86_64 GNU/Linux
+
+$ java -version
+java version "1.7.0_60"
+Java(TM) SE Runtime Environment (build 1.7.0_60-b19)
+Java HotSpot(TM) 64-Bit Server VM (build 24.60-b09, mixed mode)
+~~~
+
+#### Step.2 Download and Install
+
+~~~
+$ wget http://apache.mesi.com.ar/hadoop/common/hadoop-1.2.1/hadoop-1.2.1.tar.gz
 $ tar -xvf hadoop-1.2.1.tar.gz
+$ cd hadoop-1.2.1
 ~~~
 
-### Configuration and Single Node Setup
+#### Step.3 Configure
 
-Edit 'hadoop-1.2.1/conf/hadoop-env.sh', comment out JAVA_HOME, make sure it point to a valid Java installation, eg:
+Edit 'conf/hadoop-env.sh', comment out JAVA_HOME, make sure it point to a valid Java Home:
 
 ~~~
-export JAVA_HOME=/usr/java/jdk1.8.0_25
+export JAVA_HOME=/usr/java/jdk1.7.0_60
 ~~~
 
 > NOTE: Hadoop 1.2.1 need Java 1.6 or higher
 
-Edit 'hadoop-1.2.1/conf/core-site.xml', add the following 3 property in <configuration>:
+Edit 'conf/core-site.xml', add the following properties in <configuration>:
 
 ~~~
 <property>
@@ -62,11 +77,15 @@ Edit 'hadoop-1.2.1/conf/core-site.xml', add the following 3 property in <configu
      <name>fs.default.name</name>
      <value>hdfs://localhost:9000</value>
 </property>
+<property>
+    <name>dfs.permissions</name>
+    <value>false</value>
+</property>
 ~~~
 
 > NOTE: the property's value should match to your's setting.
 
-Edit 'hadoop-1.2.1/conf/hdfs-site.xml', add the following 2 property in <configuration>:
+Edit 'conf/hdfs-site.xml', add the following 2 property in <configuration>:
 
 ~~~
 <property>
@@ -81,7 +100,7 @@ Edit 'hadoop-1.2.1/conf/hdfs-site.xml', add the following 2 property in <configu
 
 > NOTE: the property's value should match to your's setting.
 
-Edit 'hadoop-1.2.1/conf/mapred-site.xml', add below in <configuration>:
+Edit 'conf/mapred-site.xml', add below in <configuration>:
 
 ~~~
 <property>
@@ -96,10 +115,39 @@ Format a new distributed-filesystem via execute
 hadoop-1.2.1/bin/hadoop namenode -format
 ~~~
 
-Start the hadoop via execute
+#### Step.4 Start
+
+Start all hadoop services via execute
 
 ~~~
-hadoop-1.2.1/bin/start-all.sh
+$ ./bin/start-all.sh
+~~~
+
+> NOTE: there are 5 java processes which represent 5 services be started: `NameNode`, `SecondaryNameNode`, `DataNode`, `JobTracker`, `TaskTracker`. Execute 'jps -l' to check the java processes:
+
+~~~
+$ jps -l
+4056 org.apache.hadoop.hdfs.server.namenode.NameNode
+4271 org.apache.hadoop.hdfs.server.datanode.DataNode
+4483 org.apache.hadoop.hdfs.server.namenode.SecondaryNameNode
+4568 org.apache.hadoop.mapred.JobTracker
+4796 org.apache.hadoop.mapred.TaskTracker
+~~~
+
+> NOTE: `NameNode`, `JobTracker`, `TaskTracker` has relevant Web Consoles for View and Monitor the serivces. Web Access URLs for Services:
+
+~~~
+http://localhost:50030/   for the Jobtracker
+http://localhost:50070/   for the Namenode
+http://localhost:50060/   for the Tasktracker
+~~~
+
+#### Step.5 Stop
+
+Stop all hadoop services via execute
+
+~~~
+# bin/stop-all.sh
 ~~~
 
 ## HDFS 介绍
@@ -115,7 +163,7 @@ Hadoop HDFS 的组成:
 ![HDFS 数据管理策略]({{ site.baseurl }}/assets/blog/hadoop-hdfs-strategy.png)
 
 * 数据块副本: 数据块有多个副本，分布在不同机架内的不同 DataNode 上
-* 心条检测: DataNode 周期性的向 NameNode 发送心跳消息
+* 心跳检测: DataNode 周期性的向 NameNode 发送心跳消息
 * 二级 NameNode: NameNode 的备份，元数据周期性的同步
 
 下图为 Hadoop HDFS 读操作的步骤
