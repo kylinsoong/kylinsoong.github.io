@@ -111,13 +111,11 @@ TupleBuffer buffer = bm.createTupleBuffer(elements, "ConnectionId", TupleSourceT
 buffer.setForwardOnly(false);
 TupleBatch batch = new TupleBatch(0, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ"), Arrays.asList(103, "GE"), Arrays.asList(104, "SAP"), Arrays.asList(105, "TM")));
 buffer.addTupleBatch(batch, true);
-		
-TupleBufferTupleSource tupleSource = buffer.createIndexedTupleSource();
-tupleSource.setReverse(true);
-while(tupleSource.hasNext()) {
-	System.out.println(tupleSource.nextTuple());
-}
-tupleSource.closeSource();
+
+TupleBatch batch = resultsBuffer.getBatch(0);
+for(int i = 0 ; i < batch.getRowCount() ; i ++) {
+	System.out.println(batch.getTuple(i));
+}		
 ~~~
 
 Run above code will output the same result as Example.1.
