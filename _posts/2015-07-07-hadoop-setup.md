@@ -9,8 +9,6 @@ duoshuoid: ksoong2015070701
 excerpt: Hadoop Introduction, Installation, configuration, Single Node Setup
 ---
 
-## Introduction
-
 Google's revolutionary Big Data concepts `MapReduce`, `BigTable`, `GFS` has become the principle of Big Data Area, the dissertations relevant to these concepts are opened by Google, but the concepts' implementation product not a open source. 
 
 * [MapReduce](http://static.googleusercontent.com/media/research.google.com/en/us/archive/mapreduce-osdi04.pdf)
@@ -27,6 +25,12 @@ Quick link for these products:
 - [http://hbase.apache.org/](http://hbase.apache.org/)
 - [http://hive.apache.org/](http://hive.apache.org/)
 - [http://spark.apache.org/](http://spark.apache.org/)
+
+The content of this article including:
+
+* Hadoop Installation
+* HDFS Introduction
+* MapReduce Introduction
 
 ## Installation
 
@@ -150,7 +154,7 @@ Stop all hadoop services via execute
 # bin/stop-all.sh
 ~~~
 
-## HDFS 介绍
+## HDFS Introduction
 
 Hadoop HDFS 的组成:
 
@@ -198,3 +202,62 @@ $ ./hadoop fs -mkdir input
 $ ./hadoop fs -put ./../NOTE.md input
 $ ./hadoop fs -get input/NOTE.md note2.md 
 ~~~
+
+## MapReduce Introduction
+
+### What is MapReduce
+
+In the first part of this section, we will try to explain What is MapReduce via some overall paradigm. 
+
+#### Sum of squares
+
+Sum of squares means calculate the sum of integers' squares. For example, suppose there are integers: 1, 2, 3, 4, Sum of squares means 1^2 + 2^2 + 3^2 + 4^2. 
+
+With the theory of MapReduce, we can classify the Sum of squares to 2 tasks: 
+
+* Map task - square the integers
+* Reduce task  - sum the integers' squares up.
+
+![sum of squares map]({{ site.baseurl }}/assets/blog/hadoop-sum-of-squares-map.png)
+
+So Map here essentially is the function square which processes each record, what the square of 1, 2, 3 and 4 leads to the corresponding output 1, 4, 9, 16. Also these record be processed sequentially and independently.
+
+> NOTE: processes each record sequentially and independently is the key of Map.
+
+![sum of squares reduce]({{ site.baseurl }}/assets/blog/hadoop-sum-of-squares-reduce.png)
+
+So Reduce here is the function plus which applies plus to a group of records, what the sum of 1, 4, 9, 16 leads to result 30. The records be processed may not be all the records, it may be a subset of all the records, it in a group and process in batches.
+
+> NOTE: processes set of all records in batches is the key of Reduce.
+
+#### Wordcount
+
+Wordcount means produce a count list for every word that appears in a data set. The data set may very large, like all of the text in Wikipedia, and you're asked to produce a count list for every word that appears in that data set. For example, the work **java** may appears in many of Wikipedia's article, how many times does it appear in all Wikipedia's articles, you need produce a call for that.
+
+Wordcount can be classified to 2 tasks:
+
+* Map task - process each record to generate key/value pair
+* Reduce task - merge key/value pairs per key
+
+![WordCount Map]({{ site.baseurl }}/assets/blog/hadoop-wordcount-map.png)
+
+As above figure, assume a file only consists of four words, "Welcome Everyone, Hello Everyone," Map task generated 4 key/value pairs:
+
+* Welcome  -> 1
+* Everyone -> 1
+* Hello    -> 1 
+* Everyone -> 1
+
+Parallelly process a large number of individual records with multile Map Tasks is the key in Map, in this particular case, there are 2 Map Tasks.
+
+Reduce Task processes and merges all key/value pairs per key:
+
+![WordCount Reduce]({{ site.baseurl }}/assets/blog/hadoop-wordcount-reduce.png)
+
+As above, in Reduce phase, there are reduce tasks process and merge generate the key/value pairs:
+
+* Welcome  -> 1
+* Everyone -> 2
+* Hello    -> 1
+
+> NOTE: In Reduce Task, each key be assigned to one Reduce, Parallelly processes and merges by partitioning key, One way of partitioning is called hash partitioning with simple hash algorithm SHA-1 or a message digest MD-5.
