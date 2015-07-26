@@ -26,4 +26,20 @@ excerpt: Java 浮点运算符
 * 1048576>>10    -> 1048576 / (2^10) = 1024       (MB 转化 KB)
 * 1024>>10       -> 1024 / (2^10) =1              (KB 转化字节) 
 
-NOTE: 一个应用实例, Teiid BufferManager 默认设定的 MaxBufferSpace 为 50 GB(50L<<30)  
+NOTE: 一个应用实例, Teiid BufferManager 默认设定的 MaxBufferSpace 为 50 GB(50L<<30) 
+
+### 比率运算符 .
+ 
+比率运算 .a 即为 1 * 0.a，例如：
+
+* .7  -> 0.7
+* .83 -> 0.83
+
+#### 示例
+
+~~~
+long maxMemory = Runtime.getRuntime().maxMemory();
+maxMemory = Math.max(0, maxMemory - (150 << 20)); //assume an overhead for the system stuff is 150 MB
+int one_gig = 1 << 30;
+long maxReserveBytes = (long)Math.max(0, (maxMemory - one_gig) * .7); /assume 70% of the memory over the first gig
+~~~

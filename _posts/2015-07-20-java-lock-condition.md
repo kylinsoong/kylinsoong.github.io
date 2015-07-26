@@ -47,88 +47,64 @@ public class MonitorExample {
 
 本示例演示使用 synchronized 模拟 Java 中常见的死锁问题。
 
-死锁需要两个对象，两个线程，本示例两个对象为 A 和 B:
+死锁需要两个对象，两个线程，本示例两个对象为 A 和 B，两个线程分别为 Thread 1 和 Thread 2，运行如下代码会出现线程死锁:
 
 ~~~
-class A {
-	public void foo(B b){
-		synchronized(this){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-			b.foo(this);
-		}
-	}
-}
-
-class B {
-	public void foo(A a){
-		synchronized(this){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-			a.foo(this);
-		}
-	}
-}
-~~~
-
-对象 A 和 B 都提供一个 foo 方法用来获取 `monitor`。如果两个线程同事启动且分别访问 A 对象 foo 和 B 对象 foo 时会产生死锁，如下:
-
-* 线程 1 访问 A 对象 foo， 锁定 A 对象 `monitor`
-* 线程 2 访问 B 对象 foo， 锁定 B 对象 `monitor`
-* 线程 1 休眠 1000 毫秒
-* 线程 2 休眠 1000 毫秒
-* 线程 1 访问 B 对象 foo 尝试获取 B 对象 `monitor`
-* 线程 2 访问 A 对象 foo 尝试获取 A 对象 `monitor`
-
-如下代码段可描述如上过程
-
-~~~
-final A a = new A();
-final B b = new B();
+final Object a = new Object();
+final Object b = new Object();
 
 new Thread(new Runnable(){
 	public void run() {
 		Thread.currentThread().setName("Thread 1");
-		a.foo(b);
+		synchronized(a){
+			sleep(1000);
+			synchronized(b){
+			}
+		}				
 	}}).start();
 		
 new Thread(new Runnable(){
 	public void run() {
 		Thread.currentThread().setName("Thread 2");
-		b.foo(a);
+		synchronized(b){
+			sleep(1000);
+			synchronized(a){
+			}
+		}
 	}}).start();
 ~~~
 
-如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
+如上，两个线程同时启动且分别尝试锁定 A B 对象的 `monitor`，如下:
+
+* 线程 1 通过 synchronized 锁定 A 对象 `monitor`
+* 线程 2 通过 synchronized 锁定 B 对象 `monitor`
+* 线程 1 休眠 1000 毫秒
+* 线程 2 休眠 1000 毫秒
+* 线程 1 通过 synchronized 尝试锁定 B 对象 `monitor`
+* 线程 2 通过 synchronized 尝试锁定 A 对象 `monitor`
+
+由于线程 1 拥有 A 的锁等待线程 2 释放 B 的锁，而线程 2 拥有 B 的锁等待线程 1释放 A 的锁，这样造成线程 1 和 线程 2 死锁。如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
 
 ~~~
-"Thread 1" #9 prio=5 os_prio=0 tid=0x00007f3eb80cb000 nid=0x1676 waiting for monitor entry [0x00007f3ea8ffe000]
+"Thread 2" #10 prio=5 os_prio=0 tid=0x00007fc7bc0f5800 nid=0xf60 waiting for monitor entry [0x00007fc7962e9000]
    java.lang.Thread.State: BLOCKED (on object monitor)
-	at B.foo(DeadlockExample.java:17)
-	- waiting to lock <0x00000000d7f7c180> (a B)
-	at A.foo(DeadlockExample.java:8)
-	- locked <0x00000000d7f7a968> (a A)
-	at DeadlockExample$1.run(DeadlockExample.java:35)
-	at java.lang.Thread.run(Thread.java:745)
+        at DeadlockExample$2.run(DeadlockExample.java:58)
+        - waiting to lock <0x00000000d7f79670> (a java.lang.Object)
+        - locked <0x00000000d7f79680> (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:745)
 
    Locked ownable synchronizers:
-	- None
+        - None
 
-"Thread 2" #10 prio=5 os_prio=0 tid=0x00007f3eb80cd000 nid=0x1677 waiting for monitor entry [0x00007f3ea8efd000]
+"Thread 1" #9 prio=5 os_prio=0 tid=0x00007fc7bc0f3800 nid=0xf5f waiting for monitor entry [0x00007fc7963ea000]
    java.lang.Thread.State: BLOCKED (on object monitor)
-	at A.foo(DeadlockExample.java:5)
-	- waiting to lock <0x00000000d7f7a968> (a A)
-	at B.foo(DeadlockExample.java:20)
-	- locked <0x00000000d7f7c180> (a B)
-	at DeadlockExample$2.run(DeadlockExample.java:41)
-	at java.lang.Thread.run(Thread.java:745)
+        at DeadlockExample$1.run(DeadlockExample.java:47)
+        - waiting to lock <0x00000000d7f79680> (a java.lang.Object)
+        - locked <0x00000000d7f79670> (a java.lang.Object)
+        at java.lang.Thread.run(Thread.java:745)
 
    Locked ownable synchronizers:
-	- None
+        - None
 
 ~~~
 
@@ -197,7 +173,7 @@ public class BlockingQueue<T> {
 }
 ~~~
 
-接下来，我们启动三个线程调用 BlockingQueue:
+接下来，我们启动二个线程(Thread 1，Thread 2)调用 BlockingQueue 的 take() 方法:
 
 ~~~
 final BlockingQueue<String> queue = new BlockingQueue<>(3);
@@ -214,29 +190,11 @@ new Thread(new Runnable(){
 		System.out.println(queue.take());
 	}}).start();
 		
-new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 3");
-		System.out.println(queue.take());
-	}}).start();
 ~~~
 
-三个线程都处于阻塞状态，都被添加到 BlockingQueue 对象的 wait 集合中，JVM 中线程 dumo 日志如下:
+两个个线程都处于阻塞状态，都被添加到 BlockingQueue 对象的 wait 集合中，JVM 中线程 dumo 日志如下:
 
 ~~~
-"Thread 3" #11 prio=5 os_prio=0 tid=0x00007f90040cf800 nid=0x2f6a in Object.wait() [0x00007f8fe9779000]
-   java.lang.Thread.State: WAITING (on object monitor)
-	at java.lang.Object.wait(Native Method)
-	- waiting on <0x00000000d7f7b4d8> (a BlockingQueue)
-	at java.lang.Object.wait(Object.java:502)
-	at BlockingQueue.take(BlockingQueue.java:27)
-	- locked <0x00000000d7f7b4d8> (a BlockingQueue)
-	at WaitSetExample$3.run(WaitSetExample.java:38)
-	at java.lang.Thread.run(Thread.java:745)
-
-   Locked ownable synchronizers:
-	- None
-
 "Thread 2" #10 prio=5 os_prio=0 tid=0x00007f90040ce000 nid=0x2f69 in Object.wait() [0x00007f8fe987a000]
    java.lang.Thread.State: WAITING (on object monitor)
 	at java.lang.Object.wait(Native Method)
@@ -264,15 +222,88 @@ new Thread(new Runnable(){
 	- None
 ~~~
 
-> NOTE: 在上面 dump 中，0x00000000d7f7b4d8 被三个线程锁定过，但三个线程同样阻塞于 0x00000000d7f7b4d8
+> NOTE: 在上面 dump 中，0x00000000d7f7b4d8 被二个线程锁定过，但二个线程同样阻塞于 0x00000000d7f7b4d8
 
-如果调有 BlockingQueue 的 put 方法，则相应的 wait 集合中的线程被唤起。
+如果调有 BlockingQueue 的 put 方法，则相应的 wait 集合中的线程被唤起，被唤起的线程从 wait 集合中移除。
 
-## Lock 
+## Lock
+
+java.util.concurrent.locks 包中 API 提供了多线程锁相关的实现，如下图 `Lock` 可以看作是对 `synchronization` 机制的扩展，它提供了更广泛，更灵活的锁操作机制。
+
+锁用来控制多线程访问线程之间共享的资源，通常一个线程访问共享的资源，首先它需要获取锁，但有些锁可以允许多个线程同时访问共享的资源，如 java.util.concurrent.locks 包中 ReadWriteLock 的 ReadLock. 
 
 ![Lock]({{ site.baseurl }}/assets/blog/java-concurrency-lock.png)
 
+#### Java DeadlockExample with Lock
+
+使用 java.util.concurrent.locks 包中 API 来实现 Synchronization 部分 DeadLock 示例如下:
+
+~~~
+final Lock a = new ReentrantLock();
+final Lock b = new ReentrantLock();
+		
+new Thread(new Runnable(){
+	public void run() {
+		Thread.currentThread().setName("Thread 1");
+		a.lock();
+		sleep(1000);
+		b.lock();				
+	}}).start();
+		
+new Thread(new Runnable(){
+	public void run() {
+		Thread.currentThread().setName("Thread 2");
+		b.lock();
+		sleep(1000);
+		a.lock();
+	}}).start();
+~~~
+
+类似 Synchronization 部分 DeadLock 示例
+
+* Thread 1 锁定 A 的同时 Thread 2 锁定 B
+* Thread 1 在拥有 A 的锁后尝试锁定 B，阻塞于等待 Thread 1 释放 A 
+* Thread 2 在拥有 B 的锁后尝试锁定 A，阻塞于等待 Thread 2 释放 B
+
+如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
+
+~~~
+"Thread 2" #10 prio=5 os_prio=0 tid=0x00007f1fbc0dd800 nid=0x134d waiting on condition [0x00007f1fac1f0000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d7f7acf8> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at DeadlockExample$4.run(DeadlockExample.java:62)
+        at java.lang.Thread.run(Thread.java:745)
+
+   Locked ownable synchronizers:
+        - <0x00000000d7f7ad28> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+
+"Thread 1" #9 prio=5 os_prio=0 tid=0x00007f1fbc0db800 nid=0x134c waiting on condition [0x00007f1fac2f1000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x00000000d7f7ad28> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:836)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireQueued(AbstractQueuedSynchronizer.java:870)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1199)
+        at java.util.concurrent.locks.ReentrantLock$NonfairSync.lock(ReentrantLock.java:209)
+        at java.util.concurrent.locks.ReentrantLock.lock(ReentrantLock.java:285)
+        at DeadlockExample$3.run(DeadlockExample.java:53)
+        at java.lang.Thread.run(Thread.java:745)
+
+   Locked ownable synchronizers:
+        - <0x00000000d7f7acf8> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+~~~
+
 ## Condition
+
+如上 Lock 中 UML 图所示，Lock 定义了一个 newCondition() 方法，用来获取 Lock 相关联的 Condition 对象，
 
 ![Condition]({{ site.baseurl }}/assets/blog/java-concurrency-condition.png)
 
