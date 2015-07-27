@@ -79,6 +79,12 @@ The below sequence diagram shows how DQPCore's 'executeRequest' method run and r
 
 ![teiid connector logic]({{ site.baseurl }}/assets/blog/teiid-dqp-executerequest.png)
 
+### BatchCollector collect tuples
+
+BatchCollector collect tuples are related with BufferManager, the sequence diagram as below
+
+![teiid batch collector]({{ site.baseurl }}/assets/blog/teiid-batchcollector-batch.png)
+
 ### DataTierTupleSource getResults
 
 Continue with DQPCore execute request, below sequence diagram shows how DataTierTupleSource interact with Translator layer and getResults `AtomicResultsMessage`

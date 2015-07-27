@@ -132,6 +132,12 @@ TupleBrowser tb = new TupleBrowser(stree, new CollectionTupleSource(Collections.
 tb.nextTuple();
 ~~~
 
+## BatchManager
+
+BatchManager acts as a combination serializer/cachemanager. It also related with a TupleBuffer.
+
+![BatchManager]({{ site.baseurl }}/assets/blog/teiid-buffer-batchManager.png)
+
 ## LRFU Eviction Queue
 
 Teiid BufferManager use LRFU Eviction Queue in Cache Eviction, which LRFU means **Least Recently Used (LRU)** and **Least-Frequently Used (LFU)**, both of them are common Cache algorithms, more details from [Wikipedia](http://en.wikipedia.org/wiki/Cache_algorithms).
