@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Presentation Skills"
+title:  "演讲的技巧"
 date:   2015-07-28 19:00:00
 categories: other
 permalink: /presentation-skill
@@ -36,15 +36,28 @@ duoshuoid: ksoong2015072801
 
 ![FAB]({{ site.baseurl }}/assets/blog/FAB.png)
 
+**The Seven Habits of Highly Effective People - Stephen R.Covey**
 
-![]({{ site.baseurl }}/assets/blog/)
+* [http://book.douban.com/subject/1048007/](http://book.douban.com/subject/1048007/)
+* [http://www.amazon.co.uk/The-Habits-Highly-Effective-People](http://www.amazon.co.uk/The-Habits-Highly-Effective-People-x/dp/1455892823)
 
-![]({{ site.baseurl }}/assets/blog/)
+**Groom**
 
-![]({{ site.baseurl }}/assets/blog/)
+![Groom]({{ site.baseurl }}/assets/blog/presentation-groom.gif)
 
-![]({{ site.baseurl }}/assets/blog/)
+[Why work doesn't happen at work - Jason Fried](http://www.ted.com/talks/jason_fried_why_work_doesn_t_happen_at_work?language=en)
 
-![]({{ site.baseurl }}/assets/blog/)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5XD2kNopsUs" frameborder="0" allowfullscreen></iframe>
 
-![]({{ site.baseurl }}/assets/blog/)
+**Practice Script**
+
+~~~
+中间件软件在中国有很大市场潜力
+ * JBoss 中间件占红帽 revenue 的 20%，但在中国 JBoss 占 5%，
+ * 中国发生巨变，基础设施 -> 高科技（Oracle, IMB, Salesforce)
+
+我的工作是将中间件产品和中国的用户连接起来
+ * 开源中间件产品的开发工程师
+ * 开源论坛讲演
+ * 博客，文章，图书出版
+~~~
