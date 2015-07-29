@@ -79,11 +79,26 @@ The below sequence diagram shows how DQPCore's 'executeRequest' method run and r
 
 ![teiid connector logic]({{ site.baseurl }}/assets/blog/teiid-dqp-executerequest.png)
 
+* 1 StatementImpl invoke DQPCore's `executeRequest()` method with **RequestMessage** as parameter
+* 2 **Request** and **RequestWorkItem** initialize
+* 3 - 5 [http://ksoong.org/teiid-dqp/](http://ksoong.org/teiid-dqp/)
+* 6 Refer to below `BatchCollector collect tuples` section
+
 ### BatchCollector collect tuples
 
 BatchCollector collect tuples are related with BufferManager, the sequence diagram as below
 
 ![teiid batch collector]({{ site.baseurl }}/assets/blog/teiid-batchcollector-batch.png)
+
+* 1 collectTuples first invoke QueryProcessor's nextBatch() method get the `TupleBatch`, then invoke flushBatch() method with `TupleBatch` as a parameter
+* 2 If TupleBatch's row count is 0 and TupleBatch's Termination flag is NOT_TERMINATED flushBatch() method return, else invoke flushBatchDirect() method with `TupleBatch` as a parameter
+* 3 Invoke TupleBuffer's addTupleBatch() method to add `TupleBatch` to TupleBuffer;
+* 4 addTupleBatch() first update TupleBuffer's **rowCount** then recursively invoke addTuple() method to add each `Tuple` to TupleBuffer;
+* 5 addTuple() first create a temporary ResizingArrayList, add all `Tuple` to this list, then invoke saveBatch() method
+* 6 BatchManager's createManagedBatch() be invoked return a `mbatch` as Batch Id; add `mbatch` to batches TreeMap; rest temporary ResizingArrayList to null;
+* 7 update BatchManagerImpl's **totalSize** with the total size of Tuples in ResizingArrayLise; update BatchManagerImpl's **rowsSampled** with ResizingArrayList's size; BufferManagerImpl's **batchAdded** getAndIncrement; Create CacheEntry and add CacheEntry's id to BufferFrontedFileStoreCache's **physicalMapping** map(BatchManagerImpl id is Key, Batch Id is Value); Invoke addMemoryEntry() method with CacheEntry as parameter; return Batch Id;
+* 8 Invoke persistBatchReferences(); add CacheEntry to BufferManagerImpl's **memoryEntries** map(CacheEntry's Id is Key, CacheEntry is Value); add CacheEntry to BufferManagerImpl's **initialEvictionQueue**; update BufferManagerImpl's **activeBatchBytes**
+* 9 TIDO--
 
 ### DataTierTupleSource getResults
 
