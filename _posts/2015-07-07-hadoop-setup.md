@@ -102,7 +102,7 @@ Edit 'conf/hdfs-site.xml', add the following 2 property in <configuration>:
 </property>
 ~~~
 
-> NOTE: the property's value should match to your's setting.
+> NOTE: the property's value should match to your's setting. dfs.data.dir should need rwxr-xr-x rights(chmod 755 data)
 
 Edit 'conf/mapred-site.xml', add below in <configuration>:
 
@@ -207,9 +207,9 @@ $ ./hadoop fs -get input/NOTE.md note2.md
 
 ### What is MapReduce
 
-In the first part of this section, we will try to explain What is MapReduce via some overall paradigm. 
+In the first part of this section, we will try to explain What is MapReduce via some overall Examples. 
 
-#### Sum of squares
+#### Example.1 Sum of squares
 
 Sum of squares means calculate the sum of integers' squares. For example, suppose there are integers: 1, 2, 3, 4, Sum of squares means 1^2 + 2^2 + 3^2 + 4^2. 
 
@@ -230,7 +230,7 @@ So Reduce here is the function plus which applies plus to a group of records, wh
 
 > NOTE: processes set of all records in batches is the key of Reduce.
 
-#### Wordcount
+#### Example.2 Wordcount
 
 Wordcount means produce a count list for every word that appears in a data set. The data set may very large, like all of the text in Wikipedia, and you're asked to produce a count list for every word that appears in that data set. For example, the work **java** may appears in many of Wikipedia's article, how many times does it appear in all Wikipedia's articles, you need produce a call for that.
 
@@ -261,3 +261,38 @@ As above, in Reduce phase, there are reduce tasks process and merge generate the
 * Hello    -> 1
 
 > NOTE: In Reduce Task, each key be assigned to one Reduce, Parallelly processes and merges by partitioning key, One way of partitioning is called hash partitioning with simple hash algorithm SHA-1 or a message digest MD-5.
+
+#### Example.3 distributed grep
+
+You have a large set of files with a large amount of text in them, you need to grep for particular words:
+
+* Input - large set of files
+* Output - Lines that match pattern
+
+To use MapDeduce theroy to handle distributed grep
+
+* Map - Emits a line if it matchs the supplied pattern
+* Reduce - Copies the intermediate data to output
+
+#### Example.4 Reverse Web-Link Graph
+
+Assume you have a Tuples (a, b) where a is a webpage and b is a webpage, and a has a link that points to b. Web-Link Graph means great set of Tuples(a1, b1), (a2,b2)...(source,target) together, compose of a Graph. Reverse Web-Link Graph means list all source links for each target page.
+
+* Input: Web-Link Graph, Tuples (a, b) where page a link to page b
+* Output: For each page, list of pages that link to it
+
+To use MapDeduce theroy to handle distributed grep
+
+* Map - process web log and for each  input (source, target), output (target, source)
+* Reduce - emits (target list(source)) 
+
+#### Example.5 Count of URL access frequency
+
+* Input: Logs of accessed URL, eg, from proxcy server
+* Output: For each URL, percentage of total accesses for that URL
+
+### Programming Examples
+
+[WordCount](https://github.com/kylinsoong/data/tree/master/hadoop-wordcount)
+
+[Sort](https://github.com/kylinsoong/data/tree/master/hadoop-sort)
