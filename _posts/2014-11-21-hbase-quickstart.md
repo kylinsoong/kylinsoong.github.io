@@ -14,9 +14,64 @@ This article contains how to quick start with Standalone HBase.
 
 [Entry Doc](http://hbase.apache.org/book/quickstart.html)
 
+### HBase Installation
+
+#### Install HBase 1.1.1
+
+Install via
+
+~~~
+$ tar xzvf hbase-1.1.1-bin.tar.gz
+$ cd hbase-1.1.1
+~~~
+
+Edit 'conf/hbase-env.sh' add JAVA_HOME
+
+~~~
+conf/hbase-env.sh
+~~~
+
+Edit 'conf/hbase-site.xml', add the following for Standalone HBase:
+
+~~~
+<property>
+    <name>hbase.rootdir</name>
+    <value>file:///home/kylin/server/hbase-1.1.1/hbase</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/kylin/server/hbase-1.1.1/zookeeper</value>
+  </property>
+~~~
+
+Start HBase via
+
+~~~
+$ ./bin/start-hbase.sh
+~~~
+
+Install Phoenix to HBase(Optional)
+
+~~~
+$ tar xzvf phoenix-4.5.0-HBase-1.1-bin.tar.gz
+$ cd phoenix-4.5.0-HBase-1.1-bin
+$ cp phoenix-4.5.0-HBase-1.1-server.jar ../hbase-1.1.1/lib
+~~~
+
+> NOTE: Restart HBase is necessary, More detailed document refer to [Phoenix Installation](http://phoenix.apache.org/installation.html)
+
+Stop HBase via
+
+~~~
+$ ./bin/stop-hbase.sh
+~~~
+
+### HBase Shell
+
 Use HBase For the First Time Scripts:
 
 ~~~
+$ ./bin/hbase shell
 help
 create 'test', 'cf'
 list 'test'
