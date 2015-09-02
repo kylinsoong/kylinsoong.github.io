@@ -9,6 +9,20 @@ duoshuoid: ksoong2015052201
 excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ---
 
+### org.teiid.net.socket.ServerConnection
+
+![Teiid Client Socket Connection]({{ site.baseurl }}/assets/blog/teiid-net-connection.png)
+
+* SocketServerConnection - Represents a client connection that maintains session state and allows for service fail over. Implements a sticky random selection policy.
+
+### org.teiid.transport.ClientServiceRegistry
+
+![Teiid Client Registry]({{ site.baseurl }}/assets/blog/teiid-client-registry.png)
+
+### org.teiid.jdbc.ConnectionProfile
+
+![Teiid Connection profile]({{ site.baseurl }}/assets/blog/teiid-connection-profile.png)
+
 ### org.teiid.metadata.AbstractMetadataRecord
 
 ![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadata.png)
