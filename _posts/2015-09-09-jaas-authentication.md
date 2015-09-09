@@ -1,7 +1,7 @@
 ---
 layout: blog
 title:  "JAAS Authentication Tutorial"
-date:   2015-09-09 18:20:12
+date:   2015-09-09 19:20:12
 categories: security
 permalink: /jaas-auth
 author: Kylin Soong
