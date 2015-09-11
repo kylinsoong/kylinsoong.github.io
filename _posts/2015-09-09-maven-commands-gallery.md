@@ -10,10 +10,30 @@ duoshuoid: ksoong2015090901
 
 This documents coontains a series Maven Commands usage sample and function depiction.
 
-### Creating a simple java application
+### archetype
 
 ~~~
 mvn archetype:create 
   -DgroupId=[your project's group id]
   -DartifactId=[your project's artifact id]
+~~~
+
+### dependency
+
+**Copy Dependencies**
+
+~~~
+$ mvn dependency:copy-dependencies
+~~~
+
+**List Dependencies**
+
+~~~
+$ mvn dependency:list
+~~~
+
+**Dependencies Tree**
+
+~~~
+$ mvn dependency:tree
 ~~~
