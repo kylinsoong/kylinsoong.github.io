@@ -40,7 +40,7 @@ excerpt: 使用 Database LoginModule 加密 REST 服务, WildFly 安全, JAAS
 </security-domain>
 ~~~
 
-> NOTE: security-domain 中 dsJndiName 执行关系数据库，principalsQuery 和 rolesQuery 分别指向数据中的 user 表和 role 表。
+> NOTE: security-domain 中 dsJndiName 指向关系数据库，principalsQuery 和 rolesQuery 分别指向数据中的 user 表和 role 表。
 
 ## 在数据库中创建 user 和 role 表
 
