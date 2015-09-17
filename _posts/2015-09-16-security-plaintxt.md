@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "使用 Plain-text 加密 REST Web Service"
+title:  "使用 JAAS Plain-text LoginModule 加密 REST Web Service"
 date:   2015-09-16 21:40:12
 categories: jboss
 author: Kylin Soong
@@ -8,7 +8,7 @@ duoshuoid: ksoong2015091601
 excerpt: 使用 Plain-text 加密 REST 服务, WildFly 安全, JAAS
 ---
 
-本文说明如何使用 Plain-text 加密 REST Web Service，**customer.war** 是一个提供 REST 服务的 Web 应用，它需要部署到 WildFly 对外提供服务。使用 Plain-text 加密 REST Web 应用分如下几个步骤：
+本文说明如何使用 JAAS Plain-text LoginModule 加密 REST Web Service，**customer.war** 是一个提供 REST 服务的 Web 应用，它需要部署到 WildFly 对外提供服务。使用 Plain-text 加密 REST Web 应用分如下几个步骤：
 
 * 创建 security domain
 * 创建 Application User
@@ -98,7 +98,7 @@ $ ./bin/add-user.sh -a -u kylin -p password1! -g test
 
 ~~~
 $ git clone git@github.com:kylinsoong/security-examples.git
-$ cd security-examples/customer-security-database
+$ cd security-examples/customer-security-file
 $ mvn clean install
 ~~~
 
@@ -110,8 +110,8 @@ Build 成功会产生 customer.war 位于 target 目录下。
 $ cd wildfly-9.0.0.Final/
 $ ./bin/add-user.sh -a -u kylin -p password1! -g test
 $ ./bin/standalone.sh
-$ cp ~/src/security-examples/customer-security-database/src/scripts/create-security-domain-database.cli ./
-$ ./bin/jboss-cli.sh --connect --file=create-security-domain-database.cli
+$ cp ~/src/security-examples/customer-security-file/src/scripts/create-security-domain-file.cli ./
+$ ./bin/jboss-cli.sh --connect --file=create-security-domain-file.cli
 ~~~
 
 ### 部署 customer.war 测试
