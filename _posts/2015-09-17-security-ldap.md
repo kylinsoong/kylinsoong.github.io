@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "使用 JAAS DataBase LoginModule 加密 REST Web Service"
+title:  "使用 JAAS LDAP LoginModule 加密 REST Web Service"
 date:   2015-09-17 17:55:12
 categories: jboss
 author: Kylin Soong
@@ -24,7 +24,7 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
 ~~~
 /subsystem=security/security-domain=test-security:add(cache-type=default)
 /subsystem=security/security-domain=test-security/authentication=classic:add()
-/subsystem=security/security-domain=test-security/authentication=classic/login-module=LdapExtended:add(code=LdapExtended, flag=required, module-options={"java.naming.provider.url"=>"ldap://10.66.218.46:389","bindDN"=>"cn=Manager,dc=example,dc=com","bindCredential"=>"redhat","baseCtxDN"=>"ou=Customers,dc=example,dc=com","baseFilter"=>"(uid={0})","rolesCtxDN"=>"ou=Tester,dc=example,dc=com","roleFilter"=>"(uniqueMember={1})","roleAttributeID"=>"cn"})
+/subsystem=security/security-domain=test-security/authentication=classic/login-module=LdapExtended:add(code=LdapExtended, flag=required, module-options={"java.naming.factory.initial"=>"com.sun.jndi.ldap.LdapCtxFactory", "java.naming.provider.url"=>"ldap://10.66.218.46:389", "java.naming.security.authentication"=>"simple", "bindDN"=>"cn=Manager,dc=example,dc=com", "bindCredential"=>"redhat", "baseCtxDN"=>"ou=Customers,dc=example,dc=com", "baseFilter"=>"(uid={0})", "rolesCtxDN"=>"ou=Roles,dc=example,dc=com", "roleFilter"=>"(uniqueMember={1})", "roleAttributeID"=>"cn"})
 ~~~
 
 上述命令执行成功，WildFly 配置文件会出现如下配置：
@@ -33,12 +33,14 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
 <security-domain name="test-security" cache-type="default">
     <authentication>
         <login-module code="LdapExtended" flag="required">
+            <module-option name="java.naming.factory.initial" value="com.sun.jndi.ldap.LdapCtxFactory"/>
             <module-option name="java.naming.provider.url" value="ldap://10.66.218.46:389"/>
+            <module-option name="java.naming.security.authentication" value="simple"/>
             <module-option name="bindDN" value="cn=Manager,dc=example,dc=com"/>
             <module-option name="bindCredential" value="redhat"/>
             <module-option name="baseCtxDN" value="ou=Customers,dc=example,dc=com"/>
             <module-option name="baseFilter" value="(uid={0})"/>
-            <module-option name="rolesCtxDN" value="ou=Tester,dc=example,dc=com"/>
+            <module-option name="rolesCtxDN" value="ou=Roles,dc=example,dc=com"/>
             <module-option name="roleFilter" value="(uniqueMember={1})"/>
             <module-option name="roleAttributeID" value="cn"/>
         </login-module>
@@ -57,6 +59,7 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
 [customer-security.ldif](https://raw.githubusercontent.com/kylinsoong/data/master/openldap/customer-security.ldif)
 
 > NOTE: 执行 'ldapadd -x -D "cn=Manager,dc=example,dc=com" -w redhat -f customer-security.ldif' 可完成创建
+
 ## 配置 web.xml
 
 编辑 web.xml，添加 basic authentication 配置如下:
@@ -64,7 +67,7 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
 ~~~
      <security-role>
         <description>security role</description>
-        <role-name>*</role-name>
+        <role-name>Tester</role-name>
     </security-role>
 
     <security-constraint>
@@ -74,7 +77,7 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>*</role-name>
+            <role-name>Tester</role-name>
         </auth-constraint>
     </security-constraint>
 
