@@ -36,5 +36,10 @@ Linux ksoong.redhat.com 3.11.10-301.fc20.x86_64 #1 SMP Thu Dec 5 14:01:17 UTC 20
 
 ## Why Error Throw
 
+* Native virtual memory (address space) exhaustion and/or fragmentation.
+* The open file limit imposed by the OS has been reached. In Java, every socket is a file.
+* The maximum number of processes per user (ulimit -u) limits the number of threads.
+* The number of sockets exceeds the open file limit (ulimit -n).
+* The JVM process size is hitting the configured max memory size limit (ulimit -m).
 
 ## How to Resolve
