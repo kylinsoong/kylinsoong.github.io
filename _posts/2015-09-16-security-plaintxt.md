@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "使用 JAAS Plain-text LoginModule 加密 REST Web Service"
+title:  "使用 Plain-text 加密 REST Web 应用"
 date:   2015-09-16 21:40:12
 categories: jboss
 author: Kylin Soong

@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "使用 JAAS LDAP LoginModule 加密 REST Web Service"
+title:  "使用 LDAP 加密 REST Web 应用"
 date:   2015-09-17 17:55:12
 categories: jboss
 author: Kylin Soong
@@ -15,7 +15,7 @@ excerpt: 使用 LDAP LoginModule 加密 REST 服务, WildFly 安全, JAAS
 * 配置 web.xml
 * 配置 jboss-web.xml
 
-本文的结尾有一个完整的示例，演示使用 数据库 LoginModule 加密 REST Web 应用 customer.
+本文的结尾有一个完整的示例，演示使用 LDAP LoginModule 加密 REST Web 应用 customer.
 
 ## 创建 security domain
 

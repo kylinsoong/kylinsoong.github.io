@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "使用 JAAS DataBase LoginModule 加密 REST Web Service"
+title:  "使用 DataBase 加密 REST Web 应用"
 date:   2015-09-17 15:20:12
 categories: jboss
 author: Kylin Soong
