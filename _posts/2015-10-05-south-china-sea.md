@@ -12,6 +12,8 @@ duoshuoid: ksoong2015100502
 
 ## Owned by China
 
+[永兴岛](https://zh.wikipedia.org/wiki/%E6%B0%B8%E5%85%B4%E5%B2%9B)
+
 [美济岛](https://zh.wikipedia.org/wiki/%E7%BE%8E%E6%B5%8E%E5%B2%9B)
 
 [渚碧岛](https://zh.wikipedia.org/wiki/%E6%B8%9A%E7%A2%A7%E5%B2%9B)
