@@ -1,15 +1,19 @@
 ---
 layout: blog
-title:  "Java 多线程 - Synchronization, Locks, Conditions"
+title:  "Java 多线程 - synchronized, wait, notify, Locks, Conditions"
 date:   2015-07-20 15:30:00
 categories: java
 permalink: /java-lock-condition
 author: Kylin Soong
 duoshuoid: ksoong2015072001
-excerpt: Java Concurrency, Synchronization, Lock, Condition
+excerpt: Java Concurrency, Synchronization(synchronized, wait, notify), Lock, Condition
 ---
 
 ## Synchronization
+
+本部分依次介绍 Java 多线程的关键字 synchronized, wait, notify.
+
+### synchronized
 
 Java 语言提供了很多种多线程之间通信的机制，但最基本的方式是通过 `monitors` 实现的 `synchronization` 机制。这个机制主要使用关键字是 synchronized，关于这个同步机制以及 synchronized 关键字我们可总结如下几点：
 
@@ -43,47 +47,55 @@ public class MonitorExample {
 }  
 ~~~
 
-#### Java-level deadlock 示例
+#### synchronized 关键字示例
 
-本示例演示使用 synchronized 模拟 Java 中常见的死锁问题。
+本示例演示使用 synchronized 关键字模拟 Java 中常见的死锁问题。如下如所示：
 
-死锁需要两个对象，两个线程，本示例两个对象为 A 和 B，两个线程分别为 Thread 1 和 Thread 2，运行如下代码会出现线程死锁:
+![DeadLock]({{ site.baseurl }}/assets/blog/java-thread-deadlock.png)
+
+死锁需要两个对象，两个线程，本示例两个对象为 A 和 B，两个线程分别为 Thread 1 和 Thread 2，如果 Thread 1 锁定对象 A 后再锁定对象 B 与 Thread 2 锁定对象 B 后再锁定对象 A 同时发生，则两个线程出现死锁.
+
+> 死锁的现象： 两个线程永久性的处于阻塞等待状态，直到程序被强制停止.
+
+运行如下代码会出现线程死锁:
 
 ~~~
 final Object a = new Object();
 final Object b = new Object();
 
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 1");
-		synchronized(a){
-			sleep(1000);
-			synchronized(b){
-			}
-		}				
-	}}).start();
+    public void run() {
+	Thread.currentThread().setName("Thread 1");
+	synchronized(a){
+	    sleep(1000);
+	    synchronized(b){
+	    }
+ 	}				
+    }}).start();
 		
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 2");
-		synchronized(b){
-			sleep(1000);
-			synchronized(a){
-			}
-		}
-	}}).start();
+    public void run() {
+	Thread.currentThread().setName("Thread 2");
+	synchronized(b){
+	    sleep(1000);
+	    synchronized(a){
+	    }
+	}
+    }}).start();
 ~~~
 
-如上，两个线程同时启动且分别尝试锁定 A B 对象的 `monitor`，如下:
+如上，两个线程同时启动且分别尝试锁定 A B 对象的 `monitor` 引发死锁，如下按照时间的先后顺序列出程序运行的过程:
 
-* 线程 1 通过 synchronized 锁定 A 对象 `monitor`
-* 线程 2 通过 synchronized 锁定 B 对象 `monitor`
+* 线程 1 通过 synchronized 锁定 A 对象，拥有 A 对象的 `monitor`
+* 线程 2 通过 synchronized 锁定 B 对象，拥有 B 对象的 `monitor`
 * 线程 1 休眠 1000 毫秒
 * 线程 2 休眠 1000 毫秒
-* 线程 1 通过 synchronized 尝试锁定 B 对象 `monitor`
-* 线程 2 通过 synchronized 尝试锁定 A 对象 `monitor`
+* 线程 1 通过 synchronized 尝试锁定 B 对象，尝试获取 B 对象的 `monitor`
+* 线程 2 通过 synchronized 尝试锁定 A 对象，尝试获取 A 对象的 `monitor`
 
-由于线程 1 拥有 A 的锁等待线程 2 释放 B 的锁，而线程 2 拥有 B 的锁等待线程 1释放 A 的锁，这样造成线程 1 和 线程 2 死锁。如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
+由于线程 1 拥有 A 的锁等待线程 2 释放 B 的锁，而线程 2 拥有 B 的锁等待线程 1 释放 A 的锁，这样造成线程 1 和 线程 2 死锁。
+
+如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
 
 ~~~
 "Thread 2" #10 prio=5 os_prio=0 tid=0x00007fc7bc0f5800 nid=0xf60 waiting for monitor entry [0x00007fc7962e9000]
@@ -108,7 +120,9 @@ new Thread(new Runnable(){
 
 ~~~
 
-> NOTE: Java 语言中没有提供死锁自动检测的机制，在编程中要注意 synchronized 关键字的使用，另外读写 volatile 变量或使用 java.util.concurrent 包中的类是另一种可供选择的类 Synchronization 机制
+如上线程 dump 中 `0x00000000d7f79670` 为 A 对象的 `monitor` 在内存中的地址，`0x00000000d7f79680` 为 A 对象的 `monitor` 在内存中的地址。
+
+> NOTE: Java 语言中没有提供死锁自动检测的机制，在多线程编程中要注意使用 synchronized 关键字来避免死锁，另外读写 volatile 变量或使用 java.util.concurrent 包中的类是另一种避免死锁的途径.
 
 ### wait, notify
 
@@ -134,7 +148,7 @@ wait, notify 是多线程的基础：
 * wait 阻塞一个线程，但释放当前对象的锁
 * notify 随即释放 wait 集合中一个阻塞的线程
 
-#### BlockingQueue 示例
+#### wait, notify 关键字示例
 
 BlockingQueue 示例用来演示多线程调有 wait, notify。
 
@@ -143,56 +157,55 @@ BlockingQueue 示例用来演示多线程调有 wait, notify。
 ~~~  
 public class BlockingQueue<T> {
 	
-	private Queue<T> queue = new LinkedList<T>();
-	private int capacity;
+    private Queue<T> queue = new LinkedList<T>();
+    private int capacity;
 	
-	public BlockingQueue(int capacity) {
+    public BlockingQueue(int capacity) {
         this.capacity = capacity;
     }
 	
-	public void put(T element) throws InterruptedException {
-		synchronized(this){
-			while(queue.size() == capacity){
-				wait();
-			}
-			queue.add(element);
-			notify();
-		}
+    public void put(T element) throws InterruptedException {
+        synchronized(this){
+	    while(queue.size() == capacity){
+		wait();
+	    }
+	    queue.add(element);
+	    notify();
 	}
+    }
 	
-	public T take() throws InterruptedException{
-		synchronized(this){
-			while(queue.isEmpty()){
-				wait();
-			}
-			T item = queue.remove();
-			notify();
-			return item;
-		}
+    public T take() throws InterruptedException{
+	synchronized(this){
+	    while(queue.isEmpty()){
+	        wait();
+	    }
+	    T item = queue.remove();
+	    notify();
+	    return item;
 	}
+    }
 }
 ~~~
 
-接下来，我们启动二个线程(Thread 1，Thread 2)调用 BlockingQueue 的 take() 方法:
+接下来，我们启动两个线程(Thread 1，Thread 2)调用 BlockingQueue 的 take() 方法:
 
 ~~~
 final BlockingQueue<String> queue = new BlockingQueue<>(3);
 						
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 1");
-		System.out.println(queue.take());
-	}}).start();
+    public void run() {
+	Thread.currentThread().setName("Thread 1");
+	System.out.println(queue.take());
+    }}).start();
 		
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 2");
-		System.out.println(queue.take());
-	}}).start();
-		
+    public void run() {
+        Thread.currentThread().setName("Thread 2");
+	System.out.println(queue.take());
+    }}).start();		
 ~~~
 
-两个个线程都处于阻塞状态，都被添加到 BlockingQueue 对象的 wait 集合中，JVM 中线程 dumo 日志如下:
+两个线程都处于阻塞状态，都被添加到 BlockingQueue 对象的 wait 集合中，JVM 中线程 dumo 日志如下:
 
 ~~~
 "Thread 2" #10 prio=5 os_prio=0 tid=0x00007f90040ce000 nid=0x2f69 in Object.wait() [0x00007f8fe987a000]
@@ -222,7 +235,7 @@ new Thread(new Runnable(){
 	- None
 ~~~
 
-> NOTE: 在上面 dump 中，0x00000000d7f7b4d8 被二个线程锁定过，但二个线程同样阻塞于 0x00000000d7f7b4d8
+> NOTE: 在上面 dump 中，0x00000000d7f7b4d8 被两个线程锁定过，但两个线程同样阻塞于 0x00000000d7f7b4d8
 
 如果调有 BlockingQueue 的 put 方法，则相应的 wait 集合中的线程被唤起，被唤起的线程从 wait 集合中移除。
 
@@ -243,20 +256,20 @@ final Lock a = new ReentrantLock();
 final Lock b = new ReentrantLock();
 		
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 1");
-		a.lock();
-		sleep(1000);
-		b.lock();				
-	}}).start();
+    public void run() {
+	Thread.currentThread().setName("Thread 1");
+	a.lock();
+	sleep(1000);
+	b.lock();				
+    }}).start();
 		
 new Thread(new Runnable(){
-	public void run() {
-		Thread.currentThread().setName("Thread 2");
-		b.lock();
-		sleep(1000);
-		a.lock();
-	}}).start();
+    public void run() {
+	Thread.currentThread().setName("Thread 2");
+	b.lock();
+	sleep(1000);
+	a.lock();
+    }}).start();
 ~~~
 
 类似 Synchronization 部分 DeadLock 示例
