@@ -48,6 +48,14 @@ timer.keep_alive_time="3000"
 imer.queue_max_size="500"
 ~~~
 
+TimeScheduler 在 JGroups 中的使用：
+
+* RSVP 协议启动 ResendTask
+* STABLE 协议启动 StableTask
+* UNICAST3 协议启动 RetransmitTask
+* NAKACK2 协议启动 RetransmitTask
+
+
 ## OOB thread pool
 
 OOB 线程池的实现使用 ThreadPoolExecutor

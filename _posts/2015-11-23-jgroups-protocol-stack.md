@@ -38,7 +38,7 @@ JChannel 初始化传入的参数为 `udp-stack.xml`（详细内容参照附录�
 
 如上协议栈中协议的 UML 图:
 
-![JGroups Protocol UML]({{ site.baseurl }}/assets/blog/jgroups-procotols-uml.png)
+![JGroups Protocol UML]({{ site.baseurl }}/assets/blog/jgroups-protocols-uml.png)
 
 ## jGroups UDP 传输协议初始化
 
@@ -48,6 +48,11 @@ JChannel 初始化传入的参数为 `udp-stack.xml`（详细内容参照附录�
 
 ![JGroups Protocol udp]({{ site.baseurl }}/assets/blog/jgroups-protocol-udp-init.png)
 
+## JChannel connect
+
+JChannel connect 方法调运过程如下
+
+![JGroups JChannel connect]({{ site.baseurl }}/assets/blog/jgroups-jchannel-connect.png)
 
 ## 附录一: jGroups 协议栈配置
 
