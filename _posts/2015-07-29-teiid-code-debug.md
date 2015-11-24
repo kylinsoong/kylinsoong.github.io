@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "10 tips in debug Teiid source code"
+title:  "Tips in debug Teiid source code"
 date:   2015-07-29 17:00:00
 categories: teiid
 permalink: /teiid-code-debug
@@ -37,3 +37,21 @@ By default, QueryProcessor assume the TimeSlice between RequestWorkItem and Quer
 EmbeddedConfiguration config = new EmbeddedConfiguration();
 config.setTimeSliceInMilli(Integer.MAX_VALUE);
 ~~~
+
+### 3. Enable Logging
+
+Logging is first steps for reading code, [EmbeddedHelper](https://raw.githubusercontent.com/teiid/teiid-embedded-examples/master/common/src/main/java/org/teiid/example/EmbeddedHelper.java) is a example that supply static logger metod, A simple way of enable logger is 
+
+~~~
+EmbeddedHelper.enableLogger(Level.ALL);
+~~~
+
+### 4. Set Breakpoint to debug Engine
+
+As below figure, set the Breakpoint Engine's Entry Mehod `org.teiid.dqp.internal.process.DQPCore` around line 245
+
+![Engine's Entry Method]({{ site.baseurl }}/assets/blog/teiid-debug-engine-entry.png)
+
+RequestMessage as parameter be passed from client which wrapped a sql command, ResultsFuture<ResultsMessage> (wrap a ResultsMessage) will be return at the end of this method.
+
+[teiid-mind-map](http://ksoong.org/teiid-mind-map/) 'Statement execute Query' section has a mind map which can help to debug the engine.
