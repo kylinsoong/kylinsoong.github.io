@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Tips in debug Teiid source code"
+title:  "Tips for debug Teiid source code"
 date:   2015-07-29 17:00:00
 categories: teiid
 permalink: /teiid-code-debug
