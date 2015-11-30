@@ -48,7 +48,7 @@ EmbeddedHelper.enableLogger(Level.ALL);
 
 ### 4. Import javacc QueryParser depends
 
-If you want de bug Teiid Engine Source Code, the first steps is import javacc QueryParser depends, or else your code will have complie error, once build Teiid Source code success, extrct QueryParser depends from teiid-engine-VERSION-SNAPSHOT.jar, package it as a separate jar, add to Teiid Engine class path:
+If you want to debug Teiid Engine Source Code, the first steps is import javacc QueryParser depends, or else your code will have complie error, once build Teiid Source code success, extrct QueryParser depends from teiid-engine-VERSION-SNAPSHOT.jar, package it as a separate jar, add to Teiid Engine class path:
 
 ![Engine's javacc code]({{ site.baseurl }}/assets/blog/teiid-debug-engine-javacc.png)
 
