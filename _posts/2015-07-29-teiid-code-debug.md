@@ -46,7 +46,15 @@ Logging is first steps for reading code, [EmbeddedHelper](https://raw.githubuser
 EmbeddedHelper.enableLogger(Level.ALL);
 ~~~
 
-### 4. Set Breakpoint to debug Engine
+### 4. Import javacc QueryParser depends
+
+If you want de bug Teiid Engine Source Code, the first steps is import javacc QueryParser depends, or else your code will have complie error, once build Teiid Source code success, extrct QueryParser depends from teiid-engine-VERSION-SNAPSHOT.jar, package it as a separate jar, add to Teiid Engine class path:
+
+![Engine's javacc code]({{ site.baseurl }}/assets/blog/teiid-debug-engine-javacc.png)
+
+As above figure, teiid-engine-javacc-9.x.jar will be generated, add it to classpath.
+
+### 5. Set Breakpoint to debug Engine
 
 As below figure, set the Breakpoint Engine's Entry Mehod `org.teiid.dqp.internal.process.DQPCore` around line 245
 
@@ -55,3 +63,4 @@ As below figure, set the Breakpoint Engine's Entry Mehod `org.teiid.dqp.internal
 RequestMessage as parameter be passed from client which wrapped a sql command, ResultsFuture<ResultsMessage> (wrap a ResultsMessage) will be return at the end of this method.
 
 [teiid-mind-map](http://ksoong.org/teiid-mind-map/) 'Statement execute Query' section has a mind map which can help to debug the engine.
+

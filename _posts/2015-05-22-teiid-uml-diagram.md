@@ -46,9 +46,26 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 ![QueryMetadataInterface]({{ site.baseurl }}/assets/blog/teiid-querymetadatainterface.png)
 
+* QueryMetadataInterface interface defines the way that query components access metadata. Any user of a query component will need to implement this interface. Many  of these methods take or return things of type "Object". Typically, these objects represent a metadata-implementation-specific metadata ID. The interface define several methods:
+
+~~~
+Object getElementID(String elementName)throws TeiidComponentException, QueryMetadataException;
+Object getGroupID(String groupName)throws TeiidComponentException, QueryMetadataException;
+Object getModelID(String modelName)throws TeiidComponentException, QueryMetadataException;
+Collection getGroupsForPartialName(String partialGroupName)throws TeiidComponentException, QueryMetadataException;
+Object getModelID(Object groupOrElementID)throws TeiidComponentException, QueryMetadataException;
+String getFullName(Object metadataID)throws TeiidComponentException, QueryMetadataException;
+String getName(Object metadataID) throws TeiidComponentException, QueryMetadataException;
+List getElementIDsInGroupID(Object groupID)throws TeiidComponentException, QueryMetadataException;
+Object getGroupIDForElementID(Object elementID)throws TeiidComponentException, QueryMetadataException;
+...
+~~~
+
 ### org.teiid.query.optimizer.capabilities.CapabilitiesFinder
 
 ![CapabilitiesFinder]({{ site.baseurl }}/assets/blog/teiid-capabilitiesfinder.png)
+
+The CapabilitiesFinder describes how to find connector capabilities.
 
 ### org.teiid.query.resolver.CommandResolver
 

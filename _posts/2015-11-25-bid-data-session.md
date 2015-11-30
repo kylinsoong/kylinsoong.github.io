@@ -65,6 +65,6 @@ Openess Vs Closeness
 
 **Speaker**
 
-[https://sites.google.com/site/zhangweinus/](https://sites.google.com/site/zhangweinus/
+[https://sites.google.com/site/zhangweinus/](https://sites.google.com/site/zhangweinus/)
 
-)
+
