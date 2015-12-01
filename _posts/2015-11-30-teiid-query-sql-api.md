@@ -24,3 +24,9 @@ A Command is an interface for all the language objects that are at the root of a
 ## LanguageObject
 
 ![UML of LanguageObject]({{ site.baseurl }}/assets/blog/teiid-uml-sql-other.png)
+
+## ProcessorPlan
+
+![UML of ProcessorPlan]({{ site.baseurl }}/assets/blog/teiid-uml-processorPlan.png)
+
+* ProcessorPlan represents a processor plan. It is generic in that it abstracts the interface to the plan by the processor, meaning that the actual implementation of the plan or the types of processing done by the plan is not important to the processor.
