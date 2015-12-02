@@ -26,7 +26,7 @@ Java(TM) SE Runtime Environment (build 1.7.0_60-b19)
 Java HotSpot(TM) 64-Bit Server VM (build 24.60-b09, mixed mode)
 ~~~
 
-本文档已 hadoop 1.2.1 为例演示安装步骤。
+本文档以 hadoop 1.2.1 为例演示安装步骤。
 
 ## 本地模式
 
