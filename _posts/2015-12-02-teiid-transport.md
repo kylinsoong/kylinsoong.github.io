@@ -42,7 +42,28 @@ In above code snippets, the createChannelPipelineFactory() method will create a 
 
 ![SSLAwareChannelHandler]({{ site.baseurl }}/assets/blog/teiid-uml-transport-sslwaarehandler.png)
 
-The methods list in above diagram is the entry in Server side, for example, messageReceived() method will handle the JDBC Driver's Message.
+The methods list in above diagram is the entry in Server side, for example, messageReceived() method will handle the JDBC Driver's Message, the detailed procedures looks
 
+![SSLAwareChannelHandler Entry]({{ site.baseurl }}/assets/blog/teiid-seq-SSLAwareChannelHandler.png)
 
+~~~
+1. createChannelListener() create a SocketClientInstance. 
+2.onConnection() send a 'Handshake' to Client, if SSL enable, 'Handshake' contain the public key info
+3.receiveMessage() create a 'ServerWorkItem' and passed it as parameter in next method invoke 
+4.runInContext() set ThreadLocal parameter DQPWorkContext, then invoke ServerWorkItem's run() method  
+5.run() do three things: 
+    1) use Client Handshake Cryptor to unseal Message contents
+       2) use java reflection to invoke DQPCore's executeRequest()
+       3) send DQPCore's return to Client, if DQPCore execute failed, send a 'ExceptionHolder' to Client
+6.Once Client Connection closed, SocketClientInstance's disconnected() method be invoked, logout
+~~~
+
+Once the server start up, netty server will listen on socket address, which wait for handling any incoming socket request:
+
+~~~
+$ netstat -antulop | grep 15298
+tcp6       0      0 127.0.0.1:31000         :::*                    LISTEN      15298/java           off (0.00/0/0)
+~~~
+
+> NOTE: By default, netty server will listen on port 31000 for JDBC connection.
  
