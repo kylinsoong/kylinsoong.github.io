@@ -12,7 +12,7 @@ duoshuoid: ksoong2015120201
 
 ![Architecture]({{ site.baseurl }}/assets/blog/teiid-transport-architecure.png)
 
-As above architecture, java application execute JDBC query(for example 'select * from product') via Teiid JDBC Driver, the Driver will assemble the query command to a Message Object, the send it to Transport via Socket client, the Transport listen on a port via netty server, receive the message, handle the message and pass to Query Enginer, the Query Engine will select related Resource Adapter and Translator to load and transfer Data from heterogenous data stores.
+As above architecture, java application execute JDBC query(for example 'select * from product') via Teiid `JDBC Driver`, the Driver will assemble the query command to a Message Object, then send it to `Transport` via Socket client, the Transport listen on a port via netty server, receive the message, handle the message and pass it to `Query Enginer`, the Query Engine will choose related Resource Adapter and Translator to load and transfer Data from heterogenous data stores.
 
 One the left of vertical broken line, we can see it was Transport Layer, this article focus on it, diving into the details of how message be transfer between JDBC Driver and Transport.
 
