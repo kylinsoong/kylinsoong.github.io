@@ -94,7 +94,7 @@ class OioObjectChannel implements ObjectChannel {
 
 For detailed procedure of JDBC Driver create a Connection refer to
 
-    [http://ksoong.org/teiid-s-diagram/](http://ksoong.org/teiid-s-diagram/) -> 'Teiid Client' -> How a connection be created 
+[http://ksoong.org/teiid-s-diagram/](http://ksoong.org/teiid-s-diagram/) -> 'Teiid Client' -> How a connection be created 
 
 While Create Connection there are 2 types of security logon:
 
@@ -105,8 +105,8 @@ these 2 types security logon happens as a sequence, first do handshake to set Cr
 
 ![Teiid Client logon]({{ site.baseurl }}/assets/blog/teiid-client-logon.png)
 
-**1.** Once Client create a socket connect to Teiid Server, Teiid Server will send a `Hansshake` message to Client
-**2.** Client received the `Handshake`, do some setting send it back to Server
-**3.** Teiid Server send handshake ack to Client
-**4.** Client send `Logon` message(contain JDBC url, username, password) to Teiid Server
-**5.** Teiid Server handle `Logon` message, send logon ack to Client
+* Once Client create a socket connect to Teiid Server, Teiid Server will send a `Hansshake` message to Client
+* Client received the `Handshake`, do some setting send it back to Server
+* Teiid Server send handshake ack to Client
+* Client send `Logon` message(contain JDBC url, username, password) to Teiid Server
+* Teiid Server handle `Logon` message, send logon ack to Client
