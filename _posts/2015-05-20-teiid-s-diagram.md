@@ -11,6 +11,22 @@ excerpt: Teiid Sequence Diagrams Contains a series Sequence diagrams
 
 ## Teiid Client
 
+### How a connection be created
+
+Java programmer can use JDBC API with Teiid JDBC Driver create a JDBC Connection, for example
+
+~~~
+String url = "jdbc:teiid:Portfolio@mm://localhost:31000;version=1";
+String user = "testUser";
+String pass = "password";
+Class.forName("org.teiid.jdbc.TeiidDriver");
+Connection conn = DriverManager.getConnection(url, user, pass);
+~~~
+
+the below sequence diagram shows how DriverManager create a connection:
+
+![teiid-create-connection]({{ site.baseurl }}/assets/blog/teiid-seq-create-connection.png)
+
 ### How a connection execute the query
 
 Assuming view 'Marketdata' existed in Teiid VDB, a JDBC client execute query like:

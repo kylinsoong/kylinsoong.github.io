@@ -46,19 +46,7 @@ The methods list in above diagram is the entry in Server side, for example, mess
 
 ![SSLAwareChannelHandler Entry]({{ site.baseurl }}/assets/blog/teiid-seq-SSLAwareChannelHandler.png)
 
-~~~
-1. createChannelListener() create a SocketClientInstance. 
-2.onConnection() send a 'Handshake' to Client, if SSL enable, 'Handshake' contain the public key info
-3.receiveMessage() create a 'ServerWorkItem' and passed it as parameter in next method invoke 
-4.runInContext() set ThreadLocal parameter DQPWorkContext, then invoke ServerWorkItem's run() method  
-5.run() do three things: 
-    1) use Client Handshake Cryptor to unseal Message contents
-       2) use java reflection to invoke DQPCore's executeRequest()
-       3) send DQPCore's return to Client, if DQPCore execute failed, send a 'ExceptionHolder' to Client
-6.Once Client Connection closed, SocketClientInstance's disconnected() method be invoked, logout
-~~~
-
-Once the server start up, netty server will listen on socket address, which wait for handling any incoming socket request:
+Once theid server start up, netty server will listen on socket address, which wait for handling any incoming socket request:
 
 ~~~
 $ netstat -antulop | grep 15298
@@ -66,4 +54,59 @@ tcp6       0      0 127.0.0.1:31000         :::*                    LISTEN      
 ~~~
 
 > NOTE: By default, netty server will listen on port 31000 for JDBC connection.
- 
+
+## Socket Client in JDBC Driver
+
+With the content of `Netty Server` section, we know that the `SocketListener` is the Server-side listener, SocketListener Constructor method init netty Server, `SSLAwareChannelHandler` registered as Netty Server's ChannelPipelineFactory, each time a client connection incoming, a revelant `SocketClientInstance` be created, the `SocketClientInstance` wrapped a netty Channel in charge of sending/receiving message from client.
+
+Correspondingly, each client request has a related `SocketServerInstanceImpl` which wrapped a Socket, connect with Teiid Server, sending and receiving message, the UML diagram of `SocketServerInstanceImpl` looks
+
+![uml OF SocketServerInstanceImpl]({{ site.baseurl }}/assets/blog/teiid-uml-SocketServerInstanceImpl.png)
+
+SocketServerInstanceImpl has a ObjectChannel attribute that wrap a Socket, used to send/recieve message, the revelant code extract from `org.teiid.net.socket.OioObjectChannel`:
+
+~~~
+package org.teiid.net.socket;
+
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+import org.teiid.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import org.teiid.netty.handler.codec.serialization.ObjectEncoderOutputStream;
+
+class OioObjectChannel implements ObjectChannel {
+    private final Socket socket;
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
+
+    private OioObjectChannel(Socket socket, int maxObjectSize) throws IOException{
+        this.socket = socket;
+        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        outputStream = new ObjectEncoderOutputStream(out, STREAM_BUFFER_SIZE);
+        final ClassLoader cl = this.getClass().getClassLoader();
+        inputStream = new ObjectDecoderInputStream(new AccessibleBufferedInputStream(socket.getInputStream(), STREAM_BUFFER_SIZE), cl, maxObjectSize);
+    }
+}
+~~~ 
+
+> Note that, netty's ObjectDecoderInputStream used to read Object message from Server(Netty Server), and ObjectEncoderOutputStream used to write Object message to Server(Netty Server).
+
+For detailed procedure of JDBC Driver create a Connection refer to
+
+    [http://ksoong.org/teiid-s-diagram/](http://ksoong.org/teiid-s-diagram/) -> 'Teiid Client' -> How a connection be created 
+
+While Create Connection there are 2 types of security logon:
+
+* handshake
+* logon
+
+these 2 types security logon happens as a sequence, first do handshake to set Cryptor, then execute logon, both handshake and logon on top of SocketServerInstance. The process as below figure:
+
+![Teiid Client logon]({{ site.baseurl }}/assets/blog/teiid-client-logon.png)
+
+**1.** Once Client create a socket connect to Teiid Server, Teiid Server will send a `Hansshake` message to Client
+**2.** Client received the `Handshake`, do some setting send it back to Server
+**3.** Teiid Server send handshake ack to Client
+**4.** Client send `Logon` message(contain JDBC url, username, password) to Teiid Server
+**5.** Teiid Server handle `Logon` message, send logon ack to Client

@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "WildFly Command Line"
+title:  "JGroups WARN message"
 date:   2015-11-17 17:10:12
 categories: jboss
 author: Kylin Soong
