@@ -8,7 +8,7 @@ author: Kylin Soong
 duoshuoid: ksoong2015010601
 ---
 
-Future类位于java.util.concurrent包下，它是一个接口：
+Future 类位于 java.util.concurrent 包下，它是一个接口：
 
 ~~~
 public interface Future<V> {
@@ -20,7 +20,7 @@ public interface Future<V> {
 }
 ~~~
 
-在Future接口中声明了5个方法，下面依次解释每个方法的作用：
+在 Future 接口中声明了5个方法，下面依次解释每个方法的作用：
 
 * cancel方法用来取消任务，如果取消任务成功则返回true，如果取消任务失败则返回false。参数mayInterruptIfRunning表示是否允许取消正在执行却没有执行完毕的任务，如果设置true，则表示可以取消正在执行过程中的任务。如果任务已经完成，则无论mayInterruptIfRunning为true还是false，此方法肯定返回false，即如果取消已经完成的任务会返回false；如果任务正在执行，若mayInterruptIfRunning设置为true，则返回true，若mayInterruptIfRunning设置为false，则返回false；如果任务还没有执行，则无论mayInterruptIfRunning为true还是false，肯定返回true。
 * isCancelled方法表示任务是否被取消成功，如果在任务正常完成前被取消成功，则返回 true。
@@ -28,77 +28,32 @@ public interface Future<V> {
 * get()方法用来获取执行结果，这个方法会产生阻塞，会一直等到任务执行完毕才返回；
 * get(long timeout, TimeUnit unit)用来获取执行结果，如果在指定时间内，还没获取到结果，就直接返回null
 
-也就是说Future提供了三种功能：
+也就是说 Future 提供了三种功能：**判断任务是否完成**, **能够中断任务**, **能够获取任务执行结果**.
 
-* 判断任务是否完成；
-* 能够中断任务；
-* 能够获取任务执行结果。
+FutureTask 为 RunnableFuture 接口的实现类，同位于 java.util.concurrent 包下，它的 UML 类图如下：
 
-接下来我们看FutureTask的实现：
+![UML of FutureTask]({{ site.baseurl }}/assets/blog/java-uml-future.png)
 
-~~~
-public class FutureTask<V> implements RunnableFuture<V>
-~~~
+可以看出 RunnableFuture 继承了 Runnable 接口和 Future 接口，而 FutureTask 实现了 RunnableFuture 接口。所以它既可以作为 Runnable 被线程执行，又可以作为 Future 得到 Callable 的返回值。
 
-FutureTask类实现了RunnableFuture接口，我们看一下RunnableFuture接口的实现：
+FutureTask 提供了2个构造方法：
 
 ~~~
-public interface RunnableFuture<V> extends Runnable, Future<V> {
-    void run();
-}
+public FutureTask(Callable<V> callable) {}
+public FutureTask(Runnable runnable, V result) {}
 ~~~
 
-可以看出RunnableFuture继承了Runnable接口和Future接口，而FutureTask实现了RunnableFuture接口。所以它既可以作为Runnable被线程执行，又可以作为Future得到Callable的返回值。
+### 案例一: Callable + Future 获取执行结果示例
 
-FutureTask提供了2个构造方法：
+Task 类实现了 Callable 接口
 
-~~~
-public FutureTask(Callable<V> callable) {
-}
-public FutureTask(Runnable runnable, V result) {
-}
-~~~
+![Example.1 - Task]({{ site.baseurl }}/assets/blog/java-future-example-1-task.png)
 
-## Callable + Future 获取执行结果示例
+call() 方法执行到 27 行 sleep 5 秒钟，然后进行 1 到 100 累加。
 
-~~~
-public class TestFuture {
+![Example.1 - Run]({{ site.baseurl }}/assets/blog/java-future-example-1-run.png)
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-
-		ExecutorService executor = Executors.newCachedThreadPool();
-        Task task = new Task();
-        Future<Integer> result = executor.submit(task);
-        executor.shutdown();
-        
-        Thread.sleep(1000);
-      
-        System.out.println("主线程在执行任务");
-        
-        System.out.println("task运行结果" + result.get());
-         
-        System.out.println("所有任务执行完毕");
-	}
-	
-	static class Task implements Callable<Integer> {
-
-		@Override
-		public Integer call() throws Exception {
-			System.out.println("子线程在进行计算");
-	        Thread.sleep(5000);
-	        int sum = 0;
-	        for(int i=0;i<100;i++) {
-	        	sum += i;
-	        }
-	        return sum;
-		}
-		
-	}
-
-}
-~~~
-
-执行结果：
+如上代码，创建一个线程池，执行 Callable Task，通过返回的 Future 结果测试 Future 的 get() 方法。程序运行输出结果：
 
 ~~~
 子线程在进行计算
@@ -107,103 +62,43 @@ task运行结果4950
 所有任务执行完毕
 ~~~
 
-## Callable + Future 以及判断任务是否完成示例
+[完整代码](https://raw.githubusercontent.com/kylinsoong/JVM/master/jdk/concurrent/src/main/java/org/ksoong/tutorial/java/concurrent/future/TestFuture.java) 
 
-~~~
-public class TestFuturePlus {
+### 案例二: Callable + Future 以及判断任务是否完成示例
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+Task 类实现了 Callable 接口
 
-		ExecutorService executor = Executors.newCachedThreadPool();
-        Task task = new Task();
-        Future<Integer> result = executor.submit(task);
-        executor.shutdown();
-        
-        Thread.sleep(1000);
-      
-        System.out.println("主线程在执行任务");
-        
-        System.out.println("task 是否结束: " + result.isDone());
-        System.out.println("task 是否取消: " + result.isCancelled());
-        try {
-			System.out.println("task运行结果" + result.get(1000, TimeUnit.MICROSECONDS));
-		} catch (TimeoutException e) {
-		}
-        result.cancel(true);
-        System.out.println("task 是否结束: " + result.isDone());
-        System.out.println("task 是否取消: " + result.isCancelled());
-        
-	}
-	
-	static class Task implements Callable<Integer> {
+![Example.2 - Task]({{ site.baseurl }}/assets/blog/java-future-example-2-task.png)
 
-		@Override
-		public Integer call() throws Exception {
-			System.out.println("子线程在进行计算");
-	        Thread.sleep(20000);
-	        int sum = 0;
-	        for(int i=0;i<100;i++) {
-	        	sum += i;
-	        }
-	        return sum;
-		}
-		
-	}
+call() 方法执行到 27 行 sleep 20 秒钟，然后进行 1 到 100 累加。
 
-}
-~~~
+![Example.2 - Run]({{ site.baseurl }}/assets/blog/java-future-example-2-run.png)
 
-执行结果：
+如上代码，创建一个线程池，执行 Callable Task，通过返回的 Future 结果测试 Future 的 isDone(), isCancelled(), get(long timeout, TimeUnit unit) 等方法。程序运行输出结果：
 
 ~~~
 子线程在进行计算
 主线程在执行任务
 task 是否结束: false
 task 是否取消: false
+task 运行出错: java.util.concurrent.TimeoutException
 task 是否结束: true
 task 是否取消: true
 ~~~
 
-## Callable + FutureTask 获取执行结果示例
+[完整代码](https://raw.githubusercontent.com/kylinsoong/JVM/master/jdk/concurrent/src/main/java/org/ksoong/tutorial/java/concurrent/future/TestFuturePlus.java)
 
-~~~
-public class TestFutureTask {
+### 案例三: Callable + FutureTask 获取执行结果示例
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+Task 类实现了 Callable 接口
 
-		Task task = new Task();
-        FutureTask<Integer> futureTask = new FutureTask<Integer>(task);
-        Thread thread = new Thread(futureTask);
-        thread.start();
-        
-        Thread.sleep(1000);
-      
-        System.out.println("主线程在执行任务");
-        
-        System.out.println("task运行结果" + futureTask.get());
-         
-        System.out.println("所有任务执行完毕");
-	}
-	
-	static class Task implements Callable<Integer> {
+![Example.3 - Task]({{ site.baseurl }}/assets/blog/java-future-example-1-task.png)
 
-		@Override
-		public Integer call() throws Exception {
-			System.out.println("子线程在进行计算");
-	        Thread.sleep(5000);
-	        int sum = 0;
-	        for(int i=0;i<100;i++) {
-	        	sum += i;
-	        }
-	        return sum;
-		}
-		
-	}
+call() 方法执行到 27 行 sleep 5 秒钟，然后进行 1 到 100 累加。
 
-}
-~~~
+![Example.3 - Run]({{ site.baseurl }}/assets/blog/java-future-example-3-run.png)
 
-执行结果：
+如上代码，创建一个 FutureTask，Callable Task作为构造函数的参数，随后启动一个线程并启动执行 FutureTask，测试 FutureTask 的 get() 方法。程序运行输出结果：
 
 ~~~
 子线程在进行计算
@@ -212,54 +107,19 @@ task运行结果4950
 所有任务执行完毕
 ~~~
 
-## Callable + FutureTask 以及判断任务是否完成示例
+[完整代码](https://raw.githubusercontent.com/kylinsoong/JVM/master/jdk/concurrent/src/main/java/org/ksoong/tutorial/java/concurrent/future/TestFutureTask.java)
 
-~~~
-public class TestFutureTaskPlus {
+### 案例四: Callable + FutureTask 以及判断任务是否完成示例
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
+Task 类实现了 Callable 接口
 
-		Task task = new Task();
-        FutureTask<Integer> futureTask = new FutureTask<Integer>(task);
-        Thread thread = new Thread(futureTask);
-        thread.start();
-        
-        Thread.sleep(1000);
-      
-        System.out.println("主线程在执行任务");
-        
-        System.out.println("task 是否结束: " + futureTask.isDone());
-        System.out.println("task 是否取消: " + futureTask.isCancelled());
-        try {
-			System.out.println("task运行结果" + futureTask.get(1000, TimeUnit.MICROSECONDS));
-		} catch (TimeoutException e) {
-		}
-        futureTask.cancel(true);
-        System.out.println("task 是否结束: " + futureTask.isDone());
-        System.out.println("task 是否取消: " + futureTask.isCancelled());
-        
-        System.out.println("任务取消");
-	}
-	
-	static class Task implements Callable<Integer> {
+![Example.4 - Task]({{ site.baseurl }}/assets/blog/java-future-example-2-task.png)
 
-		@Override
-		public Integer call() throws Exception {
-			System.out.println("子线程在进行计算");
-	        Thread.sleep(20000);
-	        int sum = 0;
-	        for(int i=0;i<100;i++) {
-	        	sum += i;
-	        }
-	        return sum;
-		}
-		
-	}
+call() 方法执行到 27 行 sleep 5 秒钟，然后进行 1 到 100 累加。
 
-}
-~~~
+![Example.4 - Run]({{ site.baseurl }}/assets/blog/java-future-example-4-run.png)
 
-执行结果：
+如上代码，创建一个 FutureTask，Callable Task作为构造函数的参数，随后启动一个线程并启动执行 FutureTask，测试 FutureTask 的 isDone(), isCancelled(), get(long timeout, TimeUnit unit) 等方法。程序运行输出结果：
 
 ~~~
 子线程在进行计算
@@ -271,67 +131,19 @@ task 是否取消: true
 任务取消
 ~~~
 
-## Runnable + FutureTask 获取执行结果示例
+[完整代码](https://raw.githubusercontent.com/kylinsoong/JVM/master/jdk/concurrent/src/main/java/org/ksoong/tutorial/java/concurrent/future/TestFutureTaskPlus.java)
 
-~~~
-public class TestFutureTaskRunnable {
+### 案例五: Runnable + FutureTask 获取执行结果示例
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		Result result = new Result();
-		Task task = new Task(result);
-        FutureTask<Result> futureTask = new FutureTask<Result>(task, result);
-        Thread thread = new Thread(futureTask);
-        thread.start();
-        
-        Thread.sleep(1000);
-        
-        System.out.println("主线程在执行任务");
-        
-        System.out.println("task运行结果" + futureTask.get());
-         
-        System.out.println("所有任务执行完毕");
+Task 类实现了 Runnable 接口，且它又一个 Result 属性为构造方法的参数
 
-	}
-	
-	static class Result {
-		public int result;
+![Example.5 - Task]({{ site.baseurl }}/assets/blog/java-future-example-5-task.png)
 
-		@Override
-		public String toString() {
-			return result + "";
-		}
-	}
-	
-	static class Task implements Runnable {
-		private Result result;
+run() 方法执行到 42 行 sleep 5 秒钟，然后进行 1 到 100 累加。
 
-		public Task(Result result) {
-			super();
-			this.result = result;
-		}
+![Example.5 - Run]({{ site.baseurl }}/assets/blog/java-future-example-5-run.png)
 
-		@Override
-		public void run() {
-			System.out.println("子线程在进行计算");
-	        try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        int sum = 0;
-	        for(int i=0;i<100;i++) {
-	        	sum += i;
-	        }
-	        result.result = sum;
-		}
-		
-	}
-
-}
-~~~
-
-执行结果：
+如上代码，创建一个 FutureTask，Runnable Task 和 Result 作为构造函数的参数，随后启动一个线程并启动执行 FutureTask，测试 FutureTask 的 get(t) 方法。程序运行输出结果：
 
 ~~~
 子线程在进行计算
@@ -339,4 +151,6 @@ public class TestFutureTaskRunnable {
 task运行结果4950
 所有任务执行完毕
 ~~~
+
+[完整代码](https://raw.githubusercontent.com/kylinsoong/JVM/master/jdk/concurrent/src/main/java/org/ksoong/tutorial/java/concurrent/future/TestFutureTaskRunnable.java)
 
