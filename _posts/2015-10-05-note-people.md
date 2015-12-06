@@ -8,7 +8,5 @@ author: Kylin Soong
 duoshuoid: ksoong2015100510
 ---
 
-| **Name** | **Items** | **Notes** |
-|:-----------|:-----------|:-----------|
-|习进平 |[wiki](https://zh.wikipedia.org/wiki/%E4%B9%A0%E8%BF%91%E5%B9%B3) [在文艺座谈会上的讲话](http://news.ifeng.com/a/20151014/44928424_0.shtml)|N/A |
+[习进平在文艺座谈会上的讲话](http://news.ifeng.com/a/20151014/44928424_0.shtml), [蘇起-台灣安全的新變數](http://udn.com/news/story/7339/1242949-%E5%8F%B0%E7%81%A3%E5%AE%89%E5%85%A8%E7%9A%84%E6%96%B0%E8%AE%8A%E6%95%B8)
 
