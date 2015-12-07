@@ -64,3 +64,10 @@ RequestMessage as parameter be passed from client which wrapped a sql command, R
 
 [teiid-mind-map](http://ksoong.org/teiid-mind-map/) 'Statement execute Query' section has a mind map which can help to debug the engine.
 
+### 6. Disable Client Ping
+
+By default, the Client ping are enabled for guaranteeing each client session has a relevant active server session(server hung, networking limited, connection reset will cause server session lose). In order to simplify debuging, add System properties to disable Client Ping:
+
+~~~
+-Dorg.teiid.sockets.DisablePing=false
+~~~

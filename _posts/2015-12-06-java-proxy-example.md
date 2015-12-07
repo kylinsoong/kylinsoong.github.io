@@ -45,7 +45,7 @@ public interface InvocationHandler {
 
 > 如上图 invoke() 方法中 13-16 行调运 shutdown() 方法是典型的 **代理对象添加一些处理逻辑的AOP模式**， 19-21 行通过反射来调运 SocketServerInstance 实现的其他方法。
 
-[详细参加 Teiid 源代码](https://raw.githubusercontent.com/teiid/teiid/master/client/src/main/java/org/teiid/net/socket/SocketServerConnectionFactory.java)
+[详细参见 Teiid 源代码](https://raw.githubusercontent.com/teiid/teiid/master/client/src/main/java/org/teiid/net/socket/SocketServerConnectionFactory.java)
 
 ## 案例二: ILogon Proxy
 
@@ -57,6 +57,8 @@ public interface InvocationHandler {
 
 RemoteInvocationHandler 有一个抽象方法 getInstance() 用来获取 SocketServerInstance 实现，invoke() 方法中通过 SocketServerInstance 完成发送消息给 Teiid Server 和接收 Teiid Server 返回的消息。
 
+[详细参见 Teiid 源代码](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerInstanceImpl.java)
+
 ## 案例三: DQP Proxy
 
 ![Java Proxies DQP Proxy]({{ site.baseurl }}/assets/blog/java-proxies-teiid-dqp.png)
@@ -66,3 +68,4 @@ RemoteInvocationHandler 有一个抽象方法 getInstance() 用来获取 SocketS
 
 DQP Proxy 与 ILogon Proxy 中 RemoteInvocationHandler 相同，都通过 SocketServerInstance 完成发送消息给 Teiid Server 和接收 Teiid Server 返回的消息。
 
+[详细参见 Teiid 源代码](https://github.com/teiid/teiid/blob/master/client/src/main/java/org/teiid/net/socket/SocketServerConnection.java)

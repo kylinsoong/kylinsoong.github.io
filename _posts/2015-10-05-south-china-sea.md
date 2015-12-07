@@ -10,6 +10,10 @@ duoshuoid: ksoong2015100502
 
 [南海诸岛](https://zh.wikipedia.org/wiki/%E5%8D%97%E6%B5%B7%E8%AF%B8%E5%B2%9B)
 
+![Image.1]({{ site.baseurl }}/assets/blog/nanhai-taiwan.jpg)
+
+![Image.2]({{ site.baseurl }}/assets/blog/nanhai-bbc.gif)
+
 ## Owned by China
 
 [永兴岛](https://zh.wikipedia.org/wiki/%E6%B0%B8%E5%85%B4%E5%B2%9B)

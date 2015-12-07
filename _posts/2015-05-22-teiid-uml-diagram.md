@@ -9,6 +9,26 @@ duoshuoid: ksoong2015052201
 excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ---
 
+### org.teiid.client.DQP
+
+![UML of DQP]({{ site.baseurl }}/assets/blog/teiid-uml-dqp.png)
+
+* DQP is the client core interface, client own a DQP Proxy to interact with Teiid Server
+
+### org.teiid.client.security.ILogon
+
+![UML of ILogon]({{ site.baseurl }}/assets/blog/teiid-uml-ilogon.png)
+
+* ILogon is the interface for Client generoc logon
+
+### org.teiid.net.socket.ObjectChannel
+
+![UML of ObjectChannel]({{ site.baseurl }}/assets/blog/teiid-uml-objectChannel.png)
+
+* ObjectChannel is the key interface for socket write and read, it has 2 implementation
+* OioObjectChannel is client implementation for socket read and write, which it wrapped a Socket client
+* ObjectChannelImpl is the server implementation for socket read and write, which it wrapped a Netty Server
+
 ### org.teiid.net.socket.ServerConnection
 
 ![Teiid Client Socket Connection]({{ site.baseurl }}/assets/blog/teiid-net-connection.png)
