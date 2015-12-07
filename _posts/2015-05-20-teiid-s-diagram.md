@@ -27,12 +27,11 @@ the below sequence diagram shows how DriverManager create a connection:
 
 ![teiid-create-connection]({{ site.baseurl }}/assets/blog/teiid-seq-create-connection.png)
 
-### How a connection execute the query
+### How a Statement execute the query
 
 Assuming view 'Marketdata' existed in Teiid VDB, a JDBC client execute query like:
 
 ~~~
-...
 Statement stmt = conn.createStatement();
 stmt.executeQuery("SELECT * FROM Marketdata");
 ~~~
@@ -47,6 +46,19 @@ the below sequence diagram shows how query sql `SELECT * FROM Marketdata` be sen
 * RemoteInvocationHandler assemble a `org.teiid.net.socket.Message` base on passed `org.teiid.client.RequestMessage`, then SocketServerInstanceImpl's **send** method be invoked
 * OioObjectChannel's **write** methd be invoked
 * ObjectOutputStream which come from socket **writeObject** `org.teiid.net.socket.Message`
+
+### How ResultSet get Next
+
+Continue with above Statement execute Query, ResultSet get Next like
+
+~~~
+ResultSet rs = stmt.getResultSet();
+rs.next();
+~~~
+
+the below sequence diagram shows how ResultSet get Next
+
+![teiid-resultset-next]({{ site.baseurl }}/assets/blog/teiid-seq-ResultSetImpl-hasNext.png)
 
 ### How Teiid Server handle query request
 
