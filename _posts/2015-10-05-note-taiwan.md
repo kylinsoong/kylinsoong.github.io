@@ -1,12 +1,20 @@
 ---
 layout: blog
-title:  "Notes - TaiWan"
+title:  "Notes - From Internet"
 date:   2015-10-05 15:00:00
 categories: other
 permalink: /notes-taiwan
 author: Kylin Soong
 duoshuoid: ksoong2015100503
 ---
+
+### Comments from [CrossTalk: Chinese wave](https://www.youtube.com/watch?v=ASSf3x6tRG0)
+
+First，Modern China comprises of 56 ethnic groupsin in China，We have a common name——Chinese nation.not's 汉人(Han people)not any of them, are all of them.
+
+China is a dictatorship,but i like it.After I saw the Ukrainian democracy,after I saw so many countries for democracy in the war.I don't think democracy is always good.He might be good for Europe and the United States in some countries.But I don't think if Chinese democracy are able to develop so quickly. I Would rather be effective ruled than listen those politicians bullshit(In fact China is very democratic,but you may not believe...so just let it be).
+
+China's five principles of peaceful coexistence: Mutual respect for sovereignty and territorial integrity, non-aggression, non-interference in each other's internal affairs, equality and mutual benefit, and peaceful coexistence.
 
 ### An funny comparision between 台灣 and 北韓
 
