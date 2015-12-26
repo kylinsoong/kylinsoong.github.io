@@ -3,7 +3,6 @@ layout: blog
 title:  "Teiid embedded examples"
 date:   2015-03-11 15:20:00
 categories: teiid
-permalink: /teiid-embedded-examples
 author: Kylin Soong
 duoshuoid: ksoong2015031101
 ---
