@@ -8,14 +8,49 @@ author: Kylin Soong
 duoshuoid: ksoong20150127
 ---
 
-This article show some viewpoints for how [dashboard-builder](https://github.com/droolsjbpm/dashboard-builder/tree/master/modules) works.
+* Table of contents
+{:toc}
+
+## Objectives
+
+This article is a supplement of Dashbuilder's document on [dashbuilder.org](http://www.dashbuilder.org/) and [github.com/kylinsoong/dashboard-builder](https://github.com/kylinsoong/dashboard-builder), primary purpose including:
+
+* Build [Dashbuilder](https://github.com/kylinsoong/dashboard-builder) from source code
+* Debug source code under [dashboard-builder](https://github.com/droolsjbpm/dashboard-builder/tree/master/modules).
+* Trial Dashbuilder on WildFly
 
 ## Deploy dashboard-builder to WildFly
 
-* Clone the source code via `git clone git@github.com:droolsjbpm/dashboard-builder.git`
-* Build modules via `./build.sh h2`
-* Execute Maven command `mvn clean install -Dfull -DskipTests` under `builder` directory will generate `dashbuilder-6.3.0-SNAPSHOT-wildfly8.war`
-* Deploy `dashbuilder-6.3.0-SNAPSHOT-wildfly8.war` to WildFly.
+### Build from source code
+
+~~~
+$ git clone git@github.com:kylinsoong/dashboard-builder.git
+$ cd dashboard-builder/
+$ mvn clean install -P h2,jetty -DskipTests
+$ cd builder/
+$ mvn clean install
+~~~
+
+Execute above commands will generate `dashbuilder-VERSION-wildflyX.war` under 'dashboard-builder/builder/target' folder, this war need deploy to a running WildFly Server.
+
+### Create User
+
+Navigate to WildFly Home, execute the following commands to create two user:
+
+~~~
+$ ./bin/add-user.sh -a -u root -p password1! -g admin
+$ ./bin/add-user.sh -a -u user -p password1! -g user
+~~~
+
+### Run the Dashboard Builder
+
+Once WildFly id running, `dashbuilder-VERSION-wildflyX.war` deployed success, login Dashboard Builder via
+
+    http://localhost:8080/dashbuilder
+
+and use the recently created user `root/password1!` as below figure:
+
+![Dashboard Builder Login]({{ site.baseurl }}/assets/blog/dashbuilder-login.png)
 
 ## Use Mysql with dashboard-builder
 

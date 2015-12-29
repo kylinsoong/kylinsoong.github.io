@@ -26,6 +26,9 @@ JBoss EAP 6/WildFly 以 domain 模式启动时会启动多个 JVM，例如如下
 
 > `jboss-modules.jar` 是 JBoss 底层类加载机制，用于启动一个 JVM
 
+* Table of contents
+{:toc}
+
 ## 从启动脚本开始
 
 domain.sh 脚本中如下信息:
