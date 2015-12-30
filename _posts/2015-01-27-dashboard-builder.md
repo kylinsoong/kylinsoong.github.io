@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Debug dashboard-builder"
+title:  "JBoss Dashbuilder"
 date:   2015-01-27 18:40:12
 categories: jboss
 permalink: /dashboard-builder
@@ -52,18 +52,119 @@ and use the recently created user `root/password1!` as below figure:
 
 ![Dashboard Builder Login]({{ site.baseurl }}/assets/blog/dashbuilder-login.png)
 
+## Security configuration in web.xml
+
+~~~
+  <security-role>
+    <description>Administrator</description>
+    <role-name>admin</role-name>
+  </security-role>
+
+  <security-role>
+    <description>End user</description>
+    <role-name>user</role-name>
+  </security-role>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Free access</web-resource-name>
+      <url-pattern>/images/jb_logo.png</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Restricted access</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>user</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <form-login-config>
+      <form-login-page>/login.jsp</form-login-page>
+      <form-error-page>/login_failed.jsp</form-error-page>
+    </form-login-config>
+  </login-config>
+
+  <error-page>
+    <error-code>403</error-code>
+    <location>/not_authorized.jsp</location>
+  </error-page>
+~~~
+
+* **security-role** - lists all the security roles used in the application, these roles should be mapped with roles exist in Application Server, in WildFly, map roles to a specific appication via `security-domain` which defined in `jboss-web.xml` file.
+
+* **security-constraint** - define the access privileges to a collection of resources using their URL mapping. **web-resource-collection** specifies a list of URL patterns, **auth-constraint** specifies whether authentication is to be used and names the roles authorized to perform the constrained requests.
+
+* **login-config** - define authentication method, in above configuration, Form-based authentication be defined, refer to below `Form-Based Authentication` for more details.
+
+### Form-Based Authentication
+
+Compare with Basic Authentication pop up a raw login form, Form-Based Authentication allows the developer to control the look and feel of the login authentication screens by customizing the login screen and error pages that an HTTP browser presents to the end user. As below figure:
+
+![Form Based Login]({{ site.baseurl }}/assets/blog/jee-web-form-login.png)
+
+When form-based authentication is declared, the following actions occur:
+
+* A client requests access to a protected resource.
+* If the client is unauthenticated, the server redirects the client to a login page.
+* The client submits the login form to the server.
+* The server attempts to authenticate the user. If authentication succeeds, redirect to requested protected resource, If authentication fails, redirected to an error page.
+
+An example of login form:
+
+~~~
+<form method="POST" action="j_security_check">
+    <input type="text" name="j_username">
+    <input type="password" name="j_password">
+</form>
+~~~
+
+Note that, the action of the login form must always be `j_security_check`, the input name must be `j_username` and the input password must be `j_password`.
+
 ## Use Mysql with dashboard-builder
 
 * [Step by step procedure](https://github.com/droolsjbpm/dashboard-builder/blob/master/builder/src/main/wildfly8/README.md)
 * [Set up Datasource](https://github.com/jbosschina/wildfly-dev-cookbook/blob/master/persistence/create-ds-mysql.cli)
 
-## ControllerServlet init
+## ControllerServlet
 
-ControllerServlet is the entry point for UI request, all request as below will go to ControllerServlet, this section dive into ControllerServlet init
+ControllerServlet is the entry point for UI request, all request(/workspace/*, /jsp/*, /kpi/*) will go to ControllerServlet, below figure is the sequence diagram of dashboard-builder login:
 
-* /workspace/*
-* /jsp/*
-* /kpi/*
+![Login Process]({{ site.baseurl }}/assets/blog/dashbuilder.war-servlet.png)
+
+### web fragment
+
+Started from Servlet 3.0, `web-fragment.xml` be introduced for pluggability of library jars which are packaged under WEB-INF/lib, The content of `web-fragment.xml` are almost same as `web.xml`, the `web-fragment.xml` be placed under classpath's META-INF folder.
+
+For example, in dashbuilder.war's index.jsp define a jsp forward to Servlet
+
+~~~
+<jsp:forward page="workspace"/>
+~~~
+
+`workspace` define in WEB-INF/lib/dashboard-ui-core-6.4.0-SNAPSHOT.jar/META-INF/web-fragment.xml, rather than wewb.xml, the `workspace` definition looks:
+
+~~~
+<servlet>
+    <servlet-name>Controller</servlet-name>
+    <servlet-class>org.jboss.dashboard.ui.controller.ControllerServlet</servlet-class>
+    <load-on-startup>5</load-on-startup>
+</servlet>
+<servlet-mapping>
+    <servlet-name>Controller</servlet-name>
+    <url-pattern>/workspace/*</url-pattern>
+</servlet-mapping>
+~~~
+
+### ControllerServlet init
+
+The following will dive into ControllerServlet init.
 
 **init App Directories** 
 
