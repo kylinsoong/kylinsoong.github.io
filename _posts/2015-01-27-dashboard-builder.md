@@ -168,47 +168,108 @@ The following will dive into ControllerServlet init.
 
 **init App Directories** 
 
-The following directory fields be added to `org.jboss.dashboard.Application`:
+The following 3 directory path be formed and set to @ApplicationScoped scope entiry `org.jboss.dashboard.Application`:
 
-* tmp/vfs/temp/temp7e145d2fd5273f6a/dashbuilder-6.3.0-SNAPSHOT-wildfly8.war-c7ba2b28938c64da
-* tmp/vfs/temp/temp7e145d2fd5273f6a/dashbuilder-6.3.0-SNAPSHOT-wildfly8.war-c7ba2b28938c64da/WEB-INF/etc
-* tmp/vfs/temp/temp7e145d2fd5273f6a/dashbuilder-6.3.0-SNAPSHOT-wildfly8.war-c7ba2b28938c64da/WEB-INF/lib
+* **baseAppDir** -> standalone/deployments/dashbuilder.war
+* **baseConfigDir** -> standalone/deployments/dashbuilder.war/WEB-INF/etc
+* **baseLibDir** -> standalone/deployments/dashbuilder.war/WEB-INF/lib
+
+Key code used to extract baseAppDir:
+
+~~~
+baseAppDir = new File(getServletContext().getRealPath("/")).getPath();
+~~~
 
 **Startable Start**
 
-* `org.jboss.dashboard.database.hibernate.HibernateInitializer`
-* `org.jboss.dashboard.cluster.ClusterNodesManager`
-* `org.jboss.dashboard.workspace.SkinsManagerImpl`
-* `org.jboss.dashboard.workspace.PanelsProvidersManagerImpl`
-* `org.jboss.dashboard.workspace.EnvelopesManagerImpl`
-* `org.jboss.dashboard.workspace.LayoutsManagerImpl`
-* `org.jboss.dashboard.ui.resources.ResourceManagerImpl`
-* `org.jboss.dashboard.security.UIPolicy`
-* `org.jboss.dashboard.DeploymentScanner`
-* `org.jboss.dashboard.initialModule.InitialModulesManager`
+The Startable happens in ControllerServlet init, the sequence like
+
+![Startable Start]({{ site.baseurl }}/assets/blog/jboss-dashbuilder-controllerServlet-init.png)
+
+All 10 Startable be started including:
+
+~~~
+org.jboss.dashboard.security.UIPolicy
+org.jboss.dashboard.workspace.PanelsProvidersManagerImpl
+org.jboss.dashboard.workspace.SkinsManagerImpl
+org.jboss.dashboard.initialModule.InitialModulesManager
+org.jboss.dashboard.cluster.ClusterNodesManager
+org.jboss.dashboard.workspace.LayoutsManagerImpl
+org.jboss.dashboard.ui.resources.ResourceManagerImpl
+org.jboss.dashboard.workspace.EnvelopesManagerImpl
+org.jboss.dashboard.DeploymentScanner
+org.jboss.dashboard.database.hibernate.HibernateInitializer
+~~~
 
 **Hibernate cfg**
 
+
+### HibernateInitializer
+
+Startable HibernateInitializer start initializes the Hibernate framework. It reads all the *.hbm.xml files and push them as part of the Hibernate configuration. Furthermore, initializes a SessionFactory object that will be used further by transactions. 
+
+dashbuilder.war's total 16 .hbm.xml files be placed in 7 places:
+
+**1. dashbuilder.war/WEB-INFO/etc**
+
 ~~~
-org/jboss/dashboard/ui/resources/GraphicElement.hbm.xml
-org/jboss/dashboard/workspace/Workspace.hbm.xml
-org/jboss/dashboard/workspace/PanelParameter.hbm.xml
-org/jboss/dashboard/workspace/Panel.hbm.xml
-org/jboss/dashboard/workspace/PanelInstance.hbm.xml
-org/jboss/dashboard/workspace/Section.hbm.xml
+hibernate.cfg.xml
+~~~
+
+**2. dashbuilder.war/WEB-INF/lib/dashboard-security-VERSION.jar**
+
+~~~
+org/jboss/dashboard/security/PermissionDescriptor.hbm.xml
+~~~
+
+**3. dashbuilder.war/WEB-INF/lib/dashboard-commons-VERSION.jar**
+
+~~~
+org/jboss/dashboard/cluster/ClusterNode.hbm.xml
 org/jboss/dashboard/database/InstalledModule.hbm.xml
 org/jboss/dashboard/database/DataSourceEntry.hbm.xml
-org/jboss/dashboard/cluster/ClusterNode.hbm.xml
-org/jboss/dashboard/security/PermissionDescriptor.hbm.xml
-org/jboss/dashboard/ui/panel/advancedHTML/HtmlCode.hbm.xml
-org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceTableEntry.hbm.xml
-org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceColumnEntry.hbm.xml
+~~~
+
+**4. dashbuilder.war/WEB-INF/lib/dashboard-provider-core-VERSION.jar**
+
+~~~
 org/jboss/dashboard/provider/DataProvider.hbm.xml
+~~~
+
+**5. dashbuilder.war/WEB-INF/lib/dashboard-ui-core-VERSION.jar**
+
+~~~
+org/jboss/dashboard/ui/resources/GraphicElement.hbm.xml
+org/jboss/dashboard/workspace/Section.hbm.xml
+org/jboss/dashboard/workspace/PanelInstance.hbm.xml
+org/jboss/dashboard/workspace/PanelParameter.hbm.xml
+org/jboss/dashboard/workspace/Panel.hbm.xml
+jboss/dashboard/workspace/Workspace.hbm.xml
+~~~
+
+**6. dashbuilder.war/WEB-INF/lib/dashboard-displayer-core-VERSION.jar**
+
+~~~
 org/jboss/dashboard/kpi/KPI.hbm.xml
 ~~~
 
-## HibernateInitializer
+**7. dashbuilder.war/WEB-INF/lib/dashboard-ui-panels-VERSION.jar**
 
-[org.jboss.teiid.dashboard.hibernate.HibernateInitializerTest](https://github.com/kylinsoong/teiid-samples/blob/master/dashboard/src/main/java/org/jboss/teiid/dashboard/hibernate/HibernateInitializerTest.java)
+~~~
+org/jboss/dashboard/ui/panel/advancedHTML/HtmlCode.hbm.xml
+org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceColumnEntry.hbm.xml
+org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceTableEntry.hbm.xml
+~~~
 
+The key Hibernate API used in dashbuilder to init the SessionFactory looks
+
+~~~
+Configuration hbmConfig = new Configuration().configure(new File(hibernate.cfg.xml));
+loadHibernateDescriptors(hbmConfig);
+ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(hbmConfig.getProperties());
+ServiceRegistry serviceRegistry = serviceRegistryBuilder.buildServiceRegistry();
+SessionFactory factory = hbmConfig.buildSessionFactory(serviceRegistry);
+~~~
+
+Completed runable code refer to [HibernateInitializerTest](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/dashboard/src/main/java/org/jboss/teiid/dashboard/hibernate/HibernateInitializerTest.java)
 
