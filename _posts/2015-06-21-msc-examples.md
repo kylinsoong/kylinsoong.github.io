@@ -8,7 +8,12 @@ duoshuoid: ksoong2015062101
 excerpt: JBoss MSC(Modular Service Container) 示例  
 ---
 
-本文包括如下示例:
+* Table of contents
+{:toc}
+
+## Overview
+
+本文包括如下示例([JBoss MSC API 介绍](http://ksoong.org/jboss/2015/06/21/msc-api/)):
 
 * HelloWorld 示例
 * Service Hierarchy 示例

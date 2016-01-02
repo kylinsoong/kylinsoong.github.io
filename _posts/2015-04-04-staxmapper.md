@@ -1,12 +1,17 @@
 ---
 layout: blog
-title:  "JBoss staxmapper 介绍"
+title:  "JBoss staxmapper"
 date:   2015-04-04 17:30:12
 categories: jboss
 author: Kylin Soong
 duoshuoid: ksoong2015040401
 excerpt: A thin StAX facade which supports plugability plus some usability enhancements.  
 ---
+
+* Table of contents
+{:toc}
+
+## Warm-up
 
 JBoss staxmapper 是对 JDK StaX API 扩展，对外提供一个 facade 接口 org.jboss.staxmapper.XMLMapper, 通过 facade 接口对 XLM 进行读写。
 
