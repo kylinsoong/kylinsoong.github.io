@@ -244,7 +244,7 @@ org/jboss/dashboard/workspace/Section.hbm.xml
 org/jboss/dashboard/workspace/PanelInstance.hbm.xml
 org/jboss/dashboard/workspace/PanelParameter.hbm.xml
 org/jboss/dashboard/workspace/Panel.hbm.xml
-jboss/dashboard/workspace/Workspace.hbm.xml
+org/jboss/dashboard/workspace/Workspace.hbm.xml
 ~~~
 
 **6. dashbuilder.war/WEB-INF/lib/dashboard-displayer-core-VERSION.jar**
