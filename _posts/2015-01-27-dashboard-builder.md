@@ -204,7 +204,7 @@ org.jboss.dashboard.database.hibernate.HibernateInitializer
 **Hibernate cfg**
 
 
-### HibernateInitializer
+#### HibernateInitializer
 
 Startable HibernateInitializer start initializes the Hibernate framework. It reads all the *.hbm.xml files and push them as part of the Hibernate configuration. Furthermore, initializes a SessionFactory object that will be used further by transactions. 
 
