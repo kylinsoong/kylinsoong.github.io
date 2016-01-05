@@ -189,22 +189,18 @@ The Startable happens in ControllerServlet init, the sequence like
 All 10 Startable be started including:
 
 ~~~
+org.jboss.dashboard.database.hibernate.HibernateInitializer
 org.jboss.dashboard.security.UIPolicy
 org.jboss.dashboard.workspace.PanelsProvidersManagerImpl
 org.jboss.dashboard.workspace.SkinsManagerImpl
-org.jboss.dashboard.initialModule.InitialModulesManager
 org.jboss.dashboard.cluster.ClusterNodesManager
 org.jboss.dashboard.workspace.LayoutsManagerImpl
 org.jboss.dashboard.ui.resources.ResourceManagerImpl
 org.jboss.dashboard.workspace.EnvelopesManagerImpl
 org.jboss.dashboard.DeploymentScanner
-org.jboss.dashboard.database.hibernate.HibernateInitializer
 ~~~
 
 **Hibernate cfg**
-
-
-#### HibernateInitializer
 
 Startable HibernateInitializer start initializes the Hibernate framework. It reads all the *.hbm.xml files and push them as part of the Hibernate configuration. Furthermore, initializes a SessionFactory object that will be used further by transactions. 
 
@@ -261,15 +257,26 @@ org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceColumnEntry.hbm.xml
 org/jboss/dashboard/ui/panel/dataSourceManagement/DataSourceTableEntry.hbm.xml
 ~~~
 
+#### Using Hibernate Service API create SessionFactory
+
 The key Hibernate API used in dashbuilder to init the SessionFactory looks
 
-~~~
-Configuration hbmConfig = new Configuration().configure(new File(hibernate.cfg.xml));
-loadHibernateDescriptors(hbmConfig);
-ServiceRegistryBuilder serviceRegistryBuilder = new ServiceRegistryBuilder().applySettings(hbmConfig.getProperties());
-ServiceRegistry serviceRegistry = serviceRegistryBuilder.buildServiceRegistry();
-SessionFactory factory = hbmConfig.buildSessionFactory(serviceRegistry);
-~~~
+![Hibernate SessionFactory Create API]({{ site.baseurl }}/assets/blog/hibernate-createSessionFactory-api.png)
 
-Completed runable code refer to [HibernateInitializerTest](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/dashboard/src/main/java/org/jboss/teiid/dashboard/hibernate/HibernateInitializerTest.java)
+* 第 2 - 3 行实例化一个 `org.hibernate.cfg.Configuration` 对象，加载 Hibernate 配置文件 *.hbm.xml
+* 第 4 - 5 行通过 `org.hibernate.service.ServiceRegistryBuilder` 实例化一个 `org.hibernate.service.ServiceRegistry`
+* 第 6 行创建 SessionFactory
+
+Completed runable code refer to [HibernateInitializerH2](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/dashboard/src/main/java/org/jboss/teiid/dashboard/hibernate/HibernateInitializerH2.java)
+
+#### Using Hibernate Session execute JDBC operations
+
+The `org.hibernate.Session` can be used to execute JDBC operations, it looks
+
+![Hibernate Session JDBC]({{ site.baseurl }}/assets/blog/hibernate-session-jdbc.png)
+
+* 第 2 - 19 行实例化了一个 `org.hibernate.jdbc.Work`，execute(Connection connection) 方法用来执行 JDBC 操作
+* 第 20 行通过 sessionFactory 创建一个 `org.hibernate.Session`
+* 第 21 - 23 执行 Work，重写的 execute(Connection connection) 方法被调运
+
 
