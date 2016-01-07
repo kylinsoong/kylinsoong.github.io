@@ -198,6 +198,7 @@ org.jboss.dashboard.workspace.LayoutsManagerImpl
 org.jboss.dashboard.ui.resources.ResourceManagerImpl
 org.jboss.dashboard.workspace.EnvelopesManagerImpl
 org.jboss.dashboard.DeploymentScanner
+org.jboss.dashboard.initialModule.InitialModulesManager
 ~~~
 
 **Hibernate cfg**
