@@ -1,12 +1,18 @@
 ---
 layout: blog
-title:  "Understanding Teiid Transport Layer"
+title:  "Understanding Teiid Transport"
 date:   2015-12-02 18:10:00
 categories: teiid
 permalink: /teiid-transport
 author: Kylin Soong
 duoshuoid: ksoong2015120201
+excerpt: Teiid Transport, Netty Server, Socket Client in JDBC Driver, Transport Security
 ---
+
+* Table of contents
+{:toc}
+
+## Overview
 
 [Teiid](http://teiid.jboss.org) supply a jdbc driver which allows java applications to use data from multiple, heterogenous data stores,
 
@@ -110,3 +116,13 @@ these 2 types security logon happens as a sequence, first do handshake to set Cr
 * Teiid Server send handshake ack to Client
 * Client send `Logon` message(contain JDBC url, username, password) to Teiid Server
 * Teiid Server handle `Logon` message, send logon ack to Client
+
+## Transport Security
+
+### USERPASSWORD based authentication
+
+The simplest way of authentication, 'username/password' be passed to Server side, Server do JAAS based authentication, if user is valid, authentication success, Server send a LogonResult to Client, the sequence diagram like:
+
+![Teiid Client logon usernamepassword]({{ site.baseurl }}/assets/blog/teiid-client-logon-usernamepassword.png)
+
+

@@ -16,6 +16,6 @@ duoshuoid: ksoong2015100530
 * [Kitco 金拓 - www.kitco.cn/](http://www.kitco.cn/) - ajax.googleapis.com 被屏蔽导致页面无法访问
 
 
-## IT 类
+### IT 科技类
 
 * [JBoss 社区 - www.jboss.org](http://www.jboss.org) - ajax.googleapis.com 和 youtube.com 被屏蔽导致页面加载缓慢，网站某些视频无法观看
