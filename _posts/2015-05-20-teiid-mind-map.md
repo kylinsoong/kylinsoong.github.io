@@ -9,14 +9,8 @@ duoshuoid: ksoong2015052001
 excerpt: Teiid Mind Map Gallery Contains a series Mind Map diagrams
 ---
 
-The Mind Map in this article including:
-
-* TeiidDriver create a Connection
-* TeiidDriver create a Connection in embedded
-* Statement execute Query
-* Teiid Embedded Server Initialization
-* Teiid Embedded Server startup
-* Teiid Embedded Server deployVDB
+* Table of contents
+{:toc}
 
 ## TeiidDriver create a Connection
 

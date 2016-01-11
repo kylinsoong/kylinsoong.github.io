@@ -9,6 +9,9 @@ duoshuoid: ksoong2015052002
 excerpt: Teiid Sequence Diagrams Contains a series Sequence diagrams
 ---
 
+* Table of contents
+{:toc}
+
 ## Teiid Client
 
 ### How a connection be created

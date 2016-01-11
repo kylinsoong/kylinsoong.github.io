@@ -9,6 +9,9 @@ duoshuoid: ksoong2015052201
 excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ---
 
+* Table of contents
+{:toc}
+
 ### org.teiid.client.DQP
 
 ![UML of DQP]({{ site.baseurl }}/assets/blog/teiid-uml-dqp.png)
