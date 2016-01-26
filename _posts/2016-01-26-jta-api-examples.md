@@ -90,12 +90,10 @@ tm.begin();
 Transaction t = tm.getTransaction();
 t.registerSynchronization(new Synchronization(){
 
-    @Override
     public void beforeCompletion() {
         System.out.println("transaction before completion");
     }
 
-    @Override
     public void afterCompletion(int status) {
         System.out.println("transaction after completion, status: " + status);
     }
