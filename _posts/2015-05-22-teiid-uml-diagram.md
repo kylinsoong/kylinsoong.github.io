@@ -12,6 +12,8 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 * Table of contents
 {:toc}
 
+## Client
+
 ### org.teiid.client.DQP
 
 ![UML of DQP]({{ site.baseurl }}/assets/blog/teiid-uml-dqp.png)
@@ -38,13 +40,17 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 * SocketServerConnection - Represents a client connection that maintains session state and allows for service fail over. Implements a sticky random selection policy.
 
+### org.teiid.jdbc.ConnectionProfile
+
+![Teiid Connection profile]({{ site.baseurl }}/assets/blog/teiid-connection-profile.png)
+
+## Transport
+
 ### org.teiid.transport.ClientServiceRegistry
 
 ![Teiid Client Registry]({{ site.baseurl }}/assets/blog/teiid-client-registry.png)
 
-### org.teiid.jdbc.ConnectionProfile
-
-![Teiid Connection profile]({{ site.baseurl }}/assets/blog/teiid-connection-profile.png)
+## API
 
 ### org.teiid.metadata.AbstractMetadataRecord
 
@@ -53,6 +59,16 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 ### org.teiid.metadata.MetadataRepository<F,C>
 
 ![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadatarepo.png)
+
+### Teiid Language API
+
+Refer to [link](http://ksoong.org/teiid-language-api/)
+
+## Engine
+
+### Teiid Query Sql API
+
+Refer to [link](http://ksoong.org/teiid-query-sql-api/)
 
 ### org.teiid.dqp.internal.process.RequestWorkItem
 
@@ -93,6 +109,10 @@ The CapabilitiesFinder describes how to find connector capabilities.
 ### org.teiid.query.resolver.CommandResolver
 
 ![CommandResolver]({{ site.baseurl }}/assets/blog/teiid-commandresolver.png)
+
+### org.teiid.query.optimizer.CommandPlanner
+
+![CommandPlanner]({{ site.baseurl }}/assets/blog/teiid-CommandPlanner.png)
 
 ### org.teiid.query.processor.ProcessorPlan
 
