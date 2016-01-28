@@ -77,6 +77,24 @@ Refer to [link](http://ksoong.org/teiid-query-sql-api/)
 * RequestWorkItem - Compiles results and other information for the client.  There is quite a bit of logic surrounding forming batches to prevent buffer growth, send multiple batches at a time, partial batches, etc.  There is also special handling for the update count case, which needs to read the entire result before sending it back to the client.
 * AbstractWorkItem - Represents a task that performs work that may take more than one processing pass to complete. During processing the WorkItem may receive events asynchronously through the moreWork method.
 
+### org.teiid.dqp.internal.process.Request
+
+![Request UML]({{ site.baseurl }}/assets/blog/teiid-dqp-process-request.png)
+
+### org.teiid.query.util.CommandContext
+
+![org.teiid.query.util.CommandContext]({{ site.baseurl }}/assets/blog/teiid-uml-commandcontext.png)
+
+* CommandContext defines the context that a command is processing in.  For example, this defines who is processing the command and why. Also, this class (or subclasses) provide a means to pass context-specific information between users of the query processor framework.
+
+### org.teiid.query.processor.relational.AccessNode
+
+![AccessNode]({{ site.baseurl }}/assets/blog/teiid-uml-AccessNode.png)
+
+### org.teiid.query.optimizer.relational.OptimizerRule
+
+![OptimizerRule]({{ site.baseurl }}/assets/blog/teiid-uml-OptimizerRule.png)
+
 ### org.teiid.dqp.internal.process.ThreadReuseExecutor
 
 ![ThreadReuseExecutor]({{ site.baseurl }}/assets/blog/teiid-threadreuseexecutor.png)
