@@ -56,9 +56,53 @@ excerpt: Teiid UML Diagrams Contains a series UML diagrams
 
 ![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadata.png)
 
+**Example - Schema**
+
+~~~java
+MetadataStore metadataStore = new MetadataStore();
+Schema schema = new Schema();
+schema.setName("name");
+metadataStore.addSchema(schema);
+~~~
+
+> NOTE: A Schema mainly contain Table, Procedure, FunctionMethod.
+
+**Example - Table**
+
+~~~java
+Table table = new Table();
+table.setName("name");
+table.setSupportsUpdate(true);
+table.setTableType(org.teiid.metadata.Table.Type.Table);
+schema.addTable(table);
+~~~
+
+**Example - Column**
+
+~~~java
+Table table = new Table();
+...        
+Column column = new Column();
+column.setName("name");
+column.setRuntimeType(DataTypeManager.DefaultDataTypes.STRING);
+column.setSearchType(SearchType.Searchable); 
+column.setNullType(NullType.Nullable);
+column.setPosition(1);
+column.setUpdatable(true);
+column.setLength(100);
+table.addColumn(column);
+~~~
+
 ### org.teiid.metadata.MetadataRepository<F,C>
 
 ![Teiid MetaData API Hierarchy]({{ site.baseurl }}/assets/blog/teiid-metadatarepo.png)
+
+### org.teiid.query.metadata.CompositeMetadataStore
+
+![org.teiid.query.metadata.CompositeMetadataStore]({{ site.baseurl }}/assets/blog/teiid-uml-MetadataStore.png)
+
+* MetadataStore is a sample holder for metadata, which mainly contain Schemas(`org.teiid.metadata.Schema`) and DataTypes(`org.teiid.metadata.Datatype`).
+* CompositeMetadataStore add function of merge MetadataStore together.
 
 ### Teiid Language API
 
