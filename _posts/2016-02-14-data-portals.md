@@ -1,7 +1,7 @@
 ---
 layout: blog
 title:  "Free Data Sources"
-date:   2015-08-03 18:00:00
+date:   2016-02-14 12:00:00
 categories: data
 permalink: /free-data-sourvces
 author: Kylin Soong
