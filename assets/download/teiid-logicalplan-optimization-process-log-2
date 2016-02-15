@@ -1,0 +1,139 @@
+============================================================================
+USER COMMAND:
+SELECT MAX(pm1.G1.E1) FROM pm1.G1 WHERE pm1.G1.E2 = 1
+
+----------------------------------------------------------------------------
+OPTIMIZE: 
+SELECT MAX(pm1.G1.E1) FROM pm1.G1 WHERE pm1.G1.E2 = 1
+
+----------------------------------------------------------------------------
+GENERATE CANONICAL: 
+SELECT MAX(pm1.G1.E1) FROM pm1.G1 WHERE pm1.G1.E2 = 1
+
+CANONICAL PLAN: 
+Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1]})
+  Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}})
+    Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1})
+      Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING PlaceAccess
+
+AFTER: 
+Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1]})
+  Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}})
+    Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1})
+      Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING PushSelectCriteria
+
+AFTER: 
+Project(groups=[anon_grp0])
+  Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}})
+    Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+      Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1})
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING CleanCriteria
+
+AFTER: 
+Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1], OUTPUT_COLS=null})
+  Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}, OUTPUT_COLS=null})
+    Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+      Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1, OUTPUT_COLS=null})
+        Source(groups=[pm1.G1], props={OUTPUT_COLS=null})
+
+
+============================================================================
+EXECUTING RaiseAccess
+
+AFTER: 
+Access(groups=[anon_grp0], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+  Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1], OUTPUT_COLS=null})
+    Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}, OUTPUT_COLS=null})
+      Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1, OUTPUT_COLS=null})
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING PushAggregates
+
+AFTER: 
+Access(groups=[anon_grp0])
+  Project(groups=[anon_grp0])
+    Group(groups=[anon_grp0])
+      Select(groups=[pm1.G1])
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING AssignOutputElements
+
+AFTER: 
+Access(groups=[anon_grp0], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[anon_grp0.agg0 AS expr1]})
+  Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1], OUTPUT_COLS=[anon_grp0.agg0 AS expr1]})
+    Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}, OUTPUT_COLS=[anon_grp0.agg0]})
+      Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1, OUTPUT_COLS=[pm1.G1.E1]})
+        Source(groups=[pm1.G1], props={OUTPUT_COLS=[pm1.G1.E2, pm1.G1.E1]})
+
+
+============================================================================
+EXECUTING CalculateCost
+
+AFTER: 
+Access(groups=[anon_grp0], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[anon_grp0.agg0 AS expr1], EST_CARDINALITY=1.0, EST_COL_STATS={anon_grp0.agg0 AS expr1=[1.0, 1.0]}})
+  Project(groups=[anon_grp0], props={PROJECT_COLS=[anon_grp0.agg0 AS expr1], OUTPUT_COLS=[anon_grp0.agg0 AS expr1], EST_CARDINALITY=1.0, EST_COL_STATS={anon_grp0.agg0 AS expr1=[1.0, 1.0]}})
+    Group(groups=[anon_grp0], props={SYMBOL_MAP={anon_grp0.agg0=MAX(pm1.G1.E1)}, OUTPUT_COLS=[anon_grp0.agg0], EST_CARDINALITY=1.0, EST_COL_STATS={anon_grp0.agg0=[1.0, 0.0]}})
+      Select(groups=[pm1.G1], props={SELECT_CRITERIA=pm1.G1.E2 = 1, OUTPUT_COLS=[pm1.G1.E1], EST_CARDINALITY=-1.0})
+        Source(groups=[pm1.G1], props={OUTPUT_COLS=[pm1.G1.E2, pm1.G1.E1], EST_COL_STATS={pm1.G1.E2=[-1.0, -1.0], pm1.G1.E1=[-1.0, -1.0]}, EST_CARDINALITY=-1.0})
+
+
+============================================================================
+EXECUTING MergeCriteria
+
+AFTER: 
+Access(groups=[anon_grp0])
+  Project(groups=[anon_grp0])
+    Group(groups=[anon_grp0])
+      Select(groups=[pm1.G1])
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING PlanSorts
+
+AFTER: 
+Access(groups=[anon_grp0])
+  Project(groups=[anon_grp0])
+    Group(groups=[anon_grp0])
+      Select(groups=[pm1.G1])
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING CollapseSource
+
+AFTER: 
+Access(groups=[anon_grp0], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[anon_grp0.agg0 AS expr1], EST_CARDINALITY=1.0, EST_COL_STATS={anon_grp0.agg0 AS expr1=[1.0, 1.0]}, ATOMIC_REQUEST=SELECT MAX(pm1.G1.E1) AS expr1 FROM pm1.G1 WHERE pm1.G1.E2 = 1})
+
+
+============================================================================
+CONVERTING PLAN TREE TO PROCESS TREE
+
+PROCESS PLAN = 
+AccessNode(1) output=[anon_grp0.agg0 AS expr1] SELECT MAX(g_0.E1) FROM pm1.G1 AS g_0 WHERE g_0.E2 = 1
+
+============================================================================
+
+----------------------------------------------------------------------------
+OPTIMIZATION COMPLETE:
+PROCESSOR PLAN:
+AccessNode(1) output=[anon_grp0.agg0 AS expr1] SELECT MAX(g_0.E1) FROM pm1.G1 AS g_0 WHERE g_0.E2 = 1
+
+============================================================================

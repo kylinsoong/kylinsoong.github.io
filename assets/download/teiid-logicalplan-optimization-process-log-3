@@ -1,0 +1,116 @@
+============================================================================
+USER COMMAND:
+SELECT x.E1 FROM (SELECT pm1.G1.E1 FROM pm1.G1) AS x
+
+----------------------------------------------------------------------------
+OPTIMIZE: 
+SELECT x.E1 FROM (SELECT pm1.G1.E1 FROM pm1.G1) AS x
+
+----------------------------------------------------------------------------
+GENERATE CANONICAL: 
+SELECT x.E1 FROM (SELECT pm1.G1.E1 FROM pm1.G1) AS x
+
+CANONICAL PLAN: 
+Project(groups=[x], props={PROJECT_COLS=[x.E1]})
+  Source(groups=[x], props={NESTED_COMMAND=SELECT pm1.G1.E1 FROM pm1.G1, SYMBOL_MAP={x.E1=pm1.G1.E1}})
+    Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1]})
+      Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING PlaceAccess
+
+AFTER: 
+Project(groups=[x], props={PROJECT_COLS=[x.E1]})
+  Source(groups=[x], props={NESTED_COMMAND=SELECT pm1.G1.E1 FROM pm1.G1, SYMBOL_MAP={x.E1=pm1.G1.E1}})
+    Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1]})
+      Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+        Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING AssignOutputElements
+
+AFTER: 
+Project(groups=[x], props={PROJECT_COLS=[x.E1], OUTPUT_COLS=[x.E1]})
+  Source(groups=[x], props={NESTED_COMMAND=SELECT pm1.G1.E1 FROM pm1.G1, SYMBOL_MAP={x.E1=pm1.G1.E1}, OUTPUT_COLS=[x.E1]})
+    Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=[pm1.G1.E1]})
+      Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[pm1.G1.E1]})
+        Source(groups=[pm1.G1], props={OUTPUT_COLS=[pm1.G1.E1]})
+
+
+============================================================================
+EXECUTING MergeVirtual
+
+AFTER: 
+Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=[x.E1]})
+  Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[pm1.G1.E1]})
+    Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING CleanCriteria
+
+AFTER: 
+Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=null})
+  Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+    Source(groups=[pm1.G1], props={OUTPUT_COLS=null})
+
+
+============================================================================
+EXECUTING RaiseAccess
+
+AFTER: 
+Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+  Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=null})
+    Source(groups=[pm1.G1], props={OUTPUT_COLS=null})
+
+
+============================================================================
+EXECUTING AssignOutputElements
+
+AFTER: 
+Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[pm1.G1.E1]})
+  Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=[pm1.G1.E1]})
+    Source(groups=[pm1.G1], props={OUTPUT_COLS=[pm1.G1.E1]})
+
+
+============================================================================
+EXECUTING CalculateCost
+
+AFTER: 
+Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[pm1.G1.E1], EST_CARDINALITY=-1.0})
+  Project(groups=[pm1.G1], props={PROJECT_COLS=[pm1.G1.E1], OUTPUT_COLS=[pm1.G1.E1], EST_CARDINALITY=-1.0})
+    Source(groups=[pm1.G1], props={OUTPUT_COLS=[pm1.G1.E1], EST_COL_STATS={pm1.G1.E1=[-1.0, -1.0]}, EST_CARDINALITY=-1.0})
+
+
+============================================================================
+EXECUTING PlanSorts
+
+AFTER: 
+Access(groups=[pm1.G1])
+  Project(groups=[pm1.G1])
+    Source(groups=[pm1.G1])
+
+
+============================================================================
+EXECUTING CollapseSource
+
+AFTER: 
+Access(groups=[pm1.G1], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[pm1.G1.E1], EST_CARDINALITY=-1.0, ATOMIC_REQUEST=SELECT pm1.G1.E1 FROM pm1.G1})
+
+
+============================================================================
+CONVERTING PLAN TREE TO PROCESS TREE
+
+PROCESS PLAN = 
+AccessNode(0) output=[pm1.G1.E1] SELECT g_0.E1 FROM pm1.G1 AS g_0
+
+============================================================================
+
+----------------------------------------------------------------------------
+OPTIMIZATION COMPLETE:
+PROCESSOR PLAN:
+AccessNode(0) output=[pm1.G1.E1] SELECT g_0.E1 FROM pm1.G1 AS g_0
+
+============================================================================

@@ -1,0 +1,280 @@
+============================================================================
+USER COMMAND:
+SELECT e.TITLE, e.LASTNAME FROM pm1.EMPLOYEES AS e INNER JOIN pm1.DEPARTMENTS AS d ON e.DEPT_ID = d.DEPT_ID WHERE (year(e.BIRTHDAY) >= 1970) AND (d.DEPT_NAME = 'Engineering')
+
+----------------------------------------------------------------------------
+OPTIMIZE: 
+SELECT e.TITLE, e.LASTNAME FROM pm1.EMPLOYEES AS e INNER JOIN pm1.DEPARTMENTS AS d ON e.DEPT_ID = d.DEPT_ID WHERE (year(e.BIRTHDAY) >= 1970) AND (d.DEPT_NAME = 'Engineering')
+
+----------------------------------------------------------------------------
+GENERATE CANONICAL: 
+SELECT e.TITLE, e.LASTNAME FROM pm1.EMPLOYEES AS e INNER JOIN pm1.DEPARTMENTS AS d ON e.DEPT_ID = d.DEPT_ID WHERE (year(e.BIRTHDAY) >= 1970) AND (d.DEPT_NAME = 'Engineering')
+
+CANONICAL PLAN: 
+Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME]})
+  Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering'})
+    Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970})
+      Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID]})
+        Source(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING PlaceAccess
+
+AFTER: 
+Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME]})
+  Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering'})
+    Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970})
+      Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID]})
+        Access(groups=[pm1.EMPLOYEES AS e], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+          Source(groups=[pm1.EMPLOYEES AS e])
+        Access(groups=[pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+          Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING PushSelectCriteria
+
+AFTER: 
+Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME]})
+  Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID]})
+    Access(groups=[pm1.EMPLOYEES AS e], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970})
+        Source(groups=[pm1.EMPLOYEES AS e])
+    Access(groups=[pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering'})
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING PushNonJoinCriteria
+
+AFTER: 
+Project(groups=[pm1.EMPLOYEES AS e])
+  Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID]})
+    Access(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+    Access(groups=[pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING CleanCriteria
+
+AFTER: 
+Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME], OUTPUT_COLS=null})
+  Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=null})
+    Access(groups=[pm1.EMPLOYEES AS e], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=null})
+        Source(groups=[pm1.EMPLOYEES AS e], props={OUTPUT_COLS=null})
+    Access(groups=[pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null})
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=null})
+        Source(groups=[pm1.DEPARTMENTS AS d], props={OUTPUT_COLS=null})
+
+
+============================================================================
+EXECUTING RaiseAccess
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null, CONFORMED_SOURCES=null})
+  Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME], OUTPUT_COLS=null})
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=null})
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=null})
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING CopyCriteria
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, IS_COPIED=true})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING CleanCriteria
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=null, CONFORMED_SOURCES=null})
+  Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME], OUTPUT_COLS=null})
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, IS_COPIED=true})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.EMPLOYEES AS e], props={OUTPUT_COLS=null})
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.DEPARTMENTS AS d], props={OUTPUT_COLS=null})
+
+
+============================================================================
+EXECUTING PlanJoins
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING PushSelectCriteria
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=null, IS_COPIED=true})
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING RaiseAccess
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING org.teiid.query.optimizer.relational.rules.RulePlanOuterJoins@3f442c7b
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING ChooseJoinStrategy
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING ChooseDependent
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING AssignOutputElements
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[e.TITLE, e.LASTNAME], CONFORMED_SOURCES=null})
+  Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME], OUTPUT_COLS=[e.TITLE, e.LASTNAME]})
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=[e.TITLE, e.LASTNAME], MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, IS_COPIED=true})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=[e.DEPT_ID, e.TITLE, e.LASTNAME], IS_COPIED=true})
+        Source(groups=[pm1.EMPLOYEES AS e], props={OUTPUT_COLS=[e.BIRTHDAY, e.DEPT_ID, e.TITLE, e.LASTNAME]})
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=[d.DEPT_ID], IS_COPIED=true})
+        Source(groups=[pm1.DEPARTMENTS AS d], props={OUTPUT_COLS=[d.DEPT_NAME, d.DEPT_ID]})
+
+
+============================================================================
+EXECUTING CalculateCost
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[e.TITLE, e.LASTNAME], CONFORMED_SOURCES=null, EST_CARDINALITY=-1.0})
+  Project(groups=[pm1.EMPLOYEES AS e], props={PROJECT_COLS=[e.TITLE, e.LASTNAME], OUTPUT_COLS=[e.TITLE, e.LASTNAME], EST_CARDINALITY=-1.0})
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={JOIN_TYPE=INNER JOIN, JOIN_STRATEGY=NESTED_LOOP, JOIN_CRITERIA=[e.DEPT_ID = d.DEPT_ID], OUTPUT_COLS=[e.TITLE, e.LASTNAME], MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, IS_COPIED=true, EST_CARDINALITY=-1.0})
+      Select(groups=[pm1.EMPLOYEES AS e], props={SELECT_CRITERIA=year(e.BIRTHDAY) >= 1970, OUTPUT_COLS=[e.DEPT_ID, e.TITLE, e.LASTNAME], IS_COPIED=true, EST_CARDINALITY=-1.0})
+        Source(groups=[pm1.EMPLOYEES AS e], props={OUTPUT_COLS=[e.BIRTHDAY, e.DEPT_ID, e.TITLE, e.LASTNAME], EST_COL_STATS={e.BIRTHDAY=[-1.0, -1.0], e.DEPT_ID=[-1.0, -1.0], e.TITLE=[-1.0, -1.0], e.LASTNAME=[-1.0, -1.0]}, EST_CARDINALITY=-1.0})
+      Select(groups=[pm1.DEPARTMENTS AS d], props={SELECT_CRITERIA=d.DEPT_NAME = 'Engineering', OUTPUT_COLS=[d.DEPT_ID], IS_COPIED=true, EST_CARDINALITY=-1.0})
+        Source(groups=[pm1.DEPARTMENTS AS d], props={OUTPUT_COLS=[d.DEPT_NAME, d.DEPT_ID], EST_COL_STATS={d.DEPT_NAME=[-1.0, -1.0], d.DEPT_ID=[-1.0, -1.0]}, EST_CARDINALITY=-1.0})
+
+
+============================================================================
+EXECUTING ImplementJoinStrategy
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING MergeCriteria
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING PlanSorts
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+  Project(groups=[pm1.EMPLOYEES AS e])
+    Join(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d])
+      Select(groups=[pm1.EMPLOYEES AS e])
+        Source(groups=[pm1.EMPLOYEES AS e])
+      Select(groups=[pm1.DEPARTMENTS AS d])
+        Source(groups=[pm1.DEPARTMENTS AS d])
+
+
+============================================================================
+EXECUTING CollapseSource
+
+AFTER: 
+Access(groups=[pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d], props={SOURCE_HINT=null, MODEL_ID=Schema name=pm1, nameInSource=null, uuid=tid:43dc066a775b-0001b1d4-00000000, OUTPUT_COLS=[e.TITLE, e.LASTNAME], CONFORMED_SOURCES=null, EST_CARDINALITY=-1.0, ATOMIC_REQUEST=SELECT e.TITLE, e.LASTNAME FROM pm1.EMPLOYEES AS e, pm1.DEPARTMENTS AS d WHERE (e.DEPT_ID = d.DEPT_ID) AND (year(e.BIRTHDAY) >= 1970) AND (d.DEPT_NAME = 'Engineering')})
+
+
+============================================================================
+CONVERTING PLAN TREE TO PROCESS TREE
+
+PROCESS PLAN = 
+AccessNode(0) output=[e.TITLE, e.LASTNAME] SELECT g_0.TITLE, g_0.LASTNAME FROM pm1.EMPLOYEES AS g_0, pm1.DEPARTMENTS AS g_1 WHERE (g_0.DEPT_ID = g_1.DEPT_ID) AND (year(g_0.BIRTHDAY) >= 1970) AND (g_1.DEPT_NAME = 'Engineering')
+
+============================================================================
+
+----------------------------------------------------------------------------
+OPTIMIZATION COMPLETE:
+PROCESSOR PLAN:
+AccessNode(0) output=[e.TITLE, e.LASTNAME] SELECT g_0.TITLE, g_0.LASTNAME FROM pm1.EMPLOYEES AS g_0, pm1.DEPARTMENTS AS g_1 WHERE (g_0.DEPT_ID = g_1.DEPT_ID) AND (year(g_0.BIRTHDAY) >= 1970) AND (g_1.DEPT_NAME = 'Engineering')
+
+============================================================================
