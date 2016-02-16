@@ -6,7 +6,7 @@ categories: java
 permalink: /java-floating
 author: Kylin Soong
 duoshuoid: ksoong2015051201
-excerpt: Java 运算符: <<, >>, ., |, &, ^, |=, &=, ^=
+excerpt: Java 运算符
 ---
 
 * Table of contents
