@@ -9,6 +9,9 @@ duoshuoid: ksoong2015113001
 excerpt: UML and examples of Teiid Query SQL API
 ---
 
+* Table of contents
+{:toc}
+
 ## Criteria
 
 ![UML of Criteria]({{ site.baseurl }}/assets/blog/teiid-uml-criteria.png)
@@ -21,6 +24,23 @@ The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a que
 
 A Command is an interface for all the language objects that are at the root of a language object tree representing a SQL statement.  For instance, a Query command represents a SQL select query, an Update command represents a SQL update statement, etc.
 
+### Example of Query
+
+Combined with [Example of Select](#Example of Select) and [Example of From](#Example of From), the Example of Query looks
+
+~~~
+Query command = new Query();
+command.setSelect(select);
+command.setFrom(from);
+System.out.println(command);
+~~~
+
+The output of above code:
+
+~~~
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
+~~~
+
 ## LanguageObject
 
 ![UML of LanguageObject]({{ site.baseurl }}/assets/blog/teiid-uml-sql-other.png)
@@ -29,20 +49,31 @@ A Command is an interface for all the language objects that are at the root of a
 * `FromClause` - A FromClause is an interface for subparts held in a FROM clause. One type of FromClause is `UnaryFromClause`, which is the more common use and represents a single group.  Another, less common type of FromClause is the `JoinPredicate` which represents a join between two FromClauses and may contain criteria.
 * `org.teiid.query.sql.lang.Select` - represents the SELECT clause of a query, which defines what elements or expressions are returned from the query.
 
-**Example of Select**
+### Example of Select
 
 ~~~java
-ElementSymbol id = new ElementSymbol("Accounts.PRODUCT.ID");
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+ElementSymbol id = new ElementSymbol("ID", group);
 id.setType(DataTypeManager.DefaultDataClasses.STRING);
-ElementSymbol symbol = new ElementSymbol("Accounts.PRODUCT.SYMBOL");
+ElementSymbol symbol = new ElementSymbol("SYMBOL", group);
 symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
-ElementSymbol name = new ElementSymbol("Accounts.PRODUCT.COMPANY_NAME");
+ElementSymbol name = new ElementSymbol("COMPANY_NAME", group);
 symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
 
 Select select = new Select();
 select.addSymbol(id);
 select.addSymbol(symbol);
 select.addSymbol(name);
+~~~
+
+### Example of From
+
+~~~
+From from = new From();
+UnaryFromClause clause = new UnaryFromClause();
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+clause.setGroup(group);
+from.addClause(clause);
 ~~~
 
 ## Symbol
@@ -56,18 +87,15 @@ select.addSymbol(name);
 **Example of GroupSymbol**
 
 ~~~java
-GroupSymbol group = new GroupSymbol("Accounts.PRODUCT", "p");
-assertEquals("Accounts", group.getSchema());
-assertEquals("PRODUCT", group.getShortName());
-assertEquals("Accounts.PRODUCT", group.getName());
-assertEquals("p AS \"Accounts.PRODUCT\"", group.toString());
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
 ~~~
 
 **Example of ElementSymbol**
 
 ~~~java
-ElementSymbol id = new ElementSymbol("Test.PRODUCTView.product_id", true);
-id.setType(DataTypeManager.DefaultDataClasses.INTEGER);
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+ElementSymbol id = new ElementSymbol("ID", group);
+id.setType(DataTypeManager.DefaultDataClasses.STRING);
 ~~~
 
 ## ProcessorPlan

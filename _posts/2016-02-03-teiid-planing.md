@@ -140,3 +140,39 @@ The logical plan optimization including the following steps:
 12. OPTIMIZATION COMPLETE
 
 [Detailed logical plan optimization log]({{ site.baseurl }}/assets/download/teiid-logicalplan-optimization-process-log-3)
+
+## Portfolio Example
+
+Portfolio Example contains 2 data sources: h2 database([customer-schema.sql](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/embedded/src/main/resources/data/customer-schema.sql)) and text file([marketdata-price.txt](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/embedded/src/main/resources/data/marketdata-price.txt)), 2 data sources are Federated, [portfolio-vdb.xml](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/embedded/src/main/resources/portfolio-vdb.xml) is the VDB which defined Source Model `MarketData`, `Accounts` and View Model `Stocks`.
+
+### Direct Query Source Model Accounts
+
+**Query SQL**
+
+~~~
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME from Accounts.Product AS A
+~~~
+
+**Logical Plan**
+
+![teiid-query-plan-portfolio-1]({{ site.baseurl }}/assets/blog/teiid-query-plan-portfolio-1.png)
+
+~~~
+Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+  Source(groups=[Accounts.PRODUCT AS A])
+~~~
+
+The logical plan optimization including the following steps:
+
+1. GENERATE CANONICAL
+2. EXECUTING PlaceAccess
+3. EXECUTING RaiseAccess
+4. EXECUTING AssignOutputElements
+5. EXECUTING CalculateCost
+6. EXECUTING PlanSorts
+7. EXECUTING CollapseSource
+8. CONVERTING PLAN TREE TO PROCESS TREE
+
+[Detailed logical plan optimization log]({{ site.baseurl }}/assets/download/)teiid-portfolio-logical-plan-optimization-1
+
+

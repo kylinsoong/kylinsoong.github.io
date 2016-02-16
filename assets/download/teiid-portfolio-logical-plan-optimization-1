@@ -1,0 +1,83 @@
+============================================================================
+USER COMMAND:
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
+
+----------------------------------------------------------------------------
+OPTIMIZE: 
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
+
+----------------------------------------------------------------------------
+GENERATE CANONICAL: 
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
+
+CANONICAL PLAN: 
+Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+  Source(groups=[Accounts.PRODUCT AS A])
+
+
+============================================================================
+EXECUTING PlaceAccess
+
+AFTER: 
+Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+  Access(groups=[Accounts.PRODUCT AS A], props={SOURCE_HINT=null, MODEL_ID=Schema name=Accounts, nameInSource=null, uuid=tid:b7365020b6df-84782006-00000000})
+    Source(groups=[Accounts.PRODUCT AS A])
+
+
+============================================================================
+EXECUTING RaiseAccess
+
+AFTER: 
+Access(groups=[Accounts.PRODUCT AS A], props={SOURCE_HINT=null, MODEL_ID=Schema name=Accounts, nameInSource=null, uuid=tid:b7365020b6df-84782006-00000000})
+  Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+    Source(groups=[Accounts.PRODUCT AS A])
+
+
+============================================================================
+EXECUTING AssignOutputElements
+
+AFTER: 
+Access(groups=[Accounts.PRODUCT AS A], props={SOURCE_HINT=null, MODEL_ID=Schema name=Accounts, nameInSource=null, uuid=tid:b7365020b6df-84782006-00000000, OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+  Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+    Source(groups=[Accounts.PRODUCT AS A], props={OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME]})
+
+
+============================================================================
+EXECUTING CalculateCost
+
+AFTER: 
+Access(groups=[Accounts.PRODUCT AS A], props={SOURCE_HINT=null, MODEL_ID=Schema name=Accounts, nameInSource=null, uuid=tid:b7365020b6df-84782006-00000000, OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], EST_CARDINALITY=-1.0})
+  Project(groups=[Accounts.PRODUCT AS A], props={PROJECT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], EST_CARDINALITY=-1.0})
+    Source(groups=[Accounts.PRODUCT AS A], props={OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], EST_COL_STATS={A.ID=[-1.0, -1.0], A.SYMBOL=[-1.0, -1.0], A.COMPANY_NAME=[-1.0, -1.0]}, EST_CARDINALITY=-1.0})
+
+
+============================================================================
+EXECUTING PlanSorts
+
+AFTER: 
+Access(groups=[Accounts.PRODUCT AS A])
+  Project(groups=[Accounts.PRODUCT AS A])
+    Source(groups=[Accounts.PRODUCT AS A])
+
+
+============================================================================
+EXECUTING CollapseSource
+
+AFTER: 
+Access(groups=[Accounts.PRODUCT AS A], props={SOURCE_HINT=null, MODEL_ID=Schema name=Accounts, nameInSource=null, uuid=tid:b7365020b6df-84782006-00000000, OUTPUT_COLS=[A.ID, A.SYMBOL, A.COMPANY_NAME], EST_CARDINALITY=-1.0, ATOMIC_REQUEST=SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A})
+
+
+============================================================================
+CONVERTING PLAN TREE TO PROCESS TREE
+
+PROCESS PLAN = 
+AccessNode(0) output=[A.ID, A.SYMBOL, A.COMPANY_NAME] SELECT g_0.ID, g_0.SYMBOL, g_0.COMPANY_NAME FROM Accounts.PRODUCT AS g_0
+
+============================================================================
+
+----------------------------------------------------------------------------
+OPTIMIZATION COMPLETE:
+PROCESSOR PLAN:
+AccessNode(0) output=[A.ID, A.SYMBOL, A.COMPANY_NAME] SELECT g_0.ID, g_0.SYMBOL, g_0.COMPANY_NAME FROM Accounts.PRODUCT AS g_0
+
+============================================================================
