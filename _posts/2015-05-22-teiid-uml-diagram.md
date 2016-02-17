@@ -131,10 +131,6 @@ Refer to [link](http://ksoong.org/teiid-query-sql-api/)
 
 * CommandContext defines the context that a command is processing in.  For example, this defines who is processing the command and why. Also, this class (or subclasses) provide a means to pass context-specific information between users of the query processor framework.
 
-### org.teiid.query.processor.relational.AccessNode
-
-![AccessNode]({{ site.baseurl }}/assets/blog/teiid-uml-AccessNode.png)
-
 ### org.teiid.query.optimizer.relational.OptimizerRule
 
 ![OptimizerRule]({{ site.baseurl }}/assets/blog/teiid-uml-OptimizerRule.png)
@@ -178,7 +174,7 @@ The CapabilitiesFinder describes how to find connector capabilities.
 
 ### org.teiid.query.processor.ProcessorPlan
 
-![processPlan]({{ site.baseurl }}/assets/blog/teiid-processplan.png)
+![processPlan]({{ site.baseurl }}/assets/blog/teiid-uml-processplan.png)
 
 * ProcessorPlan - This class represents a processor plan. It is generic in that it abstracts the interface to the plan by the processor, meaning that the actual implementation of the plan or the types of processing done by the plan is not important to the processor. 
 
@@ -188,6 +184,10 @@ The CapabilitiesFinder describes how to find connector capabilities.
 
 * TempTableDataManager - A proxy ProcessorDataManager used to handle temporary tables. This isn't handled as a connector because of the temporary metadata and  the create/drop handling (which doesn't have push down support).
 * DataTierManagerImpl - A full ProcessorDataManager implementation that controls access to ConnectorManager and handles system queries.
+
+### org.teiid.query.processor.relational.AccessNode
+
+![AccessNode]({{ site.baseurl }}/assets/blog/teiid-uml-AccessNode.png)
 
 ### org.teiid.dqp.internal.datamgr.ConnectorWork
 

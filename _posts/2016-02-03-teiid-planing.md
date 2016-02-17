@@ -172,7 +172,8 @@ The logical plan optimization including the following steps:
 6. EXECUTING PlanSorts
 7. EXECUTING CollapseSource
 8. CONVERTING PLAN TREE TO PROCESS TREE
+9. OPTIMIZATION COMPLETE
 
-[Detailed logical plan optimization log]({{ site.baseurl }}/assets/download/)teiid-portfolio-logical-plan-optimization-1
+[Detailed logical plan optimization log]({{ site.baseurl }}/assets/download/teiid-portfolio-logical-plan-optimization-1)
 
 

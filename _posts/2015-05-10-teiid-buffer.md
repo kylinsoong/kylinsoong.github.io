@@ -9,6 +9,9 @@ duoshuoid: ksoong2015051001
 excerpt: How Teiid BufferManager running and processing...
 ---
 
+* Table of contents
+{:toc}
+
 As below figure, the Key Interface of Teiid BufferManager is `BufferManager`, it extends of interface `StorageManager` and `TupleBufferCache`.
 
 ![BufferManager UML]({{ site.baseurl }}/assets/blog/teiid-buffer.png)
@@ -49,9 +52,9 @@ A typical usage of TupleBuffer is like:
 
 This section contain examples for Tuple, TupleBatch, TupleSource and TupleBuffer, assume 'PRODUCTView' under 'Test' model, it's DDL like: CREATE VIEW PRODUCTView (product_id integer, symbol string) AS ... , it has 6 rows data as below figure:
 
-![Tuple Example]({{ site.baseurl }}/assets/blog/teiid-buffer-example.png)
+![Tuple Example]({{ site.baseurl }}/assets/blog/teiid-buffer-example.png) 
 
-#### Example.1 TupleBuffer with Tuple and TupleSource
+**Example.1 TupleBuffer with Tuple and TupleSource**
 
 This example how use TupleBuffer add Tuple and iterator data via TupleSource. 
 
@@ -93,7 +96,7 @@ Run above code will output
 [100, IBM]
 ~~~
 
-#### Example.2 TupleBuffer with TupleBatch and TupleSource
+**Example.2 TupleBuffer with TupleBatch and TupleSource**
 
 This example how use TupleBuffer add TupleBatch and iterator data via TupleSource.
 
