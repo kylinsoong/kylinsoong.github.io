@@ -16,6 +16,8 @@ duoshuoid: ksoong2015100502
 
 ![Image.3]({{ site.baseurl }}/assets/blog/spratly_islands_624_v5.png)
 
+![Image.4]({{ site.baseurl }}/assets/blog/xisha_Islands.jpg)
+
 ## Owned by China
 
 [永兴岛](https://zh.wikipedia.org/wiki/%E6%B0%B8%E5%85%B4%E5%B2%9B)
