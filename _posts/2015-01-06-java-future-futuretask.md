@@ -1,12 +1,15 @@
 ---
 layout: blog
-title:  "Java Future FutureTask 示例"
+title:  "Java Future FutureTask 案例"
 date:   2015-01-06 11:30:00
 categories: java
 permalink: /java-future
 author: Kylin Soong
 duoshuoid: ksoong2015010601
 ---
+
+* Table of contents
+{:toc}
 
 Future 类位于 java.util.concurrent 包下，它是一个接口：
 
