@@ -98,7 +98,7 @@ class OioObjectChannel implements ObjectChannel {
 
 > Note that, netty's ObjectDecoderInputStream used to read Object message from Server(Netty Server), and ObjectEncoderOutputStream used to write Object message to Server(Netty Server).
 
-For detailed procedure of JDBC Driver create a Connection refer to [http://ksoong.org/teiid-s-diagram/#how-a-connection-be-created](http://ksoong.org/teiid-s-diagram/#how-a-connection-be-created).
+For detailed procedure of JDBC Driver create a Connection refer to [http://ksoong.org/teiid-s-diagram#how-a-connection-be-created](http://ksoong.org/teiid-s-diagram#how-a-connection-be-created).
 
 While Create Connection there are 2 types of security logon:
 
