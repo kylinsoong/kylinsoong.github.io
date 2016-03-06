@@ -37,10 +37,6 @@ Your public key has been saved in /home/kylin/.ssh/id_t_rsa.pub.
 * Send the SSH public key to the remote server
 
 ~~~
-$ ssh-copy-id 
-Usage: /bin/ssh-copy-id [-h|-?|-n] [-i [identity_file]] [-p port] [[-o <ssh -o options>] ...] [user@]hostname
-[kylin@ksoong ~]$ ssh-copy-id -i ~/.ssh/id_t_rsa
-id_t_rsa      id_t_rsa.pub  
 [kylin@ksoong ~]$ ssh-copy-id -i ~/.ssh/id_t_rsa.pub root@10.66.218.46
 /bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
 /bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
@@ -83,7 +79,7 @@ Password:
 * Change directory to the resulting subdirectory and browse the files found there.
 
 ~~~
-# cd sosreport-yourname.01034421-20140129000049
+# cd sosreport-ksoong-20160306161748
 ~~~
 
 ## File System Navigation
