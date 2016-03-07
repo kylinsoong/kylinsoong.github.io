@@ -13,6 +13,12 @@ Netty 是什么？ Netty是一个高性能、异步事件驱动的NIO框架，�
 * Table of contents
 {:toc}
 
+## 线程模型
+
+### Reactor 设计模式
+
+Ractor 是基于事件驱动，处理多线程，海量的I/O事件的设计模式。
+
 ## 典型阻塞通信案例与弊端
 
 [阻塞通信案例](http://ksoong.org/bio-server-mode)
@@ -29,4 +35,7 @@ Netty 是什么？ Netty是一个高性能、异步事件驱动的NIO框架，�
 
 ## 相关链接
 
-[Netty系列之Netty高性能之道](http://www.infoq.com/cn/articles/netty-high-performance)
+1. [Netty系列之Netty高性能之道](http://www.infoq.com/cn/articles/netty-high-performance)
+2. [Netty系列之Netty线程模型](http://www.infoq.com/cn/articles/netty-threading-model)
+3. [Netty系列之Netty并发编程分析](http://www.infoq.com/cn/articles/netty-concurrent-programming-analysis)
+
