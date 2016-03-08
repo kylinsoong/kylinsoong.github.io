@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Red Hat Enterprise Linux 7 Commands"
+title:  "Linux 命令集合"
 date:   2016-03-16 16:14:12
 categories: linux
 permalink: /rhel7-commands
