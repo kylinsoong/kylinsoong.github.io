@@ -158,3 +158,140 @@ lrwxrwxrwx. 1 root root     5 Mar  6 16:06 tmpdir -> /tmp/
 ~~~
 
 ## Users and Groups
+
+1. **/etc/passwd** - store information about local users
+2. **/etc/group** - store information about local groups
+
+**Useful Commands:**
+
+~~~
+$ id
+$ ps au
+~~~
+
+* The **id** command is used to show information about the current logged-in user.
+* The **ps** command is used to view process information. Add the **a** option to view all processes with a terminal. To view the user associated with a process, include the **u** option.
+
+### Running Commands as root
+
+* View the user and group information and display the current working directory.
+
+~~~
+$ id
+uid=1000(kylin) gid=1000(kylin) groups=1000(kylin),987(docker) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+$ pwd
+/home/kylin
+~~~
+
+* View the variables which specify the home directory and the locations searched for executable files.
+
+~~~
+$ echo $HOME
+/home/kylin
+$ echo $PATH
+/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/rvm/bin:/home/kylin/.local/bin:/home/kylin/bin:/home/kylin/tools/apache-maven-3.2.5/bin:/usr/java/jdk1.8.0_25/bin:/home/kylin/tools/apache-ant-1.9.4/bin:/home/kylin/tools/node-v0.12.6-linux-x64/bin
+~~~
+
+* Become the root user at the shell prompt.
+
+~~~
+$ su -
+Password: 
+~~~
+
+* View the user and group information and display the current working directory.
+
+~~~
+# id
+uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+# pwd
+/root
+~~~
+
+* View the variables which specify the home directory and the locations searched for executable files.
+
+~~~
+# echo $HOME
+/root
+# echo $PATH
+/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/.cabal/bin:/usr/local/rvm/bin:/root/bin
+~~~
+
+* Exit the root
+
+~~~
+# exit
+logout
+~~~
+
+### Creating Users Using Command-line Tools
+
+* Add a user
+
+~~~
+# adduser student
+~~~
+
+> Execute `tail -2 /etc/passwd` can confirm new added user from file.
+
+* Use the passwd command to add a login password
+
+~~~
+# passwd student
+~~~
+
+### Managing Groups Using Command-line Tools
+
+* Create a group
+
+~~~
+# groupadd artists
+~~~
+
+> Execute `tail -5 /etc/group` will confirm new added group.
+
+* Add a user to a group
+
+~~~
+# usermod -G student student
+# id student 
+uid=1001(student) gid=1002(student) groups=1002(student)
+~~~
+
+### Managing User Password Aging
+
+* Lock/Unlock a user
+
+~~~
+# usermod -L student
+$ su - student 
+Password: 
+su: Authentication failure
+
+# usermod -U student
+$ su - student 
+Password: 
+Last login: Tue Mar  8 15:30:03 CST 2016 on pts/1
+Last failed login: Tue Mar  8 15:30:41 CST 2016 on pts/3
+There was 1 failed login attempt since the last successful login.
+~~~
+
+* Change the password policy to require a new password every 90 days
+
+~~~
+# chage -M 90 student
+# chage -l student 
+Last password change					: Mar 08, 2016
+Password expires					: Jun 06, 2016
+Password inactive					: never
+Account expires						: never
+Minimum number of days between password change		: 0
+Maximum number of days between password change		: 90
+Number of days of warning before password expires	: 7
+~~~
+
+### Using Identity Management Services
+
+
+## File Permissions
+
