@@ -292,6 +292,162 @@ Number of days of warning before password expires	: 7
 
 ### Using Identity Management Services
 
+//TODO--
 
 ## File Permissions
+
+### Managing File Security from the Command Line
+
+* login to root, create a directory
+
+~~~
+# mkdir /home/kylin-text
+~~~
+
+* Change the group ownership to kylin
+
+~~~
+# chown :kylin /home/kylin-text/
+~~~
+
+* Ensure the permissions of kylin-text allows group members to create and delete files.
+
+~~~
+# chmod g+w /home/kylin-text/
+~~~
+
+* Ensure the permissions of ateam-text forbids others from accessing its files.
+
+~~~
+# chmod 770 /home/kylin-text/
+# ls -ld /home/kylin-text/
+~~~
+
+* Verify the setting
+
+~~~
+# exit
+logout
+$ cd /home/kylin-text/
+$ touch samplefile1
+$ ls -l samplefile1 
+-rw-rw-r--. 1 kylin kylin 0 Mar 10 11:27 samplefile1
+~~~
+
+### Controlling New File Permissions and Ownership
+
+* show umask
+
+~~~
+[student@ksoong ~]$ umask 
+0002
+~~~
+
+* check default umask affects permissions
+
+~~~
+[student@ksoong ~]$ mkdir /tmp/shared
+[student@ksoong ~]$ ls -ld /tmp/shared/
+drwxrwxr-x. 2 student student 40 Mar 10 11:46 /tmp/shared/
+[student@ksoong ~]$ touch /tmp/shared/defaults
+[student@ksoong ~]$ ls -l /tmp/shared/defaults
+-rw-rw-r--. 1 student student 0 Mar 10 11:47 /tmp/shared/defaults
+~~~
+
+* do some change
+
+~~~
+[student@ksoong ~]$ chmod g+s /tmp/shared/
+[student@ksoong ~]$ ls -ld /tmp/shared/
+drwxrwsr-x. 2 student student 60 Mar 10 11:47 /tmp/shared/
+[student@ksoong ~]$ umask 27
+[student@ksoong ~]$ touch /tmp/shared/sameplefile2
+[student@ksoong ~]$ ls -l /tmp/shared/sameplefile2 
+-rw-r-----. 1 student student 0 Mar 10 11:52 /tmp/shared/sameplefile2
+[student@ksoong ~]$ umask 
+0027
+[student@ksoong ~]$ umask 7
+~~~
+
+### POSIX Access Control Lists (ACLs)
+
+* View file ACLs
+
+~~~
+$ getfacl gcviewer.properties 
+# file: gcviewer.properties
+# owner: kylin
+# group: kylin
+user::rw-
+group::rw-
+other::r--
+~~~
+
+### Using ACLs to Grant and Limit Access
+
+//TODO--
+
+## Selinux Permissions
+
+//TODO--
+
+## Process Management
+
+### Killing Processes
+
+* Start 3 processes
+
+~~~
+$ (while true; do echo -n "game " >> ~/outfile; sleep 1; done) &
+$ (while true; do echo -n "set " >> ~/outfile; sleep 1; done) &
+$ (while true; do echo -n "match " >> ~/outfile; sleep 1; done) &
+~~~
+
+* Check all running processes
+
+~~~
+$ tail -f outfile 
+$ jobs
+[1]   Running                 ( while true; do
+    echo -n "game " >> ~/outfile; sleep 1;
+done ) &
+[2]-  Running                 ( while true; do
+    echo -n "set " >> ~/outfile; sleep 1;
+done ) &
+[3]+  Running                 ( while true; do
+    echo -n "match " >> ~/outfile; sleep 1;
+done ) &
+~~~
+
+* Kill process
+
+~~~
+$ kill -SIGTERM 7174
+$ kill -SIGTERM 7187
+$ kill -SIGTERM 7220
+~~~
+
+### Monitoring Process Activity
+
+* Check cpu info
+
+~~~
+$ grep "model name" /proc/cpuinfo 
+model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+$ grep "model name" /proc/cpuinfo | wc -l
+4
+~~~
+
+* top commands
+
+~~~
+top
+$ top -H -p 16943
+~~~
+
+## Updating Software Packages
+
 
