@@ -10,7 +10,11 @@ duoshuoid: ksoong20140901
 
 This documents contain a series useful git commands and Frequent Questions and Answers.
 
-### Useful git commands 
+* Table of contents
+{:toc}
+
+
+## Useful git commands 
 
 * Show Current branch
 
@@ -168,6 +172,8 @@ git merge upstream/master
 git push origin master
 ~~~
 
+## Question & Answer
+
 ### Q1. What is the difference between origin and upstream in github?
 
 When a git branch -a command is done, some branches have a prefix of origin (remotes/origin/..) while others have a prefix of upstream (remotes/upstream/..) as below example:
@@ -196,3 +202,9 @@ You will use `upstream` to **fetch from the original repo** (in order to keep yo
 You will use `origin` to **pull and push** since you can contribute to your own repo.
 
 More details refer to [stackoverflow](http://stackoverflow.com/questions/9257533/what-is-the-difference-between-origin-and-upstream-in-github)
+
+### Q2. How to create a patch with the latest 10 commits?
+
+~~~
+git format-patch -10 HEAD --stdout > 0001-last-10-commits.patch
+~~~

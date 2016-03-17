@@ -9,6 +9,8 @@ duoshuoid: ksoong20140718
 
 This article contains journals in developing [ksoong.org](ksoong.org).
 
+* Table of contents
+{:toc}
 
 ## weibo feeds flash
 
