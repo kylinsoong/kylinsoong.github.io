@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Maven Plugin Gallery"
+title:  "Maven Plugin Example Gallery"
 date:   2014-08-20 16:20:12
 categories: maven
 permalink: /maven-plugin-gallery
@@ -8,7 +8,122 @@ author: Kylin Soong
 duoshuoid: ksoong20140820
 ---
 
-This documents coontains a series Maven plugin usage sample and function depiction.
+* Table of contents
+{:toc}
+
+## maven-dependency-plugin
+
+[Apache Maven Dependency Plugin](https://maven.apache.org/plugins/maven-dependency-plugin/) provides the capability to manipulate artifacts. It can copy and/or unpack artifacts from local or remote repositories to a specified location.
+
+### Example: Download Unpack WildFly Server & Install Modules
+
+This example will demonstrate:
+
+1. Download, unpack a WildFly Server
+2. Install a module to WildFly modules.
+
+**Run and Test**
+
+[Downlad example](https://github.com/kylinsoong/teiid-test/tree/master/console/build), execute
+
+~~~
+$ mvn clean install
+~~~
+
+Once build success, check from Command line:
+
+~~~
+$ ls -l  target/wildfly-9.0.2.Final/modules/system/layers/dv/org/jboss/as/console/main/
+-rw-rw-r--. 1 kylin kylin    1565 Mar 11 15:00 module.xml
+-rw-rw-r--. 1 kylin kylin 9806914 Mar 11 15:00 teiid-hal-console-2.6.1-SNAPSHOT-resources.jar
+~~~
+
+> NOTE: `wildfly-9.0.2.Final` be download and unpacked under target folder, `teiid-hal-console` modules be installed successfully.
+
+**Plugin Configure Files**
+
+~~~
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>unpack-server-deps</id>
+            <phase>package</phase>
+            <goals>
+                <goal>unpack</goal>
+            </goals>
+            <configuration>
+                <artifactItems>
+                    <artifactItem>
+                        <groupId>org.wildfly</groupId>
+                        <artifactId>wildfly-dist</artifactId>
+                        <version>${version.org.wildfly}</version>
+                        <type>zip</type>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
+                    </artifactItem>
+                    <artifactItem>
+                        <groupId>org.jboss.teiid.hal</groupId>
+                        <artifactId>dist</artifactId>
+                        <version>${version.teiid.console}</version>
+                        <classifier>overlay</classifier>
+                        <type>zip</type>
+                        <outputDirectory>${project.build.directory}/${dir.wildfly}</outputDirectory>
+                     </artifactItem>
+                </artifactItems>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+~~~
+
+[Completed pom.xml](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/console/build/pom.xml)
+
+## maven-enforcer-plugin
+
+[Maven Enforcer Plugin](https://maven.apache.org/enforcer/maven-enforcer-plugin/) provides goals to control certain environmental constraints such as Maven version, JDK version and OS family along with many more standard rules and user created rules.
+
+### Example-1: JDK version control example
+
+This example will demonstrate how `maven-enforcer-plugin` enforce Project build use JDK 1.9.
+
+**Run and Test**
+
+[Download example](https://github.com/kylinsoong/teiid-test/tree/master/console/enforcer-plugin-example), execute
+
+~~~
+$ mvn clean install
+~~~
+
+If your build environment not use JDK 1.9, build will failed with plugin notification `The build works with JDK 9 only`. 
+
+**Plugin Configure Files**
+
+~~~
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-enforcer-plugin</artifactId>
+    <version>1.2</version>
+    <executions>
+        <execution>
+            <id>enforce-versions</id>
+            <goals>
+                <goal>enforce</goal>
+            </goals>
+            <configuration>
+                <rules>
+                    <requireJavaVersion>
+                        <version>[1.9,]</version>
+                        <message>*** The build works with JDK 9 only! ***</message>
+                    </requireJavaVersion>
+                </rules>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+~~~
+
+[Completed pom.xml](https://raw.githubusercontent.com/kylinsoong/teiid-test/master/console/enforcer-plugin-example/pom.xml)
 
 ## maven-antrun-plugin
 
@@ -83,8 +198,6 @@ Usage example, as below pom:
 Execute maven build or execute goal `mvn javacc:javacc` will generate java via grammars .jj file.
 
 ## maven-bundle-plugin
-
-## maven-enforcer-plugin
 
 ## maven-jar-plugin
 
