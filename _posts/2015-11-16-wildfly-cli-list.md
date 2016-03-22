@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "WildFly Command Line"
+title:  "WildFly Management Command Lines"
 date:   2015-11-16 17:10:12
 categories: jboss
 author: Kylin Soong
@@ -8,11 +8,18 @@ duoshuoid: ksoong2015111601
 excerpt: This article contains a series of WildFly CLI and reference introduction
 ---
 
+* Table of contents
+{:toc}
+
+## Basic
+
 ### Invoking CLI commands
 
 ~~~
 $ ./bin/jboss-cli.sh
 ~~~
+
+## Runtime
 
 ### Checking the WildFly version
 
