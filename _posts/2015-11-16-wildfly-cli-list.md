@@ -16,7 +16,15 @@ excerpt: This article contains a series of WildFly CLI and reference introductio
 ### Invoking CLI commands
 
 ~~~
-$ ./bin/jboss-cli.sh
+$ ./bin/jboss-cli.sh --connect
+~~~
+
+### Allowed Origins Setup
+
+In order to use the Independent Management Console, Allowed Origins need to be Setup correctly:
+
+~~~
+/core-service=management/management-interface=http-interface:list-add(name=allowed-origins, value=http://127.0.0.1:8888)
 ~~~
 
 ## Runtime
