@@ -79,9 +79,13 @@ mergedVDB.addAttchment(TransformationMetadata.class, metadata);
 mergedVDB.addAttchment(MetadataStore.class, mergedStore);
 ~~~
 
-**Appendix-2: Metadata Validator: ** validate the SQL commands which existed in virtual model's DDL text metadata String.
+**Appendix-2: Metadata Validator** 
 
-**Appendix-3: MaterializationManager** Refer to [teiid-mat-view](http://ksoong.org/teiid-mat-view).
+Validate the SQL commands which existed in virtual model's DDL text metadata String.
+
+**Appendix-3: MaterializationManager** 
+
+Refer to [teiid-mat-view](http://ksoong.org/teiid-mat-view).
 
 ## Examples
 
