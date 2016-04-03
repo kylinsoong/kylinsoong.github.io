@@ -9,6 +9,9 @@ duoshuoid: ksoong2015072001
 excerpt: Java Concurrency, Synchronization(synchronized, wait, notify), Lock, Condition
 ---
 
+* Table of contents
+{:toc}
+
 ## Synchronization
 
 本部分依次介绍 Java 多线程的关键字 synchronized, wait, notify.
@@ -47,7 +50,7 @@ public class MonitorExample {
 }  
 ~~~
 
-#### synchronized 关键字示例
+#### 示例: 使用关键字是 synchronized 模拟死锁问题 
 
 本示例演示使用 synchronized 关键字模拟 Java 中常见的死锁问题。如下如所示：
 
@@ -56,6 +59,8 @@ public class MonitorExample {
 死锁需要两个对象，两个线程，本示例两个对象为 A 和 B，两个线程分别为 Thread 1 和 Thread 2，如果 Thread 1 锁定对象 A 后再锁定对象 B 与 Thread 2 锁定对象 B 后再锁定对象 A 同时发生，则两个线程出现死锁.
 
 > 死锁的现象： 两个线程永久性的处于阻塞等待状态，直到程序被强制停止.
+
+##### 实现代码
 
 运行如下代码会出现线程死锁:
 
@@ -95,7 +100,9 @@ new Thread(new Runnable(){
 
 由于线程 1 拥有 A 的锁等待线程 2 释放 B 的锁，而线程 2 拥有 B 的锁等待线程 1 释放 A 的锁，这样造成线程 1 和 线程 2 死锁。
 
-如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
+##### 死锁线程 dump
+
+如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟机中线程 dump 日志描述如下:
 
 ~~~
 "Thread 2" #10 prio=5 os_prio=0 tid=0x00007fc7bc0f5800 nid=0xf60 waiting for monitor entry [0x00007fc7962e9000]
@@ -148,11 +155,16 @@ wait, notify 是多线程的基础：
 * wait 阻塞一个线程，但释放当前对象的锁
 * notify 随即释放 wait 集合中一个阻塞的线程
 
-#### wait, notify 关键字示例
+#### 示例: 使用 wait, notify 实现 BlockingQueue
 
-BlockingQueue 示例用来演示多线程调有 wait, notify。
+![BlockingQueue -1]({{ site.baseurl }}/assets/blog/design_and_implement_a_blocking_queue.png)
 
-首先 BlockingQueue 代码如下，它提供两个方法 put 和 take，两个方法中分别调用 wait, notify，代码如下：
+如上图，本示例中 BlockingQueue 提供了两个方法：
+
+1. put(T element) - 用来向阻塞队列中添加 element. 当队列中 element 的个数大于或等于队列的容量时调运 wait()， 让线程处于阻塞状态; 当 element 添加到队列后调运 notify()，释放 wait 集合中的一个阻塞线程
+2. T take() - 用来从阻塞队列中获取 element. 当队列中 element 的个数小于或等于 0 时调运 wait()， 让线程处于阻塞状态; 当 element 从队列移除后调运 notify()，释放 wait 集合中的一个阻塞线程
+
+##### 实现代码
 
 ~~~  
 public class BlockingQueue<T> {
@@ -187,7 +199,9 @@ public class BlockingQueue<T> {
 }
 ~~~
 
-接下来，我们启动两个线程(Thread 1，Thread 2)调用 BlockingQueue 的 take() 方法:
+##### take() 导致线程阻塞
+
+如下代码启动两个线程(Thread 1, Thread 2)调用 BlockingQueue 的 take() 方法:
 
 ~~~
 final BlockingQueue<String> queue = new BlockingQueue<>(3);
@@ -197,30 +211,19 @@ new Thread(new Runnable(){
 	Thread.currentThread().setName("Thread 1");
 	System.out.println(queue.take());
     }}).start();
-		
+
 new Thread(new Runnable(){
     public void run() {
         Thread.currentThread().setName("Thread 2");
 	System.out.println(queue.take());
-    }}).start();		
+    }}).start();
 ~~~
+
+##### 线程 dump - take() 导致线程阻塞
 
 两个线程都处于阻塞状态，都被添加到 BlockingQueue 对象的 wait 集合中，JVM 中线程 dumo 日志如下:
 
 ~~~
-"Thread 2" #10 prio=5 os_prio=0 tid=0x00007f90040ce000 nid=0x2f69 in Object.wait() [0x00007f8fe987a000]
-   java.lang.Thread.State: WAITING (on object monitor)
-	at java.lang.Object.wait(Native Method)
-	- waiting on <0x00000000d7f7b4d8> (a BlockingQueue)
-	at java.lang.Object.wait(Object.java:502)
-	at BlockingQueue.take(BlockingQueue.java:27)
-	- locked <0x00000000d7f7b4d8> (a BlockingQueue)
-	at WaitSetExample$2.run(WaitSetExample.java:32)
-	at java.lang.Thread.run(Thread.java:745)
-
-   Locked ownable synchronizers:
-	- None
-
 "Thread 1" #9 prio=5 os_prio=0 tid=0x00007f90040cc000 nid=0x2f68 in Object.wait() [0x00007f8fe997b000]
    java.lang.Thread.State: WAITING (on object monitor)
 	at java.lang.Object.wait(Native Method)
@@ -233,11 +236,56 @@ new Thread(new Runnable(){
 
    Locked ownable synchronizers:
 	- None
+
+"Thread 2" #10 prio=5 os_prio=0 tid=0x00007f90040ce000 nid=0x2f69 in Object.wait() [0x00007f8fe987a000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x00000000d7f7b4d8> (a BlockingQueue)
+	at java.lang.Object.wait(Object.java:502)
+	at BlockingQueue.take(BlockingQueue.java:27)
+	- locked <0x00000000d7f7b4d8> (a BlockingQueue)
+	at WaitSetExample$2.run(WaitSetExample.java:32)
+	at java.lang.Thread.run(Thread.java:745)
+
+   Locked ownable synchronizers:
+	- None
 ~~~
 
 > NOTE: 在上面 dump 中，0x00000000d7f7b4d8 被两个线程锁定过，但两个线程同样阻塞于 0x00000000d7f7b4d8
 
 如果调有 BlockingQueue 的 put 方法，则相应的 wait 集合中的线程被唤起，被唤起的线程从 wait 集合中移除。
+
+##### put() 导致线程阻塞
+
+启动一个线程，添加多个随机字符串到队列，如下:
+
+~~~
+final BlockingQueue<String> queue = new BlockingQueue<>(3);
+						
+new Thread(new Runnable(){
+    public void run() {
+	Thread.currentThread().setName("Thread 1");
+        for(int i = 0 ; i < Integer.MAX_VALUE ; i ++)
+	    queue.put("test" + i);
+    }}).start();
+~~~
+
+##### 线程 dump - take() 导致线程阻塞
+
+~~~
+"Thread 1" #9 prio=5 os_prio=0 tid=0x00007fe3200c9800 nid=0x151d in Object.wait() [0x00007fe303efd000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x00000000d7f5bb90> (a BlockingQueue)
+	at java.lang.Object.wait(Object.java:502)
+	at BlockingQueue.put(BlockingQueue.java:18)
+	- locked <0x00000000d7f5bb90> (a BlockingQueue)
+	at WaitSetExample$1.run(WaitSetExample.java:14)
+	at java.lang.Thread.run(Thread.java:745)
+
+   Locked ownable synchronizers:
+	- None
+~~~
 
 ## Lock
 
@@ -247,9 +295,11 @@ java.util.concurrent.locks 包中 API 提供了多线程锁相关的实现，如
 
 ![Lock]({{ site.baseurl }}/assets/blog/java-concurrency-lock.png)
 
-#### Java DeadlockExample with Lock
+### 示例: 使用 ReentrantLock 模拟死锁问题
 
-使用 java.util.concurrent.locks 包中 API 来实现 Synchronization 部分 DeadLock 示例如下:
+[synchronized 关键字的死锁模拟示例](#synchronized) 解释模拟了 Java 死锁问题，本部分使用 java.util.concurrent.locks 包中 API 来模拟实现该问题.
+
+#### 示例代码
 
 ~~~
 final Lock a = new ReentrantLock();
@@ -272,13 +322,13 @@ new Thread(new Runnable(){
     }}).start();
 ~~~
 
-类似 Synchronization 部分 DeadLock 示例
-
 * Thread 1 锁定 A 的同时 Thread 2 锁定 B
 * Thread 1 在拥有 A 的锁后尝试锁定 B，阻塞于等待 Thread 1 释放 A 
 * Thread 2 在拥有 B 的锁后尝试锁定 A，阻塞于等待 Thread 2 释放 B
 
-如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟线程 dump 日志描述如下:
+#### 死锁线程 dump
+
+如上代码运行会出现死锁，程序运行处于永久等待状态。Java 虚拟机线程 dump 日志描述如下:
 
 ~~~
 "Thread 2" #10 prio=5 os_prio=0 tid=0x00007f1fbc0dd800 nid=0x134d waiting on condition [0x00007f1fac1f0000]
@@ -319,6 +369,20 @@ new Thread(new Runnable(){
 如上 Lock 中 UML 图所示，Lock 定义了一个 newCondition() 方法，用来获取 Lock 相关联的 Condition 对象，
 
 ![Condition]({{ site.baseurl }}/assets/blog/java-concurrency-condition.png)
+
+### 常见 ReentrantLock, Condition 的使用模板
+
+~~~
+ReentrantLock lock = new ReentrantLock();
+Condition condition = lock.newCondition();
+lock.lock();
+try {
+    // do something
+    condition.signalAll();
+} finally {
+    lock.unlock();
+}
+~~~
 
 ## 参考文献
 
