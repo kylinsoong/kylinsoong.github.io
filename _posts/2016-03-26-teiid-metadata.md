@@ -28,9 +28,15 @@ The System Metadata defined in [types.dat](https://raw.githubusercontent.com/tei
 
 ## Metadata operations in VDB deploying
 
+There are 3 phases of Metadata operations in VDB deploying:
+
+1. Assign Metadata Repositories
+2. Metadata loading
+3. VDB finish deploy
+
 ### Assign Metadata Repositories
 
-Assign Metadata Repositories means assign [MetadataRepository](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc) to each Model which contained in a VDB definition. Assuming a VDB contain 4 Models and the processing of assign Metadata Repositories likes
+Assign Metadata Repositories means assign a [MetadataRepository](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc) to each Model which contained in a VDB definition. Assuming a VDB contain 4 Models and the processing of assign Metadata Repositories likes
 
 ![Assign Metadata Repositories]({{ site.baseurl }}/assets/blog/teiid/teiid-assign-repository.png)
 
@@ -43,9 +49,9 @@ As above figure, the VDB contain 4 Models:
 
 All ChainingMetadataRepository, NativeMetadataRepository, DirectQueryMetadataRepository, MetadataRepositoryWrapper, DDLMetadataRepository and MaterializationMetadataRepository are sub-class of MetadataRepository, more details refer to [UML diagram](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc).
 
-### Metadata loading in VDB deploying
+### Metadata loading
 
-As [Assign Metadata Repositories](#Assign Metadata Repositories) section, the following is 4 models load metadata:
+Once [Assign Metadata Repositories](#Assign Metadata Repositories) finished, each Model has reference a [MetadataRepository](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc), it's loadMetadata() methods be invoked, the following is the 4 models load metadata sequence diagram:
 
 **MarketData Load Metadata**
 
@@ -64,6 +70,12 @@ A MetadataFactory used in each Model's Metadata loading, MetadataFactory can mer
 Once the last Model's Metadata loading finished, VDBRepository's finishDeployment() will be invoked, relate below section for more.
 
 ### VDB finish deploy
+
+As below figure, the VDB finish deploy mainly contains: 
+
+1. init runtime metadata API and attach it to VDB
+2. validate the DDL SQL String which exist in VDB's virtual model
+3. invoke VDBLifeCycleListener's finishedDeployment()
 
 ![VDB finish deploy]({{ site.baseurl }}/assets/blog/teiid/teiid-metadata-finished.png)
 
