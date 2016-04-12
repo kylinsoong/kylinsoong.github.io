@@ -48,15 +48,22 @@ A typical usage of TupleBuffer is like:
 * Create TupleSource via TupleBuffer
 * Iterator Tuple data in TupleSource
 
-### Examples
+### Example.1 TupleBuffer with Tuple and TupleSource
 
-This section contain examples for Tuple, TupleBatch, TupleSource and TupleBuffer, assume 'PRODUCTView' under 'Test' model, it's DDL like: CREATE VIEW PRODUCTView (product_id integer, symbol string) AS ... , it has 6 rows data as below figure:
+Assuming `PRODUCTView` under `Test` model, the create `PRODUCTView` SQL like: 
+
+~~~
+CREATE VIEW PRODUCTView (
+    product_id integer, 
+    symbol string
+) AS SELECT p.product_id, p.symbol FROM PRODUCT AS p;
+~~~
+
+`PRODUCTView` has 6 rows data as below figure:
 
 ![Tuple Example]({{ site.baseurl }}/assets/blog/teiid-buffer-example.png) 
 
-**Example.1 TupleBuffer with Tuple and TupleSource**
-
-This example how use TupleBuffer add Tuple and iterator data via TupleSource. 
+The example below show how use TupleBuffer add Tuple and iterator data via TupleSource. 
 
 ~~~
 BufferManager bm = BufferManagerFactory.getStandaloneBufferManager();
@@ -80,7 +87,7 @@ buffer.addTuple(Arrays.asList(105, "TM"));
 TupleBufferTupleSource tupleSource = buffer.createIndexedTupleSource();
 tupleSource.setReverse(true);	
 while(tupleSource.hasNext()) {
-	System.out.println(tupleSource.nextTuple());
+    System.out.println(tupleSource.nextTuple());
 }
 tupleSource.closeSource();
 ~~~
@@ -96,9 +103,9 @@ Run above code will output
 [100, IBM]
 ~~~
 
-**Example.2 TupleBuffer with TupleBatch and TupleSource**
+### Example.2 TupleBuffer with TupleBatch and TupleSource
 
-This example how use TupleBuffer add TupleBatch and iterator data via TupleSource.
+The same as [Example.1 TupleBuffer with Tuple and TupleSource](#Example.1 TupleBuffer with Tuple and TupleSource) scenarios, this example show how use TupleBuffer add TupleBatch and iterator data via TupleSource.
 
 ~~~
 BufferManager bm = BufferManagerFactory.getStandaloneBufferManager();
@@ -112,27 +119,90 @@ elements.add(symbol);
 		
 TupleBuffer buffer = bm.createTupleBuffer(elements, "ConnectionId", TupleSourceType.PROCESSOR);
 buffer.setForwardOnly(false);
-TupleBatch batch = new TupleBatch(0, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ"), Arrays.asList(103, "GE"), Arrays.asList(104, "SAP"), Arrays.asList(105, "TM")));
+TupleBatch batch = new TupleBatch(1, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ"), Arrays.asList(103, "GE"), Arrays.asList(104, "SAP"), Arrays.asList(105, "TM")));
 buffer.addTupleBatch(batch, true);
 
-TupleBatch batch = resultsBuffer.getBatch(0);
-for(int i = 0 ; i < batch.getRowCount() ; i ++) {
-	System.out.println(batch.getTuple(i));
-}		
+TupleBufferTupleSource tupleSource = buffer.createIndexedTupleSource();
+tupleSource.setReverse(true);
+while(tupleSource.hasNext()) {
+    System.out.println(tupleSource.nextTuple());
+}
+tupleSource.closeSource();
 ~~~
 
 Run above code will output the same result as Example.1.
 
-## STree
+### Example.3 TupleBatch with Tuple
 
-The STree is a Self balancing Search Tree. More details from STree please refer to [Wikipedia](http://en.wikipedia.org/wiki/Self-balancing_binary_search_tree). An example of STree usage in Teiid BufferManager:
+The same as [Example.1 TupleBuffer with Tuple and TupleSource](#Example.1 TupleBuffer with Tuple and TupleSource) scenarios, This example will create a TupleBatch, set the TupleBatch's attributes.
 
 ~~~
-BufferManagerImpl bm = new BufferManagerImpl();
-STree stree = bm.createSTree(elements, "1", 1);
-stree.insert(Arrays.asList(1), InsertMode.NEW, logSize);
-TupleBrowser tb = new TupleBrowser(stree, new CollectionTupleSource(Collections.singletonList(Arrays.asList(i)).iterator()), true);
-tb.nextTuple();
+TupleBatch batch = new TupleBatch(1, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ")));
+batch.setTerminationFlag(true);
+long sourceRow = 1;
+while (true){
+    if(batch.getRowCount() > 0 && sourceRow <= batch.getEndRow()){
+        List<?> tuple = batch.getTuple(sourceRow);
+        sourceRow++ ;
+        System.out.println(tuple);
+    }
+    if(sourceRow > batch.getEndRow()) {
+        break;
+    }
+}  
+~~~
+
+Run above code will output
+
+~~~
+[100, IBM]
+[101, DELL]
+[102, HPQ]
+1
+3
+~~~
+
+## STree
+
+The STree is a Self balancing Search Tree. More details from STree please refer to [Wikipedia](http://en.wikipedia.org/wiki/Self-balancing_binary_search_tree). 
+
+### Example.1 STree with TupleBatch and Tuples
+
+The Data Structure same as [Example.1 TupleBuffer with Tuple and TupleSource](#Example.1 TupleBuffer with Tuple and TupleSource)'s scenarios, this example show how STree insert. 
+
+~~~
+BufferManager bm = BufferManagerFactory.getStandaloneBufferManager();
+List<ElementSymbol> columns = new ArrayList<>();
+ElementSymbol id = new ElementSymbol("Test.PRODUCTView.product_id");
+id.setType(DataTypeManager.DefaultDataClasses.INTEGER);
+ElementSymbol symbol = new ElementSymbol("Test.PRODUCTView.symbol");
+symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+columns.add(id);
+columns.add(symbol);
+STree tree = bm.createSTree(columns, "sessionID", 1);
+        
+TupleBatch batch = new TupleBatch(1, Arrays.asList(Arrays.asList(100, "IBM"), Arrays.asList(101, "DELL"), Arrays.asList(102, "HPQ")));
+batch.setTerminationFlag(true);
+long sourceRow = 1;
+while (true){
+    if(batch.getRowCount() > 0 && sourceRow <= batch.getEndRow()){
+        List<?> tuple = batch.getTuple(sourceRow);
+        sourceRow++ ;
+        tree.insert(tuple, InsertMode.NEW, -1);
+    }
+    if(sourceRow > batch.getEndRow()) {
+        break;
+    }
+}
+tree.setBatchInsert(false); 
+tree.compact();
+System.out.println(tree.getRowCount());
+~~~
+
+Run above code will output
+
+~~~
+3
 ~~~
 
 ## BatchManager
