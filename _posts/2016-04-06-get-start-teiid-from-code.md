@@ -19,8 +19,9 @@ excerpt: Teiid is a Open Source Data Virtulization Platform, which means the sou
 The following are prerequisites to build Teiid:
 
 1. install JDK 1.7 or higher
-2. install maven 3 - http://maven.apache.org/download.html
-3. Create a github account and fork Teiid
+2. install maven 3 - [http://maven.apache.org/download.html](http://maven.apache.org/download.html)
+3. Set Up Git - [https://help.github.com/articles/set-up-git/](https://help.github.com/articles/set-up-git/)
+4. Create a github account and fork Teiid
 
 Enter the following:
 
