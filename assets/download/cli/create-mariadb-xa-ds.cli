@@ -1,0 +1,14 @@
+
+# Add Driver
+if (outcome != success) of /subsystem=datasources/jdbc-driver=mariadbxa:read-resource
+    /subsystem=datasources/jdbc-driver=mariadbxa:add(driver-name=mariadbxa, driver-module-name=org.mariadb.jdbc, driver-xa-datasource-class-name=org.mariadb.jdbc.MariaDbDataSource)
+end-if
+
+# Add XA Data Source
+if (outcome != success) of /subsystem=datasources/xa-data-source=MariaDBXADS:read-resource
+    /subsystem=datasources/xa-data-source=MariaDBXADS:add(driver-name=mariadbxa, jndi-name=java:jboss/datasources/MariaDBXADS, user-name=jdv_user, password=jdv_pass, use-java-context=true, use-ccm=true, min-pool-size=5, max-pool-size=30)
+    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=DatabaseName:add(value="products")
+    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=PortNumber:add(value="3306")
+    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=ServerName:add(value="localhost")
+end-if
+

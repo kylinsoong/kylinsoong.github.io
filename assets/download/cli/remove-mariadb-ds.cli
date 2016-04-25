@@ -1,0 +1,10 @@
+# Remove Data Source
+if (outcome == success) of /subsystem=datasources/data-source=MariaDBDS:read-resource
+    /subsystem=datasources/data-source=MariaDBDS:remove()
+end-if
+
+# Remove Driver
+if (outcome == success) of /subsystem=datasources/jdbc-driver=mariadb:read-resource
+    /subsystem=datasources/jdbc-driver=mariadb:remove()
+end-if
+
