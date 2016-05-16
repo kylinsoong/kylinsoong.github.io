@@ -32,12 +32,19 @@ $ mvn clean install -P release -Dmaven.javadoc.skip=true -s settings.xml
 ~~~
 
 ### To install Teiid
+Standalone Mode
 
 ~~~
 $ unzip build/target/teiid-9.0.0.Alpha3-SNAPSHOT-wildfly-server.zip
 $ cd teiid-9.0.0.Alpha3-SNAPSHOT/
 $ ./bin/standalone.sh  
 $ ./bin/jboss-cli.sh --connect --file=bin/scripts/teiid-standalone-mode-install.cli  
+~~~
+Domain Mode
+
+~~~
+$ unzip build/target/teiid-9.0.0.Alpha3-SNAPSHOT-wildfly-server.zip
+$ cd teiid-9.0.0.Alpha3-SNAPSHOT/
 $ ./bin/domain.sh  
 $ ./bin/jboss-cli.sh --connect --file=bin/scripts/teiid-domain-mode-install.cli 
 ~~~
