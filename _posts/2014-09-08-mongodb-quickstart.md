@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "MongoDB 学习比记"
+title:  "MongoDB 学习笔记"
 date:   2014-09-08 16:20:00
 categories: data
 permalink: /mongodb-quickstart

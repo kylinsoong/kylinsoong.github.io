@@ -54,6 +54,21 @@ git revert e86dc9e0ec0dc3b4481891134d5481af1389ea61
 git push origin master
 ~~~
 
+### An example of delete a branch
+
+~~~
+$ git branch -d kylin.dev
+$ git push origin :kylin.dev
+~~~
+
+### An example of sync a branch with master
+
+~~~
+$ git checkout kylin.dev.1
+$ git merge --no-ff master
+$ git push origin kylin.dev.1
+~~~
+
 ### An example of manage remote branchs
 
 As below figure, this example will demonstrates how to operate remote branches, the main content including: clone remote repo, change remove repo, 2 ways to create branch(UI, command line), change remote branch.
