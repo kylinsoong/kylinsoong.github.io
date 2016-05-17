@@ -69,24 +69,60 @@ If teiid-quickstart not exist under WildFly Home, Clone it to WildFly Home:
 $ git clone https://github.com/teiid/teiid-quickstarts.git
 ~~~ 
 
-### dynamicvdb-datafederation
+### vdb-datafederation
 
 ~~~
-$ cp -r teiid-quickstarts/dynamicvdb-datafederation/src/teiidfiles/ ./
-$ ./bin/jboss-cli.sh --connect --file=teiid-quickstarts/dynamicvdb-datafederation/src/scripts/setup.cli
+$ cp -r teiid-quickstarts/vdb-datafederation/src/teiidfiles/ ./
+$ ./bin/jboss-cli.sh --connect --file=teiid-quickstarts/vdb-datafederation/src/scripts/setup.cli
 $ cd standalone/deployments/
-$ cp ../../teiid-quickstarts/dynamicvdb-datafederation/src/vdb/portfolio-vdb.xml* ./
+$ cp ../../teiid-quickstarts/vdb-datafederation/src/vdb/portfolio-vdb.xml* ./
 ~~~
 
 [PortfolioCient](https://github.com/kylinsoong/teiid-test/blob/master/client/src/main/java/org/teiid/test/jdbc/client/PortfolioCient.java)
 
-### dynamicvdb-materialization
+### vdb-materialization
+
+Refer to [vdb-datafederation](#vdb-datafederation) section,  make sure all setps are setup completely and correctly.
 
 ~~~
 $ cd standalone/deployments/
-$ cp ../../teiid-quickstarts/dynamicvdb-materialization/src/vdb/portfolio* ./
+$ cp ../../teiid-quickstarts/vdb-materialization/src/vdb/portfolio* ./
 ~~~
 
 [PortfolioMaterializeClient](https://github.com/kylinsoong/teiid-test/blob/master/client/src/main/java/org/teiid/test/jdbc/client/PortfolioMaterializeClient.java)
 
 [PortfolioInterMaterializeClient](https://github.com/kylinsoong/teiid-test/blob/master/client/src/main/java/org/teiid/test/jdbc/client/PortfolioInterMaterializeClient.java)
+
+### vdb-restservice
+
+Refer to [vdb-datafederation](#vdb-datafederation) section,  make sure all setps are setup completely and correctly.
+
+~~~
+$ cd standalone/deployments/
+$ cp ../../teiid-quickstarts/vdb-restservice/src/vdb/portfolio-rest-vdb.xml* ./
+~~~
+
+* **Simple Web Client** - Open a web broswer, entry the following API will extract data from the VDB:
+
+~~~
+http://localhost:8080/PortfolioRest_1/Rest/foo/1
+http://localhost:8080/PortfolioRest_1/Rest/getAllStocks
+http://localhost:8080/PortfolioRest_1/Rest/getAllStockById/1007
+http://localhost:8080/PortfolioRest_1/Rest/getAllStockBySymbol/IBM
+~~~
+
+> NOTE: [http://localhost:8080/PortfolioRest_1/api](http://localhost:8080/PortfolioRest_1/api) will list all API.
+
+* **HTTP Java Client**
+
+~~~
+$ cd teiid-quickstarts/vdb-restservice/http-client/
+$ mvn package exec:java
+~~~
+
+* **Resteasy client**
+
+~~~
+$ cd teiid-quickstarts/vdb-restservice/resteasy-client
+$ mvn package exec:java
+~~~
