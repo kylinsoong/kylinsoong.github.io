@@ -1,0 +1,20 @@
+CREATE VIEW SAMPLEMATVIEW (
+  id varchar,
+  a varchar,
+  b varchar,
+  c varchar,
+  PRIMARY KEY (id, a, b)
+) OPTIONS (MATERIALIZED 'TRUE', UPDATABLE 'TRUE',         
+             MATERIALIZED_TABLE 'Accounts.SampleTable_mat', 
+             "teiid_rel:MATVIEW_TTL" 30000,
+             "teiid_rel:MATVIEW_BEFORE_LOAD_SCRIPT" 'execute accounts.native(''truncate table SampleTable_staging'');',
+             "teiid_rel:MATVIEW_AFTER_LOAD_SCRIPT"  'execute accounts.native(''ALTER TABLE SampleTable_mat RENAME TO SampleTable_mat_temp'');execute accounts.native(''ALTER TABLE SampleTable_staging RENAME TO SampleTable_mat'');execute accounts.native(''ALTER TABLE SampleTable_mat_temp RENAME TO SampleTable_staging'');', 
+             "teiid_rel:ON_VDB_DROP_SCRIPT" 'DELETE FROM Accounts.status WHERE Name=''SAMPLEMATVIEW'' AND schemaname = ''SampleModel''',
+             "teiid_rel:MATERIALIZED_STAGE_TABLE" 'SampleTable_staging',
+             "teiid_rel:ALLOW_MATVIEW_MANAGEMENT" 'true', 
+             "teiid_rel:MATVIEW_STATUS_TABLE" 'status', 
+             "teiid_rel:MATVIEW_SHARE_SCOPE" 'NONE',
+             "teiid_rel:MATVIEW_ONERROR_ACTION" 'THROW_EXCEPTION'
+)
+AS
+SELECT A.id, A.a, A.b, A.c FROM Accounts.SampleTable AS A;

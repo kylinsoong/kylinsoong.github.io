@@ -197,6 +197,31 @@ Usage example, as below pom:
 
 Execute maven build or execute goal `mvn javacc:javacc` will generate java via grammars .jj file.
 
+### Example.1 SimpleExamples 
+
+This example will demonstrate javacc plugin to compile .jj file to java.
+
+[https://github.com/kylinsoong/teiid-test/tree/master/mvn/javacc-maven-plugin-example.1](https://github.com/kylinsoong/teiid-test/tree/master/mvn/javacc-maven-plugin-example.1)
+
+Execute mvn commands:
+
+~~~
+$ cd javacc-maven-plugin-example.1/
+$ mvn javacc:javacc
+~~~
+
+Will generate java files as below:
+
+~~~
+$ ls -R target/generated-sources/javacc/
+target/generated-sources/javacc/:
+IdListConstants.java     NL_XlatorConstants.java     ParseException.java    Simple1TokenManager.java  Simple2TokenManager.java  Simple3TokenManager.java  TokenMgrError.java
+IdList.java              NL_Xlator.java              Simple1Constants.java  Simple2Constants.java     Simple3Constants.java     SimpleCharStream.java
+IdListTokenManager.java  NL_XlatorTokenManager.java  Simple1.java           Simple2.java              Simple3.java              Token.java
+~~~
+
+[More javacc examples](https://sourceforge.net/p/dacapobench/dacapobench/ci/d13c6cf87185ce2bc92d0c2ce9dbf908c8fbfc1f/tree/tools/javacc-4.2/examples/)
+
 ## maven-bundle-plugin
 
 ## maven-jar-plugin

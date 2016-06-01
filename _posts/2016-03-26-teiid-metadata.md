@@ -51,7 +51,7 @@ All ChainingMetadataRepository, NativeMetadataRepository, DirectQueryMetadataRep
 
 ### Metadata loading
 
-Once [Assign Metadata Repositories](#Assign Metadata Repositories) finished, each Model has reference a [MetadataRepository](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc), it's loadMetadata() methods be invoked, the following is the 4 models load metadata sequence diagram:
+Once [Assign Metadata Repositories](#assign-metadata-repositories) finished, each Model has reference a [MetadataRepository](http://ksoong.org/teiid-uml-diagram#orgteiidmetadatametadatarepositoryfc), each of them's loadMetadata() methods be invoked iteratively, continue the VDB in [Assign Metadata Repositories](#assign-metadata-repositories), the following is the 4 models load metadata sequence diagram:
 
 **MarketData Load Metadata**
 
@@ -61,11 +61,21 @@ Once [Assign Metadata Repositories](#Assign Metadata Repositories) finished, eac
 
 ![Accounts Load Metadata]({{ site.baseurl }}/assets/blog/teiid/teiid-jdbc-load-metadata.png)
 
+* Before loading metadada, a `MetadataFactory`, `ExecutionFactory`(only for Source Model) and `ConnectionFactory`(only for Source Model) be created, passed as the parameters of ChainingMetadataRepository's loadMetadata() method.
+* Loading metadata, will load all source metadata(tables, columns, primary keys, index info, foreign keys) into `MetadataFactory`. 
+* After load metadata, MetadataFactory's `mergeInto (MetadataStore store)` be invoked, MetadataFactory's metadata be merged into a VDB scope MetadataStore.
+
 **Stocks/StocksMatModel Load Metadata**
 
 ![Stocks Load Metadata]({{ site.baseurl }}/assets/blog/teiid/teiid-mat-load-metadata.png)
 
-A MetadataFactory used in each Model's Metadata loading, MetadataFactory can merge each other, a MetadataFactory contains dataTypes, vdbResources, grants and a Schema, which related with tables, procedures, functions.
+* Before loading metadada, a `MetadataFactory` be created
+* Loading metadata, in DDLMetadataRepository, MetadataFactory's parse() invoked, parse the ddl text to Tables and Columns, a example refer to [Example.2 MetadataFactory parse ddl text](#example2-metadatafactory-parse-ddl-text)
+* After load metadata, MetadataFactory's `mergeInto (MetadataStore store)` be invoked, MetadataFactory's metadata be merged into a VDB scope MetadataStore.
+
+A MetadataFactory used in each Model's Metadata loading, MetadataFactory can merge into a global VDB scope MetadataStore, which contains dataTypes, vdbResources, grants and a Schema, related with tables, procedures, functions.
+
+> **Note that, the result of Metadata loading load  all metadata to a VDB scope MetadataStore, metadata in MetadataStore saved by Schema(each Model in VDB reference a Schema).** 
 
 Once the last Model's Metadata loading finished, VDBRepository's finishDeployment() will be invoked, relate below section for more.
 
@@ -91,19 +101,27 @@ mergedVDB.addAttchment(TransformationMetadata.class, metadata);
 mergedVDB.addAttchment(MetadataStore.class, mergedStore);
 ~~~
 
+> NOTE: `TransformationMetadata` base on VDB Scope Metadata `MetadataStore`, both `TransformationMetadata` and `MetadataStore` be added as VDB attachment. 
+
 **Appendix-2: Metadata Validator** 
 
-Validate the SQL commands which existed in virtual model's DDL text metadata String.
+Validate all Metadata existed in Global VDB Scope `MetadataStore` with the following MetadataRule:
+
+* SourceModelArtifacts - do not allow foreign tables, source functions in view model and vice versa 
+* CrossSchemaResolver - resolves the artifacts that are dependent upon objects from other schemas materialization sources, fk and data types, ensures that even if cached metadata is used that we resolve to a single instance
+* ResolveQueryPlans - Resolves metadata query plans to make sure they are accurate
+* MinimalMetadata - At minimum the model must have table/view, procedure or function 
+* MatViewPropertiesValidator - Validate the Materrialization Properties 
 
 **Appendix-3: MaterializationManager** 
 
-Refer to [teiid-mat-view](http://ksoong.org/teiid-mat-view).
+Refer to [teiid-mat-view](http://ksoong.org/teiid-mat-view#materializationmanager-finishdeployment).
 
 ## Examples
 
 This section contain examples to quick understand the Teiid Metadata.
 
-### Load classpath ddl file
+### Example.1: Load classpath ddl file
 
 Assuming `customer.ddl` file under classpath, which define a series of Metadata, this example demonstrates how to load metadata from a classpath file.
 
@@ -132,3 +150,35 @@ if (report.hasItems()) {
 }
 ~~~
 
+### Example.2 MetadataFactory parse ddl text
+
+[Sample DDL Text File]({{ site.baseurl }}/assets/download/teiid-sample-ddl-txt) contain dll text, this example will demonstrate how MetadataFactory parse ddl text.
+
+~~~
+ModelMetaData mmd = new ModelMetaData();
+mmd.setName("ExampleMode");
+MetadataFactory factory = new MetadataFactory("VDB", "1", datatypes, mmd);
+factory.setBuiltinDataTypes(SystemMetadata.getInstance().getRuntimeTypeMap());
+factory.getSchema().setPhysical(false);
+factory.setParser(new QueryParser()); 
+
+factory.parse(new StringReader(ddl));
+for (Table t :factory.getSchema().getTables().values()) {
+    List<Column> matViewColumns = t.getColumns();
+    for(int i = 0 ; i < matViewColumns.size() ; i ++){
+        Column c = matViewColumns.get(i);
+        System.out.println(c.getName() + ", " + c.getDatatype());
+    }
+   System.out.println(t.getProperty("{http://www.teiid.org/ext/relational/2012}MATVIEW_STATUS_TABLE", false));
+}
+~~~
+
+Run code will output:
+
+~~~
+id, Datatype name=string, basetype name=anySimpleType, runtimeType=string, javaClassName=java.lang.String, ObjectID=mmuuid:bf6c34c0-c442-1e24-9b01-c8207cd53eb7
+a, Datatype name=string, basetype name=anySimpleType, runtimeType=string, javaClassName=java.lang.String, ObjectID=mmuuid:bf6c34c0-c442-1e24-9b01-c8207cd53eb7
+b, Datatype name=string, basetype name=anySimpleType, runtimeType=string, javaClassName=java.lang.String, ObjectID=mmuuid:bf6c34c0-c442-1e24-9b01-c8207cd53eb7
+c, Datatype name=string, basetype name=anySimpleType, runtimeType=string, javaClassName=java.lang.String, ObjectID=mmuuid:bf6c34c0-c442-1e24-9b01-c8207cd53eb7
+status
+~~~
