@@ -30,6 +30,19 @@ the below sequence diagram shows how DriverManager create a connection:
 
 ![teiid-create-connection]({{ site.baseurl }}/assets/blog/teiid-seq-create-connection.png)
 
+### How a connection be created in embedded
+
+In embedded, the url are much more simple, no username/password is necessary, the driver can get from EmbeddedServer directly:
+
+~~~
+String url = "jdbc:teiid:Portfolio";
+Connection conn = server.getDriver().connect("jdbc:teiid:TeiidSizingApplication", null);
+~~~
+
+the below sequence diagram shows how a connection be created in embedded:
+
+![teiid-create-connection-embedded]({{ site.baseurl }}/assets/blog/teiid/teiid-create-conn-embedded.png)
+
 ### How a Statement execute the query
 
 Assuming view 'Marketdata' existed in Teiid VDB, a JDBC client execute query like:
@@ -49,6 +62,23 @@ the below sequence diagram shows how query sql `SELECT * FROM Marketdata` be sen
 * RemoteInvocationHandler assemble a `org.teiid.net.socket.Message` base on passed `org.teiid.client.RequestMessage`, then SocketServerInstanceImpl's **send** method be invoked
 * OioObjectChannel's **write** methd be invoked
 * ObjectOutputStream which come from socket **writeObject** `org.teiid.net.socket.Message`
+
+### How a Statement execute the query in embedded
+
+Assuming view 'Marketdata' existed in Teiid VDB, a JDBC client execute query like:
+
+~~~
+Statement stmt = conn.createStatement();
+stmt.executeQuery("SELECT * FROM Marketdata");
+~~~
+
+Connection create Statement sequence diagram as below:
+
+![teiid-conn-create-stmt]({{ site.baseurl }}/assets/blog/teiid/teiid-conn-create-stmt.png)
+
+the below sequence diagram shows StatementImpl how query sql `SELECT * FROM Marketdata` be sent to Teiid Server
+
+![teiid-stmt-execute]({{ site.baseurl }}/assets/blog/teiid/teiid-stmt-executesql-embedded.png)
 
 ### How ResultSet get Next
 

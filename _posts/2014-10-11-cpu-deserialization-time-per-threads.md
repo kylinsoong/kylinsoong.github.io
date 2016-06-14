@@ -1,6 +1,6 @@
 ---
-layout: blog
-title:  "CPU deserialization capability per hardware threads"
+layout: blg
+title:  "CPU deserialization capability"
 date:   2014-10-11 16:05:00
 categories: performance
 permalink: /cpu-deserialize
@@ -15,6 +15,15 @@ Usually, the total hardware threads represents a server's compute capability, th
 For example, assume a linux server have 2 sockets(2 physical cpu), each socket have 6 cores, then the server's total_hardware_threads = 2 * 6 * 2, it's 24, it hints this server can concurrent run 24 threads in a time point.
 
 This article will give a trial which get a comparision between hardware threads and CPU deserialization capability. Simply, the trial quiet easy, a simple java code query mysql database, thing we need to calculate is how much time taken from first time we we receive the row of result to, how mach time taken to read all the rows, this gives us deserialization time roughly, grab results for 100, 1000, 1k, 10k, 50k, 100K, 500k see the numbers as to how much time it took more with number of results, like on a graph, it should linearly go up, based on that we can come with a number to multiply by. Where look at schema and see how much size that is.
+
+## Linear regression
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6tDnNyNZDF0" frameborder="0" allowfullscreen></iframe>
+
+~~~
+TIME = W * SIZE
+~~~
+
 
 ## Environment
 
