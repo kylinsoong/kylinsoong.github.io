@@ -30,6 +30,41 @@ the below sequence diagram shows how DriverManager create a connection:
 
 ![teiid-create-connection]({{ site.baseurl }}/assets/blog/teiid-seq-create-connection.png)
 
+#### ILogon
+
+Step 6, in SocketServerConnection's construct method, a ILogon Proxy created, `org.teiid.net.socket.SocketServerInstanceImpl.RemoteInvocationHandler` is the InvocationHandler, it looks:
+
+~~~
+Class<ILogon> iface  = ILogon.class;
+Class<?>[] interfaces = new Class[] {iface};
+InvocationHandler h = new SocketServerInstanceImpl.RemoteInvocationHandler(iface, false){};
+Object proxy = Proxy.newProxyInstance(loader, interfaces, h);
+ILogon logon = iface.cast(proxy);
+~~~
+
+NOTE: `org.teiid.net.socket.SocketServerInstanceImpl.RemoteInvocationHandler` has defined a getInstance() abstract method, eatch time the InvocationHandler implement, a `org.teiid.net.socket.SocketServerInstance` be return.
+
+#### OioObjectChannel
+
+Step 10 - UML of [OioOjbectChannel](http://ksoong.org/teiid-uml-diagram#orgteiidnetsocketobjectchannel), note that, ObjectChannel has 2 implementations, [OioOjbectChannelFactory](http://ksoong.org/teiid-uml-diagram#orgteiidnetsocketobjectchannel) for client, and `org.teiid.transport.SSLAwareChannelHandler.ObjectChannelImpl` for Server.
+
+The client side `org.teiid.net.socket.OioOjbectChannelFactory.OioObjectChannel` mainly contains 2 stream:
+
+* `org.teiid.netty.handler.codec.serialization.ObjectEncoderOutputStream` - used to write Client Message to Server
+* `org.teiid.netty.handler.codec.serialization.ObjectDecoderInputStream` - used to read Message from Server.
+
+#### DQP
+
+In `org.teiid.jdbc.ConnectionImpl`'s construct method, a DQP proxy created, `org.teiid.net.socket.SocketServerInstanceImpl.RemoteInvocationHandler` is the InvocationHandler, it looks:
+
+~~~
+Class<ILogon> iface  = DQP.class;
+Class<?>[] interfaces = new Class[] {iface};
+InvocationHandler h = new SocketServerInstanceImpl.RemoteInvocationHandler(iface, false){};
+Object proxy = Proxy.newProxyInstance(loader, interfaces, h);
+DQP dqp = iface.cast(proxy);
+~~~
+
 ### How a connection be created in embedded
 
 In embedded, the url are much more simple, no username/password is necessary, the driver can get from EmbeddedServer directly:
