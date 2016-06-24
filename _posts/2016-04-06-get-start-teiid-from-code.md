@@ -49,6 +49,24 @@ $ ./bin/domain.sh
 $ ./bin/jboss-cli.sh --connect --file=bin/scripts/teiid-domain-mode-install.cli 
 ~~~
 
+## quickstart.sh
+
+[quickstart.sh]({{ site.baseurl }}/assets/download/shell/quickstart.sh) is a automatically shell, execute
+
+~~~
+$ ./quickstart.sh // need download quickstart.sh to Teiid server home.
+$ ./quickstart.sh ${path}/teiid-${version}
+~~~
+
+will do the following task automatically
+
+1. Clone `teiid-quickstarts` to Teiid Server Home
+2. Creat Application Users and Management User
+3. Start Teiid Server
+4. Run `vdb-datafederation`
+5. Run `vdb-materialization`
+6. Run `vdb-restservice`
+
 ## Create User
 
 The User including dashboardUser, teiidUser, restUser, odataUser, ManagementUser, use create-user script to create:

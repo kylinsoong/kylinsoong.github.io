@@ -25,7 +25,7 @@ jdbc:teiid:<vdb-name>@mm[s]://<host>:<port>;[prop-name=prop-value;]
 
 Teiid Support a series of Properties, refer to [Teiid Document](https://teiid.gitbooks.io/documents/content/client-dev/Driver_Connection.html#_url_connection_properties) for details.
 
-`FetchSize` hints the size of the resultset, the default is 2014, which means, the resultset size is 2048. In this section, we will dive into details how FetchSize setting works in Teiid.
+`FetchSize` hints the size of the resultset, the default is 2048, which means, the resultset size is 2048. In this section, we will dive into details how FetchSize setting works in Teiid.
 
 1. In [How a connection be created](http://ksoong.org/teiid-s-diagram#how-a-connection-be-created) step, a `org.teiid.jdbc.ConnectionImpl` be created, Property **FetchSize** be set a to connectionProerties list.
 2. In [How a Statement execute the query](http://ksoong.org/teiid-s-diagram#how-a-statement-execute-the-query) setp, `org.teiid.jdbc.StatementImpl` **FetchSize** be extract from connectionProerties, parse to a integer, set to `StatementImpl`'s fetchSize filed, which this occurr in `StatementImpl`'s construct, then the **FetchSize** be sent to `org.teiid.client.RequestMessage`.
