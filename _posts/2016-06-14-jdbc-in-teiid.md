@@ -30,7 +30,7 @@ Teiid Support a series of Properties, refer to [Teiid Document](https://teiid.gi
 1. In [How a connection be created](http://ksoong.org/teiid-s-diagram#how-a-connection-be-created) step, a `org.teiid.jdbc.ConnectionImpl` be created, Property **FetchSize** be set a to connectionProerties list.
 2. In [How a Statement execute the query](http://ksoong.org/teiid-s-diagram#how-a-statement-execute-the-query) setp, `org.teiid.jdbc.StatementImpl` **FetchSize** be extract from connectionProerties, parse to a integer, set to `StatementImpl`'s fetchSize filed, which this occurr in `StatementImpl`'s construct, then the **FetchSize** be sent to `org.teiid.client.RequestMessage`.
 3. In [How Teiid Server handle query request](http://ksoong.org/teiid-s-diagram#how-teiid-server-handle-query-request), Parse Message get the `org.teiid.client.RequestMessage`, invoke the DQPCore's executeRequest(), **FetchSize** in RequestMessage be passed as a parameter.
-4.      
+4. In [DQPCore's executeRequest()](http://ksoong.org/teiid-dqp#dqpcores-executerequest-method), `RequestMessage` be sent to [Request](http://ksoong.org/teiid-dqp#request) then be sent to [RequestWorkItem](http://ksoong.org/teiid-dqp#requestworkitem), and base on **FetchSize** [RequestWorkItem](http://ksoong.org/teiid-dqp#requestworkitem)'s `begin` and `end` be updated.       
 
 
 

@@ -3,17 +3,22 @@
 DIRNAME=`dirname "$0"`
 
 function bash_print {
-echo "-----------------------------------------------------------------------------"
-echo $1  
-echo "-----------------------------------------------------------------------------"
-echo ""
+    echo "-----------------------------------------------------------------------------"
+    echo $1  
+    echo "-----------------------------------------------------------------------------"
+    echo ""
 }
 
+count=1
+Results[$count]="Results:"
+
 function bash_print_success {
-echo "-----------------------------------------------------------------------------"
-echo $1 'Success'
-echo "-----------------------------------------------------------------------------"
-echo ""
+    echo "-----------------------------------------------------------------------------"
+    echo $1 'Success'
+    echo "-----------------------------------------------------------------------------"
+    echo ""
+    count=`expr $count + 1`
+    Results[$count]="$1  -  Success"
 }
 
 function bash_pause {
@@ -117,3 +122,18 @@ cd "$TEIID_QUICKSTART_DIR/vdb-restservice/http-client"; mvn package exec:java
 cd "$TEIID_QUICKSTART_DIR/vdb-restservice/resteasy-client"; mvn package exec:java
 cd "$TEIID_QUICKSTART_DIR/vdb-restservice/cxf-client"; mvn package exec:java
 bash_print_success "Run vdb-restservice"
+
+bash_print "Run Quick Start Results"
+
+#tput bold   # Bold print
+
+for index in 1 2 3 4 5 6 7 8 9 10 11 12
+do
+  printf "     %s\n" "${Results[index]}"
+done
+
+#tput sgr0   # Reset terminal.
+
+bash_print "Exit"
+
+exit 0

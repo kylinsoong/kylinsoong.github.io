@@ -1,5 +1,5 @@
 ---
-layout: blg
+layout: blog
 title:  "CPU deserialization capability"
 date:   2014-10-11 16:05:00
 categories: performance
