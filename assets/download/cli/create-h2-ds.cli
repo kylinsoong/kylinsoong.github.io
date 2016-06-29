@@ -1,0 +1,16 @@
+
+# Add Driver
+if (outcome != success) of /subsystem=datasources/jdbc-driver=h2-no-xa:read-resource
+    /subsystem=datasources/jdbc-driver=h2-no-xa:add(driver-name=h2-no-xa, driver-module-name=org.h2.jdbc, driver-class-name=org.h2.Driver)
+end-if
+
+# Add XA Data Source
+if (outcome != success) of /subsystem=datasources/data-source=H2DS:read-resource
+    /subsystem=datasources/data-source=H2DS:add(driver-name=h2-no-xa, jndi-name=java:jboss/datasources/H2DS, connection-url="jdbc:h2:mem:test-no-xa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", user-name=user, password=password, enabled=true, use-java-context=true, min-pool-size=5, max-pool-size=30)
+end-if
+
+# Verify adding
+if (outcome == success) of /subsystem=datasources/data-source=H2DS:read-resource
+    /subsystem=datasources/data-source=H2DS:test-connection-in-pool()
+end-if
+

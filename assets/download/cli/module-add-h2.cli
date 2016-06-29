@@ -1,0 +1,2 @@
+# Add Driver Module
+module add --name=org.h2.jdbc --resources=h2-1.4.192.jar --dependencies=javax.api,javax.transaction.api

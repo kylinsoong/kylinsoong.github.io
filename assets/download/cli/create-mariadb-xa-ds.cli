@@ -1,14 +1,16 @@
 
 # Add Driver
-if (outcome != success) of /subsystem=datasources/jdbc-driver=mariadbxa:read-resource
-    /subsystem=datasources/jdbc-driver=mariadbxa:add(driver-name=mariadbxa, driver-module-name=org.mariadb.jdbc, driver-xa-datasource-class-name=org.mariadb.jdbc.MariaDbDataSource)
+if (outcome != success) of /subsystem=datasources/jdbc-driver=mariadb-xa:read-resource
+    /subsystem=datasources/jdbc-driver=mariadb-xa:add(driver-name=mariadb-xa, driver-module-name=org.mariadb.jdbc, driver-xa-datasource-class-name=org.mariadb.jdbc.MariaDbDataSource)
 end-if
 
 # Add XA Data Source
 if (outcome != success) of /subsystem=datasources/xa-data-source=MariaDBXADS:read-resource
-    /subsystem=datasources/xa-data-source=MariaDBXADS:add(driver-name=mariadbxa, jndi-name=java:jboss/datasources/MariaDBXADS, user-name=jdv_user, password=jdv_pass, use-java-context=true, use-ccm=true, min-pool-size=5, max-pool-size=30)
-    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=DatabaseName:add(value="products")
-    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=PortNumber:add(value="3306")
-    /subsystem=datasources/xa-data-source=MariaDBXADS/xa-datasource-properties=ServerName:add(value="localhost")
+    xa-data-source add --name=MariaDBXADS --driver-name=mariadb-xa --jndi-name=java:jboss/datasources/MariaDBXADS --user-name=jdv_user --password=jdv_pass --use-java-context=true --xa-datasource-properties=[DatabaseName=>products, PortNumber=>3306, ServerName=>localhost]
+end-if
+
+# Verify adding
+if (outcome == success) of /subsystem=datasources/xa-data-source=MariaDBXADS:read-resource
+    /subsystem=datasources/xa-data-source=MariaDBXADS:test-connection-in-pool()
 end-if
 

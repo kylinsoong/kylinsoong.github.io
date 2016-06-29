@@ -1,0 +1,11 @@
+# Remove Data Source
+if (outcome == success) of /subsystem=datasources/xa-data-source=H2XADS:read-resource
+    xa-data-source remove --name=H2XADS
+    :reload()
+end-if
+
+# Remove Driver
+if (outcome == success) of /subsystem=datasources/jdbc-driver=h2-xa:read-resource
+    /subsystem=datasources/jdbc-driver=h2-xa:remove()
+end-if
+

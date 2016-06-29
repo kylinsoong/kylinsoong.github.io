@@ -1,10 +1,11 @@
 # Remove Data Source
 if (outcome == success) of /subsystem=datasources/xa-data-source=MariaDBXADS:read-resource
-    /subsystem=datasources/xa-data-source=MariaDBXADS:remove()
+    xa-data-source remove --name=MariaDBXADS
+    :reload()
 end-if
 
 # Remove Driver
-if (outcome == success) of /subsystem=datasources/jdbc-driver=mariadbxa:read-resource
-    /subsystem=datasources/jdbc-driver=mariadbxa:remove()
+if (outcome == success) of /subsystem=datasources/jdbc-driver=mariadb-xa:read-resource
+    /subsystem=datasources/jdbc-driver=mariadb-xa:remove()
 end-if
 

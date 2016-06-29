@@ -1,0 +1,2 @@
+# Remove Module
+module remove --name=org.h2.jdbc

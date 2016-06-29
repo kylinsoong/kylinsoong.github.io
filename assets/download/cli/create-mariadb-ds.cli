@@ -9,3 +9,8 @@ if (outcome != success) of /subsystem=datasources/data-source=MariaDBDS:read-res
     /subsystem=datasources/data-source=MariaDBDS:add(driver-name=mariadb, jndi-name=java:jboss/datasources/MariaDBDS, connection-url=jdbc:mariadb://localhost:3306/products, user-name=jdv_user, password=jdv_pass, enabled=true, use-java-context=true, min-pool-size=5, max-pool-size=30)
 end-if
 
+# Verify adding
+if (outcome == success) of /subsystem=datasources/data-source=MariaDBDS:read-resource
+    /subsystem=datasources/data-source=MariaDBDS:test-connection-in-pool()
+end-if
+

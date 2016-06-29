@@ -1,2 +1,2 @@
 # Add Driver Module
-module add --name=org.mariadb.jdbc --resources=mariadb-java-client-1.4.3.jar --dependencies=javax.api,javax.transaction.api
+module add --name=org.mariadb.jdbc --resources=mariadb-java-client-1.4.6.jar --dependencies=javax.api,javax.transaction.api
