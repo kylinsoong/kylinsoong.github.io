@@ -1,0 +1,2 @@
+# Add Driver Module
+module add --name=org.teiid.jdbc --resources=teiid-9.0.0.Final-jdbc.jar --dependencies=javax.api,javax.transaction.api,sun.jdk

@@ -1,0 +1,2 @@
+# Remove Module
+module remove --name=com.mysql.jdbc

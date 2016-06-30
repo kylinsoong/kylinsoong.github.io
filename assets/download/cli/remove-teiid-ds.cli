@@ -1,0 +1,11 @@
+# Remove Data Source
+if (outcome == success) of /subsystem=datasources/data-source=TeiidDS:read-resource
+    /subsystem=datasources/data-source=TeiidDS:remove()
+    :reload()
+end-if
+
+# Remove Driver
+if (outcome == success) of /subsystem=datasources/jdbc-driver=teiid:read-resource
+    /subsystem=datasources/jdbc-driver=teiid:remove()
+end-if
+

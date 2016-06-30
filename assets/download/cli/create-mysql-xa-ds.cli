@@ -1,0 +1,16 @@
+
+# Add Driver
+if (outcome != success) of /subsystem=datasources/jdbc-driver=mysql-xa:read-resource
+    /subsystem=datasources/jdbc-driver=mysql-xa:add(driver-name=mysql-xa, driver-module-name=com.mysql.jdbc, driver-xa-datasource-class-name=com.mysql.jdbc.jdbc2.optional.MysqlXADataSource)
+end-if
+
+# Add XA Data Source
+if (outcome != success) of /subsystem=datasources/xa-data-source=MysqlXADS:read-resource
+    xa-data-source add --name=MysqlXADS --driver-name=mysql-xa --jndi-name=java:jboss/datasources/MysqlXADS --user-name=test_user --password=test_pass --use-java-context=true --xa-datasource-properties=[DatabaseName=>products, PortNumber=>3306, ServerName=>localhost]
+end-if
+
+# Verify adding
+if (outcome == success) of /subsystem=datasources/xa-data-source=MysqlXADS:read-resource
+    /subsystem=datasources/xa-data-source=MysqlXADS:test-connection-in-pool()
+end-if
+

@@ -1,0 +1,11 @@
+# Remove Data Source
+if (outcome == success) of /subsystem=datasources/data-source=MysqlDS:read-resource
+    /subsystem=datasources/data-source=MysqlDS:remove()
+    :reload()
+end-if
+
+# Remove Driver
+if (outcome == success) of /subsystem=datasources/jdbc-driver=mysql:read-resource
+    /subsystem=datasources/jdbc-driver=mysql:remove()
+end-if
+

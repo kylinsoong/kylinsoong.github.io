@@ -1,0 +1,10 @@
+
+# Add Driver
+if (outcome != success) of /subsystem=datasources/jdbc-driver=teiid:read-resource
+    /subsystem=datasources/jdbc-driver=teiid:add(driver-name=teiid, driver-module-name=org.teiid.jdbc, driver-class-name=org.teiid.jdbc.TeiidDriver)
+end-if
+
+# Add XA Data Source
+if (outcome != success) of /subsystem=datasources/data-source=TeiidDS:read-resource
+    /subsystem=datasources/data-source=TeiidDS:add(driver-name=teiid, jndi-name=java:jboss/datasources/TeiidDS, connection-url="jdbc:teiid:Portfolio@mm://localhost:31000;version=1", user-name=test_user, password=test_pass, enabled=true, use-java-context=true, min-pool-size=5, max-pool-size=30)
+end-if

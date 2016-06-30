@@ -1,0 +1,11 @@
+# Remove Data Source
+if (outcome == success) of /subsystem=datasources/xa-data-source=MysqlXADS:read-resource
+    xa-data-source remove --name=MysqlXADS
+    :reload()
+end-if
+
+# Remove Driver
+if (outcome == success) of /subsystem=datasources/jdbc-driver=mysql-xa:read-resource
+    /subsystem=datasources/jdbc-driver=mysql-xa:remove()
+end-if
+
