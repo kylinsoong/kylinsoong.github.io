@@ -9,3 +9,7 @@ if (outcome != success) of /subsystem=datasources/xa-data-source=TeiidXADS:read-
     xa-data-source add --name=TeiidXADS --driver-name=teiid-xa --jndi-name=java:jboss/datasources/TeiidXADS --user-name=test_user --password=test_pass --use-java-context=true --xa-datasource-properties=[DatabaseName=>Portfolio, PortNumber=>31000, ServerName=>localhost]
 end-if
 
+# Verify adding
+if (outcome == success) of /subsystem=datasources/xa-data-source=TeiidXADS:read-resource
+   /subsystem=datasources/xa-data-source=TeiidXADS:test-connection-in-pool()
+end-if

@@ -8,3 +8,8 @@ end-if
 if (outcome != success) of /subsystem=datasources/data-source=TeiidDS:read-resource
     /subsystem=datasources/data-source=TeiidDS:add(driver-name=teiid, jndi-name=java:jboss/datasources/TeiidDS, connection-url="jdbc:teiid:Portfolio@mm://localhost:31000;version=1", user-name=test_user, password=test_pass, enabled=true, use-java-context=true, min-pool-size=5, max-pool-size=30)
 end-if
+
+# Verify adding
+if (outcome == success) of /subsystem=datasources/xa-data-source=TeiidXDS:read-resource
+  /subsystem=datasources/xa-data-source=TeiidDS:test-connection-in-pool()
+end-if
