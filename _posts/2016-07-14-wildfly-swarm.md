@@ -68,6 +68,11 @@ BootModuleLoader used for class loading, it extends jboss modules's ModuleLoader
 * ApplicationModuleFinder
 * FlattishApplicationModuleFinder
 
+## SelfContainedContainer start
+
+Swarm RuntimeServer invoke SelfContainedContainer's start() method, then set up MSC container.
+
+![SelfContainedContainer start]({{ site.baseurl }}/assets/blog/wildfly/swarm-container.png)
 
 
 
