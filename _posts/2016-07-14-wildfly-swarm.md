@@ -81,7 +81,7 @@ Swarm RuntimeServer invoke SelfContainedContainer's start() method, then set up 
 A fraction in wildfly-swarm-fraction-plugin represent a maven assets, which consisted by groupId, artifactId and version. wildfly-swarm-fraction-plugin has defined several mojo goals, including:
 
 * **fraction-list** - Used to generate fractions descriptors, refer to [how fraction list works](#how-fraction-list-works) for details.
-* **process** - , refer to [how process works](#how-process-works) for details 
+* **process** - Used to generate internal modules system, refer to [how process works](#how-process-works) for details 
 
 #### how fraction-list works
 
@@ -184,8 +184,50 @@ If configu fraction plugin as below
 
 then the process task do the following:
 
-1. Generate modules - this depend on a `module.conf` file which under project base directory. In this file, every line define a module, eg, `org.apache.camel export=true services=export`. All this lines of modules be used as new created modules' dependencies.
-2. Set up bootstrap - this will create a `wildfly-swarm-bootstrap.conf` under classpath, which comtain the module created in step 1.
-3. Generate Provided Dependencies - this depend on `provided-dependencies.txt` which under resources dir. This step will create `META-INF/wildfly-swarm-classpath.conf` which contains all dependences.`
-4. Filter Modules - this depend on `module-rewrite.conf` 
+* **Generate modules**
 
+3 modules will generate
+
+1. main - the parent follder of a *Fraction.java, eg, `org.wildfly.swarm.camel.core`
+2. api - under the main module, eg, `org.wildfly.swarm.camel.core.api`
+3. runtime - under the main module, eg, `org.wildfly.swarm.camel.core.runtime`
+
+> NOTE: This step depend on a `module.conf` file which under project base directory. In this file, every line define a module, eg, `org.apache.camel export=true services=export`. All this lines of modules be added as new created modules' dependencies.
+
+An example of generated module.xml
+
+~~~
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<module xmlns="urn:jboss:module:1.5" name="org.wildfly.swarm.camel.core" slot="main">
+  <dependencies>
+    <system export="true">
+      <paths>
+        <path name="org/wildfly/swarm/camel/core"/>
+      </paths>
+    </system>
+    <module export="true" name="org.wildfly.swarm.camel.core" services="export" slot="api"/>
+  </dependencies>
+</module>
+~~~
+
+* **Set up bootstrap** 
+
+This will create a `wildfly-swarm-bootstrap.conf` under classpath, which comtain bootstrap module name, eg, `org.wildfly.swarm.camel.core`.
+
+* **Generate Provided Dependencies** 
+
+This step depend on `provided-dependencies.txt` which under resources dir, which define the provided dependencies.
+
+This step will create `META-INF/wildfly-swarm-classpath.conf` which contains all dependences.`
+
+* **Filter Modules** 
+
+This depend on `module-rewrite.conf` under base dir, which defines module rewrite rules. The process of this step including:
+
+1. load modules from `resources/modules`
+2. load modules from `target/classes/modules` which added in above steps.
+3. load modules from dependencies, which filter all modules definition from jar
+4. load modules from dependencies, which filter all modules definition from zip
+5. write modules to `target/classes/modules`
+
+* **execute Jandexer** 
