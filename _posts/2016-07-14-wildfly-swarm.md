@@ -230,4 +230,52 @@ This depend on `module-rewrite.conf` under base dir, which defines module rewrit
 4. load modules from dependencies, which filter all modules definition from zip
 5. write modules to `target/classes/modules`
 
-* **execute Jandexer** 
+* **execute Jandexer**
+
+### wildfly-swarm-plugin
+
+The wildfly-swarm-plugin use a `BuildTool` to a build swarm jar, the `BuildTool` mainly has 2 aspects task:
+
+Firstly, initialization.
+
+1. init projectArtifact - create a `projectAsset` base on project's groupId, artifactId, version, etc.
+2. init fractionList - the fractions predefined by `fraction-list` project, which contains all wildfly-swarm fractions
+3. init properties - properties passed from mvn build
+4. set main class - main class name come from plugin config
+5. set bundleDependencies - bundleDependencies come from plugin config
+6. set executable - executable come from plugin config
+7. set executableScript - executableScript come from plugin config
+8. set fractionDetectMode - fractionDetectMode come from plugin config, default value is `when_missing`
+9. init ArtifactResolvingHelper - a MavenArtifactResolvingHelper be created
+10. set logger - BuildTool.SimpleLogger be create
+11. set additionalFractions - additionalFractions come from plugin config, BuildTool's fraction method be used to set additionalFractions
+12. set dependency - any dependency of project will be set to BuildTool
+13. set Resources - any resource of project will be set to BuildTool
+14. set additionalModules - additionalModules come from plugin config
+
+Secondly, build the `-swarm.jar`.
+
+A traditional config:
+
+~~~
+<plugin>
+    <groupId>org.wildfly.swarm</groupId>
+    <artifactId>wildfly-swarm-plugin</artifactId>
+    <version>2016.7-SNAPSHOT</version>
+    <configuration>
+        <mainClass>org.teiid.test.swarm.Main</mainClass>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>package</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+~~~
+
+#### A simplest -swarm.jar
+
+In this section, a project with a simple Main class and no dependency, then we focus on how -swam.jar be build.
+ 
