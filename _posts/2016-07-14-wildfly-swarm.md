@@ -255,6 +255,17 @@ Firstly, initialization.
 
 Secondly, build the `-swarm.jar`.
 
+1. analyze Dependencies - scan modules dependencies, scan bootstrap dependencies, analyze module dependencies, analyze provided dependencies
+2. add Wildfly Swarm Bootstrap Jar - move swarm bootstrap.jar to target archive.
+3. add WildFly Bootstrap Conf - `META-INF/wildfly-swarm-bootstrap.conf` 
+4. add Manifest - mainClass be used
+5. add WildFly Swarm Properties - `wildfly-swarm.properties`
+6. add WildFly Swarm Application Conf - `META-INF/wildfly-swarm-application.conf`
+7. add WildFly Swarm Dependencies Conf - `META-INF/wildfly-swarm-dependencies.conf` 
+8. add Additional Modules
+9. add Project Asset
+10. populate UberJar Maven Repository
+
 A traditional config:
 
 ~~~
