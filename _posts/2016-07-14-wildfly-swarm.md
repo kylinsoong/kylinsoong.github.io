@@ -184,53 +184,160 @@ If configu fraction plugin as below
 
 then the process task do the following:
 
-* **Generate modules**
+**1. Generate modules**
 
-3 modules will generate
+This step against on compiled project's source code, usually under `target/classes` path, these code are categorized by path and add into one module with 3 slots, in other words, in this section, 3 module.xml will generate
 
-1. main - the parent follder of a *Fraction.java, eg, `org.wildfly.swarm.camel.core`
-2. api - under the main module, eg, `org.wildfly.swarm.camel.core.api`
-3. runtime - under the main module, eg, `org.wildfly.swarm.camel.core.runtime`
+1. main - the parent follder of a *Fraction.java, eg, `org.wildfly.swarm.teiid`
+2. api - under the main module
+3. runtime - under the main module
 
-> NOTE: This step depend on a `module.conf` file which under project base directory. In this file, every line define a module, eg, `org.apache.camel export=true services=export`. All this lines of modules be added as new created modules' dependencies.
+> NOTE: This step depend on a `module.conf` file which under project base directory. In this file, every line define a module, eg, `org.jboss.teiid`. All this lines of modules be added as new created modules' dependencies.
 
 An example of generated module.xml
 
+* target/classes/modules/org/wildfly/swarm/teiid/main/module.xml
+
 ~~~
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<module xmlns="urn:jboss:module:1.5" name="org.wildfly.swarm.camel.core" slot="main">
+<module xmlns="urn:jboss:module:1.5" name="org.wildfly.swarm.teiid" slot="main">
   <dependencies>
     <system export="true">
       <paths>
-        <path name="org/wildfly/swarm/camel/core"/>
+        <path name="org/wildfly/swarm/config"/>
+        <path name="org/wildfly/swarm/teiid/internal"/>
+        <path name="org/wildfly/swarm/teiid"/>
       </paths>
     </system>
-    <module export="true" name="org.wildfly.swarm.camel.core" services="export" slot="api"/>
+    <module export="true" name="org.wildfly.swarm.teiid" services="export" slot="api"/>
   </dependencies>
 </module>
 ~~~
 
-* **Set up bootstrap** 
+* target/classes/modules/org/wildfly/swarm/teiid/api/module.xml
 
-This will create a `wildfly-swarm-bootstrap.conf` under classpath, which comtain bootstrap module name, eg, `org.wildfly.swarm.camel.core`.
+~~~
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<module xmlns="urn:jboss:module:1.5" name="org.wildfly.swarm.teiid" slot="api">
+  <resources>
+    <artifact name="org.wildfly.swarm:teiid:2016.7-SNAPSHOT">
+      <filter>
+        <include-set>
+          <path name="org/wildfly/swarm/config"/>
+          <path name="org/wildfly/swarm/teiid/internal"/>
+          <path name="org/wildfly/swarm/teiid"/>
+        </include-set>
+        <exclude-set/>
+      </filter>
+    </artifact>
+  </resources>
+  <dependencies>
+    <module name="org.wildfly.swarm.container"/>
+    <module name="org.jboss.teiid" slot="main"/>
+  </dependencies>
+</module>
+~~~
 
-* **Generate Provided Dependencies** 
+* target/classes/modules/org/wildfly/swarm/teiid/runtime/module.xml
 
-This step depend on `provided-dependencies.txt` which under resources dir, which define the provided dependencies.
+~~~
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<module xmlns="urn:jboss:module:1.5" name="org.wildfly.swarm.teiid" slot="runtime">
+  <resources>
+    <artifact name="org.wildfly.swarm:teiid:2016.7-SNAPSHOT">
+      <filter>
+        <exclude-set>
+          <path name="org/wildfly/swarm/config"/>
+          <path name="org/wildfly/swarm/teiid/internal"/>
+          <path name="org/wildfly/swarm/teiid"/>
+        </exclude-set>
+      </filter>
+    </artifact>
+  </resources>
+  <dependencies>
+    <module name="org.wildfly.swarm.teiid" slot="main"/>
+    <module name="org.wildfly.swarm.bootstrap" optional="true"/>
+    <module name="org.wildfly.swarm.container" slot="runtime"/>
+    <module name="org.jboss.teiid" slot="main"/>
+  </dependencies>
+</module>
+~~~
 
-This step will create `META-INF/wildfly-swarm-classpath.conf` which contains all dependences.`
+**2. create bootstrap conf** 
 
-* **Filter Modules** 
+Set up bootstrap means create a `wildfly-swarm-bootstrap.conf` file under classpath, which contain the bootstrap module name, there are 3 ways to do this:
 
-This depend on `module-rewrite.conf` under base dir, which defines module rewrite rules. The process of this step including:
+1. Pre-packaged `wildfly-swarm-bootstrap.conf` file under `src/main/resources`
+2. Use system proeprties `swarm.fraction.bootstrap` define the bootstrap module name, eg `-Dswarm.fraction.bootstrap=org.wildfly.swarm.teiid`
+3. Walk through src, if file path end with `Fraction.java`, then this java's package as bootstrap module name, eg `org.wildfly.swarm.teiid.TeiidFraction` referenced bootstrap module name is `org.wildfly.swarm.teiid`  
 
-1. load modules from `resources/modules`
-2. load modules from `target/classes/modules` which added in above steps.
-3. load modules from dependencies, which filter all modules definition from jar
-4. load modules from dependencies, which filter all modules definition from zip
-5. write modules to `target/classes/modules`
+> NOTE: Both step 2 and 3 will create a `wildfly-swarm-bootstrap.conf` under classpath, which comtain the bootstrap module name.
 
-* **execute Jandexer**
+**3. Generate Dependencies** 
+
+Firstly, collect the dependencies in `provided-dependencies.txt`. 
+
+The dependencies can be defined in `provided-dependencies.txt` filem which under `src/main/resources/`, which define the provided dependencies. Each line in `provided-dependencies.txt` represent a dependency, a format like <groupId>:<artifactId>. 
+
+An example of `provided-dependencies.txt`:
+
+~~~
+g.wildfly.swarm:config-api
+org.wildfly.swarm:config-api-runtime
+~~~
+
+Secondly, dump the collected dependencies to `META-INF/wildfly-swarm-classpath.conf`.
+
+An example of `META-INF/wildfly-swarm-classpath.conf`:
+
+~~~
+  1 package(org.wildfly.swarm.container) replace(org.wildfly.swarm.container:main)
+  2 package(org.wildfly.swarm.container) replace(org.wildfly.swarm.container:runtime)
+  3 
+  4 maven(org.wildfly.swarm:config-api) remove
+  5 maven(org.wildfly.swarm:config-api-runtime) remove
+  6 maven(org.ow2.asm:asm-all) remove
+  7 maven(org.jboss.shrinkwrap:shrinkwrap-api) remove
+  8 maven(org.jboss.shrinkwrap:shrinkwrap-spi) remove
+  9 maven(org.jboss.shrinkwrap:shrinkwrap-impl-base) remove
+ 10 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi) remove
+ 11 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base) remove
+ 12 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-jboss) remove
+ 13 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-javaee) remove
+ 14 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base) remove
+ 15 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-jboss) remove
+ 16 maven(org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-javaee) remove
+ 17 maven(org.yaml:snakeyaml) remove
+ 18 maven(org.wildfly:wildfly-naming) remove
+ 19 maven(org.ow2.asm:asm-all) remove
+ 20 maven(org.yaml:snakeyaml) remove
+~~~
+
+**5. Filter Modules** 
+
+This steps including the following procedures:
+
+* Load module rewrite rules
+
+This step depend on `module-rewrite.conf` under base dir, which defines module rewrite rules. An example of `module-rewrite.conf`:
+
+~~~
+module: org.jboss.as.server
+  optional: org.jboss.as.domain-http-interface
+~~~
+
+* Walk Project Modules 
+
+load modules from `resources/modules`
+
+* Walk Dependency Modules
+
+load modules from `target/classes/modules` which added in above steps.
+* load modules from dependencies, which filter all modules definition from jar
+* load modules from dependencies, which filter all modules definition from zip
+* write modules to `target/classes/modules`
+
+**6. execute Jandexer**
 
 ### wildfly-swarm-plugin
 
