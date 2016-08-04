@@ -282,7 +282,7 @@ The dependencies can be defined in `provided-dependencies.txt` filem which under
 An example of `provided-dependencies.txt`:
 
 ~~~
-g.wildfly.swarm:config-api
+org.wildfly.swarm:config-api
 org.wildfly.swarm:config-api-runtime
 ~~~
 
@@ -313,7 +313,7 @@ An example of `META-INF/wildfly-swarm-classpath.conf`:
  20 maven(org.yaml:snakeyaml) remove
 ~~~
 
-**5. Filter Modules** 
+**4. Filter Modules** 
 
 This steps including the following procedures:
 
@@ -328,16 +328,49 @@ module: org.jboss.as.server
 
 * Walk Project Modules 
 
-load modules from `resources/modules`
+Modules can be pre configured and packaged under `resources/modules`, walk Project Modules will load each module as a `availableModules` and each module's dependencies module as `requiredModules`.
 
 * Walk Dependency Modules
 
-load modules from `target/classes/modules` which added in above steps.
-* load modules from dependencies, which filter all modules definition from jar
-* load modules from dependencies, which filter all modules definition from zip
-* write modules to `target/classes/modules`
+Walk through all project dependencies, if a jar dependency has define the modules, then get all these modules as `availableModules`.
 
-**6. execute Jandexer**
+* Walk Potential Modules
+
+Walk through all project dependencies, if a feature pack zip dependency has define, then index all zip file, if there are any modules defined, the add it as `potentialModules`
+
+~~~
+<dependency>
+  <groupId>org.wildfly.core</groupId>
+  <artifactId>wildfly-core-feature-pack</artifactId>
+  <type>zip</type>
+  <scope>provided</scope>
+  <exclusions>
+    <exclusion>
+      <groupId>*</groupId>
+      <artifactId>*</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+<dependency>
+  <groupId>org.wildfly</groupId>
+  <artifactId>wildfly-servlet-feature-pack</artifactId>
+  <type>zip</type>
+  <scope>provided</scope>
+  <exclusions>
+    <exclusion>
+      <groupId>*</groupId>
+      <artifactId>*</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+~~~
+
+> NOTE: so far, there are 3 kinds of modules: `availableModules`, `requiredModules`, `potentialModules`.
+
+* locate Fill Modules
+
+
+**5. execute Jandexer**
 
 ### wildfly-swarm-plugin
 
