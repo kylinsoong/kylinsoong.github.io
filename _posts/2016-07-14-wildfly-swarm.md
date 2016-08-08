@@ -334,7 +334,9 @@ Modules can be pre configured and packaged under `resources/modules`, walk Proje
 
 Walk through all project dependencies, if a jar dependency has define the modules, then get all these modules as `availableModules`.
 
-* Walk Potential Modules
+> NOTE: `org.wildfly.swarm:container` has defined lots of modules(more than 50), which supply the base evn of running wildfly self container, completed list refer to [modules list]({{ site.baseurl }}/assets/download/files/swarm-container-modules).
+
+* Index Potential Modules
 
 Walk through all project dependencies, if a feature pack zip dependency has define, then index all zip file, if there are any modules defined, the add it as `potentialModules`
 
@@ -354,6 +356,18 @@ Walk through all project dependencies, if a feature pack zip dependency has defi
 <dependency>
   <groupId>org.wildfly</groupId>
   <artifactId>wildfly-servlet-feature-pack</artifactId>
+  <type>zip</type>
+  <scope>provided</scope>
+  <exclusions>
+    <exclusion>
+      <groupId>*</groupId>
+      <artifactId>*</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+<dependency>
+  <groupId>org.jboss.teiid</groupId>
+  <artifactId>wildfly-teiid-feature-pack</artifactId>
   <type>zip</type>
   <scope>provided</scope>
   <exclusions>
