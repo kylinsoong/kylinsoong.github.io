@@ -68,12 +68,6 @@ BootModuleLoader used for class loading, it extends jboss modules's ModuleLoader
 * ApplicationModuleFinder
 * FlattishApplicationModuleFinder
 
-## SelfContainedContainer start
-
-Swarm RuntimeServer invoke SelfContainedContainer's start() method, then set up MSC container.
-
-![SelfContainedContainer start]({{ site.baseurl }}/assets/blog/wildfly/swarm-container.png)
-
 ## Maven plugins in swarm
 
 ### wildfly-swarm-fraction-plugin
@@ -443,4 +437,38 @@ A traditional config:
 #### A simplest -swarm.jar
 
 In this section, a project with a simple Main class and no dependency, then we focus on how -swam.jar be build.
- 
+
+## WildFly-Swarm container
+
+A WildFly-Swarm container is the topest interface for Micro-Service WildFly Swarm, it use to start a simple JBoss MSC container, a tradition usag is
+
+~~~
+Container container = new Container();    
+container.start();
+~~~ 
+
+Fractions can be add to Container before container start, or Archives be deloyed after container start.
+
+A WildFly-Swarm container represented by `org.wildfly.swarm.container.Container`, it contains the following private fileds represents the `fractions`, `socketBindingGroups`, `socketBindings`, `server`, `deployer`, etc. 
+
+### Container construction
+
+![Container construction]({{ site.baseurl }}/assets/blog/wildfly/swarm-container-constructor.png)
+
+As figure, Container construction mainly do the following:
+
+1. Check the 'swarm.debug.bootstrap' system property, if true enable bootstrap debug 
+2. init 'fractions', 'fractionsBySimpleName', 'dependentFractions', 'defaultFractionTypes', 'socketBindingGroups', 'socketBindings', 'outboundSocketBindings', 'interfaces', 'stageConfig', 'xmlConfig', 'stageConfigUrl', set 'running' to false 
+3. create server, initialize a RuntimeServer, during RuntimeServer construction, JBoss logger be initialized, used to as logging system for container 
+4. create ShrinkWrap Domain, a domain encapsulates a shared Configuration to be used by all Archives 
+5. Init determineDeploymentType, which can be jar, war, etc 
+6. configure command-line base on passed arguments,'Container(boolean debugBootstrap, String... args)', args are command-line arguments 
+7. If stageFile not null, load stage configuration file
+
+Once Container be constructed, usually, it's start method be invoked, refer below section for more details.
+
+### Container start
+
+Swarm RuntimeServer invoke SelfContainedContainer's start() method, then set up MSC container.
+
+![SelfContainedContainer start]({{ site.baseurl }}/assets/blog/wildfly/swarm-container.png)

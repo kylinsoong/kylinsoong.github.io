@@ -82,3 +82,35 @@ Caused by: java.lang.ClassNotFoundException: org.apache.maven.model.io.xpp3.Mave
 ### Resolution
 
 If a maven pojo plugin depend on a dependency, and this dependency internal has dependencies, then these dependencies should not be provided scope.
+
+## Fraction NoClassDefFoundError
+
+~~~
+Caused by: java.lang.NoClassDefFoundError: Failed to link org/wildfly/swarm/teiid/TeiidFraction (Module "org.wildfly.swarm.teiid:api" from BootModuleLoader@481a15ff for finders [BootstrapClasspathModuleFinder, BootstrapModuleFinder(org.wildfly.swarm.bootstrap:main), ClasspathModuleFinder, ApplicationModuleFinder(swarm.application:main), FlattishApplicationModuleFinder(swarm.application:flattish)]): org/wildfly/swarm/config/Teiid
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:408)
+	at org.jboss.modules.ModuleClassLoader.defineClass(ModuleClassLoader.java:446)
+	at org.jboss.modules.ModuleClassLoader.loadClassLocal(ModuleClassLoader.java:274)
+	at org.jboss.modules.ModuleClassLoader$1.loadClassLocal(ModuleClassLoader.java:78)
+	at org.jboss.modules.Module.loadModuleClass(Module.java:605)
+	at org.jboss.modules.ModuleClassLoader.findClass(ModuleClassLoader.java:190)
+	at org.jboss.modules.ConcurrentClassLoader.performLoadClassUnchecked(ConcurrentClassLoader.java:363)
+	at org.jboss.modules.ConcurrentClassLoader.performLoadClass(ConcurrentClassLoader.java:351)
+	at org.jboss.modules.ConcurrentClassLoader.loadClass(ConcurrentClassLoader.java:93)
+	at org.wildfly.swarm.container.runtime.internal.ServerConfigurationBuilder.internalBuild(ServerConfigurationBuilder.java:214)
+	at org.wildfly.swarm.container.runtime.internal.ServerConfigurationBuilder.build(ServerConfigurationBuilder.java:293)
+	at org.wildfly.swarm.container.runtime.RuntimeServer.fromAnnotation(RuntimeServer.java:540)
+	at org.wildfly.swarm.container.runtime.RuntimeServer.findAnnotationServerConfigurations(RuntimeServer.java:529)
+	at org.wildfly.swarm.container.runtime.RuntimeServer.loadFractionConfigurations(RuntimeServer.java:463)
+	at org.wildfly.swarm.container.runtime.RuntimeServer.start(RuntimeServer.java:167)
+	at org.wildfly.swarm.container.Container.start(Container.java:343)
+	at org.wildfly.swarm.container.Container.start(Container.java:326)
+	at org.teiid.test.swarm.Main.main(Main.java:15)
+	... 7 more
+~~~
+
+### Resolution
+
+
