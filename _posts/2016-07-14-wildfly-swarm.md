@@ -42,7 +42,9 @@ Add `-Dswarm.port.offset={number}` to set a global port adjustment, defaults to 
 
 Add `-Dswarm.http.port={port}` to set he HTTP port to be used, defaults to 8080.
 
-## How to enable more log
+## Develop Tips
+
+### How to enable more log
 
 System properties with the prefix `swarm.log.` can enable more log, eg: -Dswarm.log.org.wildfly.swarm=DEBUG
 
@@ -58,15 +60,13 @@ TRACE
 ALL
 ~~~
 
-## BootModuleLoader
+### How to debug swarm jar
 
-BootModuleLoader used for class loading, it extends jboss modules's ModuleLoader, defines the following Module Finders:
+Add `-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y` before run -swarm.jar
 
-* BootstrapClasspathModuleFinder
-* BootstrapModuleFinder
-* ClasspathModuleFinder
-* ApplicationModuleFinder
-* FlattishApplicationModuleFinder
+~~~
+java -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y -jar NAME-swarm.jar
+~~~
 
 ## Maven plugins in swarm
 
@@ -450,6 +450,63 @@ container.start();
 Fractions can be add to Container before container start, or Archives be deloyed after container start.
 
 A WildFly-Swarm container represented by `org.wildfly.swarm.container.Container`, it contains the following private fileds represents the `fractions`, `socketBindingGroups`, `socketBindings`, `server`, `deployer`, etc. 
+
+### Pre Container construction
+
+`java -jar X-swarm.jar` can start the lightweight container and fragment, how does this implemented? If look at the `META-INF/MANIFEST.MF` uder the unberjar,
+
+~~~
+Manifest-Version: 1.0
+Main-Class: org.wildfly.swarm.bootstrap.Main
+WildFly-Swarm-Main-Class: org.teiid.test.swarm.Main
+~~~
+
+> NOTE: `org.wildfly.swarm.bootstrap.Main` is the entrence of run uberjar, this Main be run before Container construction. `WildFly-Swarm-Main-Class` come from [wildfly-swarm-plugin](#wildfly-swarm-plugin)'s configuration.
+
+![Pre Container construction]({{ site.baseurl }}/assets/blog/wildfly/swarm-bootstrap-main.png)
+
+The bootstrap Main first set `boot.module.loader`, then invoke the `WildFly-Swarm-Main-Class.` The `getMainClass()` code looks
+
+~~~
+String mainClassName = getMainClassName();
+Module module = Module.getBootModuleLoader().loadModule(ModuleIdentifier.create("swarm.application"));
+module.getClassLoader().loadClass(mainClassName);
+~~~
+
+> NOTE: How to set JBoss modules's BootModuleLoader? - system properties **boot.module.loader** can be used set BootModuleLoader, for example, `System.setProperty("boot.module.loader", BootModuleLoader.class.getName())`.
+
+#### BootModuleLoader
+
+Pre Container construction bootstrap mainly extended the jboss modules, made jboss modules can load zip file's internal modules, this due to the implementation of `org.wildfly.swarm.bootstrap.modules.BootModuleLoader`.
+
+The boot module loader is the initial loader that is established by the module framework. It typically is based off of the environmental module path unless it is overridden by specifying a different class name for the `boot.module.loader` system property.`
+
+BootModuleLoader defines a series of Module Finders:
+
+~~~
+public class BootModuleLoader extends ModuleLoader {
+
+    public BootModuleLoader() throws IOException {
+        super(new ModuleFinder[]{
+                new BootstrapClasspathModuleFinder(),
+                new BootstrapModuleFinder(),
+                new ClasspathModuleFinder(),
+                new ApplicationModuleFinder(),
+                new FlattishApplicationModuleFinder(),
+        });
+    }
+}
+~~~
+
+As UML diagram:
+
+![UML of ModuleFinder]({{ site.baseurl }}/assets/blog/wildfly/modules-ModuleFinder-uml.png)
+
+* BootstrapClasspathModuleFinder - Used only for loading dependencies of org.wildfly.bootstrap:main from its own jar.
+* BootstrapModuleFinder -
+* ClasspathModuleFinder -
+* ApplicationModuleFinder -
+* FlattishApplicationModuleFinder - 
 
 ### Container construction
 
