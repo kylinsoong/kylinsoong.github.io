@@ -113,4 +113,12 @@ Caused by: java.lang.NoClassDefFoundError: Failed to link org/wildfly/swarm/teii
 
 ### Resolution
 
+https://github.com/kylinsoong/wildfly-swarm-teiid/commit/bcdd1801faed2c61c0724d151bc2e6004ec9822e
 
+## Teiid Fraction start dailed due to infinispan 
+
+~~~
+2016-08-10 18:39:47,046 ERROR [org.jboss.as.controller.management-operation] (ServerService Thread Pool -- 20) WFLYCTL0013: Operation ("add") failed - address: ([("subsystem" => "teiid")]) - failure description: "TEIID50094 Resultset cache configured without the Infinispan's Cache Container name. Check and provide <resultset-cache infinispan-container=\"{name}\"/> in configuration."
+~~~
+
+### Resolution
