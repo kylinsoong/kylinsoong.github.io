@@ -122,3 +122,75 @@ https://github.com/kylinsoong/wildfly-swarm-teiid/commit/bcdd1801faed2c61c0724d1
 ~~~
 
 ### Resolution
+
+https://github.com/kylinsoong/wildfly-swarm-teiid/commit/0eebd5bafde38c9b5242182d793011933b7285cc
+
+## NullPointerException
+
+~~~
+[ERROR] Failed to execute goal org.wildfly.swarm:wildfly-swarm-fraction-plugin:30:process (process) on project teiid-translator-modules: Execution process of goal org.wildfly.swarm:wildfly-swarm-fraction-plugin:30:process failed. NullPointerException -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.wildfly.swarm:wildfly-swarm-fraction-plugin:30:process (process) on project teiid-translator-modules: Execution process of goal org.wildfly.swarm:wildfly-swarm-fraction-plugin:30:process failed.
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:224)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:153)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:145)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:116)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:80)
+	at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build(SingleThreadedBuilder.java:51)
+	at org.apache.maven.lifecycle.internal.LifecycleStarter.execute(LifecycleStarter.java:120)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:355)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:155)
+	at org.apache.maven.cli.MavenCli.execute(MavenCli.java:584)
+	at org.apache.maven.cli.MavenCli.doMain(MavenCli.java:216)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:160)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:483)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced(Launcher.java:289)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launch(Launcher.java:229)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode(Launcher.java:415)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.main(Launcher.java:356)
+Caused by: org.apache.maven.plugin.PluginExecutionException: Execution process of goal org.wildfly.swarm:wildfly-swarm-fraction-plugin:30:process failed.
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:143)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:208)
+	... 19 more
+Caused by: java.lang.NullPointerException
+	at org.wildfly.swarm.plugin.ModuleGenerator.generate(ModuleGenerator.java:66)
+	at org.wildfly.swarm.plugin.ModuleGenerator.execute(ModuleGenerator.java:60)
+	at org.wildfly.swarm.plugin.ProcessMojo.executeModuleGenerator(ProcessMojo.java:98)
+	at org.wildfly.swarm.plugin.ProcessMojo.execute(ProcessMojo.java:53)
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:132)
+	... 20 more
+~~~
+
+### Resolution
+
+If module.conf added, there must be source code exist
+
+## Archive deploy failed
+
+~~~
+ Exception in thread "main" java.lang.reflect.InvocationTargetException
+ 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+ 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+ 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+ 	at java.lang.reflect.Method.invoke(Method.java:483)
+ 	at org.wildfly.swarm.bootstrap.Main.invoke(Main.java:84)
+ 	at org.wildfly.swarm.bootstrap.Main.run(Main.java:48)
+ 	at org.wildfly.swarm.bootstrap.Main.main(Main.java:43)
+ Caused by: org.jboss.shrinkwrap.impl.base.ExtensionLoadingException: No constructor with a single argument of type org.jboss.shrinkwrap.api.Archive could be found
+ 	at org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader.findConstructor(ServiceExtensionLoader.java:394)
+ 	at org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader.createExtension(ServiceExtensionLoader.java:347)
+ 	at org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader.createFromLoadExtension(ServiceExtensionLoader.java:223)
+ 	at org.jboss.shrinkwrap.impl.base.ServiceExtensionLoader.load(ServiceExtensionLoader.java:108)
+ 	at org.jboss.shrinkwrap.impl.base.ArchiveBase.as(ArchiveBase.java:686)
+ 	at org.jboss.shrinkwrap.api.ArchiveFactory.create(ArchiveFactory.java:150)
+ 	at org.jboss.shrinkwrap.api.ArchiveFactory.create(ArchiveFactory.java:110)
+ 	at org.jboss.shrinkwrap.api.ShrinkWrap.create(ShrinkWrap.java:136)
+ 	at org.teiid.test.swarm.Main.main(Main.java:29)
+ 	... 7 more
+~~~
+
+### Resolution
+
+Use a public construct method: https://github.com/kylinsoong/wildfly-swarm-teiid/commit/262557f366cf172535b83a2a0312c067756dc9ad
