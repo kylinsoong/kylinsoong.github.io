@@ -443,15 +443,15 @@ In this section, a project with a simple Main class and no dependency, then we f
 A WildFly-Swarm container is the topest interface for Micro-Service WildFly Swarm, it use to start a simple JBoss MSC container, a tradition usag is
 
 ~~~
-Container container = new Container();    
-container.start();
+Swarm swarm = new Swarm();
+swarm.start(); 
 ~~~ 
 
 Fractions can be add to Container before container start, or Archives be deloyed after container start.
 
 A WildFly-Swarm container represented by `org.wildfly.swarm.container.Container`, it contains the following private fileds represents the `fractions`, `socketBindingGroups`, `socketBindings`, `server`, `deployer`, etc. 
 
-### Pre Container construction
+### Pre Container construction - bootstrap
 
 `java -jar X-swarm.jar` can start the lightweight container and fragment, how does this implemented? If look at the `META-INF/MANIFEST.MF` uder the unberjar,
 
@@ -491,6 +491,7 @@ public class BootModuleLoader extends ModuleLoader {
                 new BootstrapClasspathModuleFinder(),
                 new BootstrapModuleFinder(),
                 new ClasspathModuleFinder(),
+                new ContainerModuleFinder(),
                 new ApplicationModuleFinder(),
                 new FlattishApplicationModuleFinder(),
         });
@@ -502,11 +503,12 @@ As UML diagram:
 
 ![UML of ModuleFinder]({{ site.baseurl }}/assets/blog/wildfly/modules-ModuleFinder-uml.png)
 
-* BootstrapClasspathModuleFinder - Used only for loading dependencies of org.wildfly.bootstrap:main from its own jar.
-* BootstrapModuleFinder -
-* ClasspathModuleFinder -
-* ApplicationModuleFinder -
-* FlattishApplicationModuleFinder - 
+* BootstrapClasspathModuleFinder - Used only for loading dependencies of org.wildfly.bootstrap:main from its own jar. The classpath modules in bootstrap including: `javax.api`, `javax.sql.api`, `org.jboss.msc`, etc
+* BootstrapModuleFinder - Module-finder used only for loading the first set of jars when run in an fat-jar scenario.
+* ClasspathModuleFinder
+* BootstrapModuleFinder
+* ApplicationModuleFinder
+* FlattishApplicationModuleFinder
 
 ### Container construction
 
@@ -515,17 +517,40 @@ As UML diagram:
 As figure, Container construction mainly do the following:
 
 1. Check the 'swarm.debug.bootstrap' system property, if true enable bootstrap debug 
-2. init 'fractions', 'fractionsBySimpleName', 'dependentFractions', 'defaultFractionTypes', 'socketBindingGroups', 'socketBindings', 'outboundSocketBindings', 'interfaces', 'stageConfig', 'xmlConfig', 'stageConfigUrl', set 'running' to false 
-3. create server, initialize a RuntimeServer, during RuntimeServer construction, JBoss logger be initialized, used to as logging system for container 
-4. create ShrinkWrap Domain, a domain encapsulates a shared Configuration to be used by all Archives 
-5. Init determineDeploymentType, which can be jar, war, etc 
+2. init 'userComponentClasses', 'explicitlyInstalledFractions', 'stageConfig', 'xmlConfig', 'stageConfigUrl' 
+3. init main method 'args' 
+4. JBoss logger be initialized, used to as logging system for container 
+5. create ShrinkWrap Domain, a domain encapsulates a shared Configuration to be used by all Archives 
 6. configure command-line base on passed arguments,'Container(boolean debugBootstrap, String... args)', args are command-line arguments 
-7. If stageFile not null, load stage configuration file
+7. If stageFile not null, load stage configuration 
 
-Once Container be constructed, usually, it's start method be invoked, refer below section for more details.
+Once Swarm be constructed, usually, it's start method be invoked, refer below section for more details.
 
-### Container start
+### Swarm start
 
-Swarm RuntimeServer invoke SelfContainedContainer's start() method, then set up MSC container.
+The main procedure of Swarm start including:
 
-![SelfContainedContainer start]({{ site.baseurl }}/assets/blog/wildfly/swarm-container.png)
+1. Swarm `RuntimeServer` as a bean instance be registered in Weld SE Container, all extentions be inject via Weld SE Container
+2. untimeServer statr invoke SelfContainedContainer's start() method
+3. MSC container start and install services.
+
+![Swarm start]({{ site.baseurl }}/assets/blog/wildfly/swarm-container.png)
+
+#### bootstrapOperations initilization
+
+#### JBoss SelfContainedContainer start
+
+A sample code to start MSC and install services via bootstrapOptions
+
+~~~
+import org.jboss.as.server.SelfContainedContainer;
+import org.jboss.dmr.ModelNode;
+import org.jboss.msc.service.ServiceActivator;
+import org.jboss.msc.service.ServiceContainer;
+
+SelfContainedContainer container = new SelfContainedContainer();
+List<ModelNode> bootstrapOperations = new ArrayList<>();
+SimpleContentProvider contentProvider = new SimpleContentProvider();
+List<ServiceActivator> activators = new ArrayList<>();
+ServiceContainer serviceContainer = container.start(bootstrapOperations, contentProvider, activators);
+~~~
