@@ -309,6 +309,24 @@ An example of `META-INF/wildfly-swarm-classpath.conf`:
 
 **4. Filter Modules** 
 
+The Sequence diagram as below
+
+![Filter Modules]({{ site.baseurl }}/assets/blog/wildfly/wildfly-swarm-ModuleFiller.png)
+
+~~~
+4- loadRewriteRules(): This step depend on module-rewrite.conf under base dir
+5- walkProjectModules()
+  1) requiredModules - keep all module's name both from class path and generated
+  2) availableModules - keep all modules's dependency module's name both from class path and generated
+  3) Both module.xml contained under resources/modules and target/classes/modules will be analyzed, each module's name add to availableModules, each module's dependencies module as requiredModules  
+7- walkDependencyModules(): find all dependencies' modules definition, add each of them as availableModules
+11- locateFillModules(): filter requiredModules which not exist in availableModules,
+12- addFillModules()
+  1) find the wildfly-feature-pack.xml, process feature pack xml
+  2) addFillModule, generate modules to class path, analyze module xml, add module's name add to availableModules, it's dependencies module as requiredModules  
+ 3) addResources, if module define resources, like deployment, etc, generate to classpath  
+~~~
+
 This steps including the following procedures:
 
 * Load module rewrite rules

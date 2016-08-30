@@ -194,3 +194,20 @@ If module.conf added, there must be source code exist
 ### Resolution
 
 Use a public construct method: https://github.com/kylinsoong/wildfly-swarm-teiid/commit/262557f366cf172535b83a2a0312c067756dc9ad
+
+## NullPointerException
+
+~~~
+Caused by: java.lang.NullPointerException
+	at java.util.regex.Matcher.getTextLength(Matcher.java:1283)
+	at java.util.regex.Matcher.reset(Matcher.java:309)
+	at java.util.regex.Matcher.<init>(Matcher.java:229)
+	at java.util.regex.Pattern.matcher(Pattern.java:1093)
+	at org.eclipse.aether.artifact.DefaultArtifact.<init>(DefaultArtifact.java:65)
+	at org.eclipse.aether.artifact.DefaultArtifact.<init>(DefaultArtifact.java:51)
+	at org.wildfly.swarm.plugin.ModuleFiller.execute(ModuleFiller.java:113)
+	at org.wildfly.swarm.plugin.ProcessMojo.executeModuleFiller(ProcessMojo.java:129)
+	at org.wildfly.swarm.plugin.ProcessMojo.execute(ProcessMojo.java:57)
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:132)
+	... 20 more
+~~~
