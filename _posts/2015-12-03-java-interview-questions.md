@@ -11,34 +11,133 @@ duoshuoid: ksoong2015120301
 * Table of contents
 {:toc}
 
-## Java Multithreading
+## ListNode
 
-### What is atomic operation? What are atomic classes in Java Concurrency API?
+### reverse ListNode
 
-Atomic operations are performed in a single unit of task without interference from other operations. Atomic operations are necessity in multi-threaded environment to avoid data inconsistency.
+The ListNode have 5 nodes with the order
 
-## Most Frequently Asked 
+~~~
+1, 2, 3, 4, 5
+~~~
 
-### Which two method you need to implement for key Object in HashMap ?
+now need reverse the order to 
 
-In order to use any object as Key in HashMap, it must implements `equals` and `hashcode` method in Java.
+~~~
+5, 4, 3, 2, 1
+~~~
 
-### How Hash Map Works In Java Or How Get() Method Works Internally
+**ListNode**
 
-TODO--
+~~~
+public class ListNode {
+    Integer value;
+    ListNode next;
+}
+~~~
 
-### What is immutable object? Can you write immutable object?
+**reverse(ListNode head)**
 
-Immutable classes are Java classes whose objects can not be modified once created. Any modification in Immutable object result in new object. For example is String is immutable in Java. Mostly Immutable are also final in Java, in order to prevent sub class from overriding methods in Java which can compromise Immutability. You can achieve same functionality by making member as non final but private and not modifying them except in constructor.
+~~~
+public ListNode reverse(ListNode head) {
+    ListNode prev = null;
+    ListNode node = null;
+    ListNode current = head;
+    while(current != null){
+        ListNode next = current.next;
+        if(next == null){
+            node = current;
+        }
+        current.next = prev;
+        prev = current;
+        current = next;
+    }
+    return node;
+}
+~~~
 
-### What is the difference between creating String as new() and literal?
+### reverse sub ListNode
 
-When we create string with new() Operator, it’s created in heap and not added into string pool while String created using literal are created in String pool itself which exists in PermGen area of heap.
+Assuming the ListNode have 5 nodes with the order
 
-### What is difference between StringBuffer and StringBuilder in Java ?
+~~~
+1, 2, 3, 4, 5
+~~~
 
-Stringbuffer methods are synchronized while StringBuilder is non synchronized.
+now need reverse sub n nodes, eg, if n is 2, the reverse result like
 
-### Write code to find the First non repeated character in the String  ?
+~~~
+2, 1, 4, 3, 5
+~~~
+
+if the n is 3, the reverse result like
+
+~~~
+3, 2, 1, 4, 5
+~~~
+
+**ListNode**
+
+~~~
+public class ListNode {
+    Integer value;
+    ListNode next;
+}
+~~~
+
+**reverse(int n, ListNode head)**
+
+~~~
+
+~~~
+
+### The last n nodes
+
+The ListNode have 5 nodes with the order
+
+~~~
+1, 2, 3, 4, 5
+~~~
+
+now need find the the last n nodes, eg, n = 3, the last 3 should be
+
+~~~
+3, 4, 5
+~~~
+
+**ListNode**
+
+~~~
+public class ListNode {
+    Integer value;
+    ListNode next;
+}
+~~~
+
+**partition(ListNode head, int n)**
+
+~~~
+public ListNode partition(ListNode head, int n){
+    if(head == null||n <= 0){
+        return null;
+    }
+    ListNode first = head;
+    ListNode second = null;
+    for(int i = 0;i < n-1;i++){
+        if(first.next != null){
+            first = first.next;
+        }else{
+           return null;
+        }
+    }
+    second = head;
+    while(first.next != null){
+        first = first.next;
+        second = second.next;
+    }
+    return second;
+}
+~~~
+
 
 
