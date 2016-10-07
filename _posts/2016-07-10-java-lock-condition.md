@@ -1,11 +1,11 @@
 ---
 layout: blog
 title:  "Java 多线程 - synchronized, wait, notify, Locks, Conditions"
-date:   2015-07-20 15:30:00
+date:   2016-07-10 15:30:00
 categories: java
 permalink: /java-lock-condition
 author: Kylin Soong
-duoshuoid: ksoong2015072001
+duoshuoid: ksoong2015071001
 excerpt: Java Concurrency, Synchronization(synchronized, wait, notify), Lock, Condition
 ---
 
