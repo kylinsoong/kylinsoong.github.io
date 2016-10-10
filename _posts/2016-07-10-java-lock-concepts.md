@@ -83,7 +83,7 @@ public class LockExample {
 * 每个 Java 对象都可以作为一个实现同步的锁，这个锁被称为内置锁或监视锁
 * Java 内置锁相当于一种互斥体，最多只有一个线程能持有这个锁
 
-## 重入
+### 内置锁重入
 
 ~~~
 public class LockExample {
@@ -104,3 +104,119 @@ public class LockExample {
 
 * synchronized 代码块可以获取 Java 对象的内置锁，重入指当一个线程访问 synchronized 代码块获取到对象的内置锁，可以再次获取该对象的内置锁。
 * 重入提高了并发编程的灵活性
+
+## 显示锁
+
+![Lock]({{ site.baseurl }}/assets/blog/java-concurrency-lock.png)
+
+### 定义
+
+* Java 5 以后在处理多线程访问共享对象时除了原有的 `synchronized`, `volatile` 机制外，引入了一种新的机制 Lock/ReentrantLock。与之前内置锁机制相比，所有加锁/接锁机制都是显示的，即通过 `java.util.concurrent.locks.Lock` 定义的方法来实施，所以我们称 Java 5 引入的新机制为**显示锁**
+* ReentrantLock 并不是一种内置锁的替换方法，而是对其的补充。ReentrantLock 可以作为一种更高级的工具，它提供了一些内置锁不具有的功能: 可定时的，可轮询的与可中断的锁获取操作，公平队列，以及非块结构的锁
+
+### 显示锁的使用形式
+
+~~~
+ Lock l = ...;
+ l.lock();
+ try {
+   // access the resource protected by this lock
+ } finally {
+   l.unlock();
+ }
+~~~ 
+
+> 显示锁必需在 try-finally 代码块中使用，且必需在 finally 中释放.
+
+### 显示锁的特性
+
+#### 轮询锁
+
+可轮询的获取锁是由 `boolean tryLock()` 方法实现的，如果返回为 true，则表示获取到了锁，一个典型的使用方式
+
+~~~
+ Lock lock = ...;
+ if (lock.tryLock()) {
+   try {
+     // manipulate protected state
+   } finally {
+     lock.unlock();
+   }
+ } else {
+   // perform alternative actions
+ }
+~~~
+
+#### 定时锁
+
+可定时的获取锁是由 `boolean tryLock(long time, TimeUnit unit)` 方法来实现的，如果一定时间获取不到锁返回，一个典型的使用示例
+
+~~~
+ Lock lock = ...;
+ long nanosTime = ...;
+ if (lock.tryLock(nanosTime, NANOSECONDS)) {
+   try {
+     // manipulate protected state
+   } finally {
+     lock.unlock();
+   }
+ } else {
+   // perform alternative actions
+ }
+~~~
+
+#### 可中断的获取锁
+
+可中断的获取锁是由 `lockInterruptibly()` 方法实现的，该方法能够在获取锁的同时保持对线程中断的响应，一个典型的使用方式
+
+~~~
+ Lock lock = ...;
+ lock.lockInterruptibly()
+ try {
+     // manipulate protected state
+ } finally {
+     lock.unlock();
+ }
+~~~
+
+### 读写锁
+
+* 读写锁是对 ReentrantLock 的补充，ReentrantLock 是一种标准的互斥锁，每次只能有一个线程持有 ReentrantLock，多线程中互斥锁是一种比较强硬的加锁规则，在一定程度限制了并发性。
+* 如之前类图中 ReadWriteLock 接口暴露了两个 Lock 对象，其中一个用于读操作，另一个用于写操作。当需要读操作时获取读取锁，当需要写操作时获取写操作锁。
+* 读写锁实现的加锁策略允许多个读操作同时进行，但每次只允许一个写操作。
+
+> 读写锁允许多个线程并发地访问被保护的对象，当访问以读取操作为主时，它能提高程序的可伸缩性.
+
+#### 读写锁实现一个 ReadWriteMap 示例
+
+~~~
+public class ReadWriteMap<K, V> {
+    
+    private final Map<K, V> map;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock r = lock.readLock();
+    private final Lock w = lock.writeLock();
+    
+    public ReadWriteMap(Map<K, V> map) {
+        this.map = map;
+    }
+    
+    public V put(K key, V value) {
+        w.lock();
+        try {
+            return this.map.put(key, value);
+        } finally {
+            w.unlock();
+        }
+    }
+    
+    public V get(Object key) {
+        r.lock();
+        try {
+            return this.map.get(key);
+        } finally {
+            r.unlock();
+        }
+    }
+}
+~~~
