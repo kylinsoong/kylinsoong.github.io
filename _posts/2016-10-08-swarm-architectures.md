@@ -35,7 +35,7 @@ Thw `wildfly-swarm-plugin` use a BuildTool to a build swarm jar, the BuildTool m
 
 ### initialization
 
-![Wildfly swarm build tool init]({{ site.baseurl }}/assets/blog/wildfly/swarm-bootstrap-main.png)
+![Wildfly swarm build tool init]({{ site.baseurl }}/assets/blog/wildfly/swarm-plugin-buildtool.png)
 
 As above figure, all the following init/set are point to `org.wildfly.swarm.tools.BuildTool`:
 
