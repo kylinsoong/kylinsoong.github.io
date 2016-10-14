@@ -12,6 +12,42 @@ excerpt: How MetadataStore, MetadataRepository, SystemMetadata, QueryMetadataInt
 * Table of contents
 {:toc}
 
+## What is Teiid Metadata
+
+Teiid Metadata like other database(mysql, oracle) metadata, like below figure, 
+
+![Teiid Metadata]({{ site.baseurl }}/assets/blog/teiid/teiid-metadata.png)
+
+From functional categories teiid metadata contain
+
+* Schemas - The Schema contain tables, procedures, functions; the Table contain primary key, foreign key, unique key, columns, etc; The Procedure contain Procedure parameter; the Function contain function parameter.  
+* Datatypes - [types.dat](https://raw.githubusercontent.com/teiid/teiid/master/engine/src/main/resources/org/teiid/metadata/types.dat) are used to define teiid datatypes
+
+From scope/administation categories teiid metadata contain
+
+* System defined Metadata - [SystemMetadata loading in VDBRepository startup](#systemmetadata-loading-in-vdbrepository-startup)
+* User defined Metadata - [Metadata operations in VDB deploying](#metadata-operations-in-vdb-deploying)
+
+### SQL examples for Teiid Metadata Administration
+
+**Get all Schemas of a specific VDB**
+
+~~~
+SELECT Name FROM SYS.Schemas WHERE VDBName = 'Portfolio'
+~~~
+
+**Get all Tables of a specific VDB and Schema**
+
+~~~
+SELECT Name FROM SYS.Tables WHERE SchemaName = 'Accounts' AND VDBName = 'Portfolio'
+~~~
+
+**Get all teiid supported datatypes**
+
+~~~
+SELECT TypeName, JavaClass, RuntimeType FROM SYS.DataTypes
+~~~
+
 ## SystemMetadata loading in VDBRepository startup
 
 In Teiid, every VDB reference a VDBRepository, once VDBRepository startup, it will load System Metadata, `SystemMetadata` is the API to operate with SystemMetadata:

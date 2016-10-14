@@ -106,13 +106,13 @@ table.addColumn(column);
 
 ### Teiid Language API
 
-Refer to [link](http://ksoong.org/teiid-language-api/)
+Refer to [link](http://ksoong.org/teiid-language-api)
 
 ## Engine
 
 ### Teiid Query Sql API
 
-Refer to [link](http://ksoong.org/teiid-query-sql-api/)
+Refer to [link](http://ksoong.org/teiid-query-sql-api)
 
 ### org.teiid.dqp.internal.process.RequestWorkItem
 

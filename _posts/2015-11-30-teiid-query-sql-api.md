@@ -12,36 +12,57 @@ excerpt: UML and examples of Teiid Query SQL API
 * Table of contents
 {:toc}
 
-## Criteria
+## What is Teiid Query Sql API
 
-![UML of Criteria]({{ site.baseurl }}/assets/blog/teiid-uml-criteria.png)
+As the overview section of [Understanding Teiid Engine](http://ksoong.org/teiid-dqp#overview), Teiid query sql api can be categorized into 6 sections:
 
-The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a query, which defines constraints on the data values to be retrieved for each parameter in the select clause.
+* lang
+* proc
+* symbol
+* navigator
+* visitor
+* util
 
-## Command
+This article will focus on the Teiid Query Sql API, like the key interface [LanguageObject](#languageobject), [LanguageVisitor](#languagevisitor), etc
+
+All the api discribed in this article are under `org.teiid.query.sql` and it's sub package:
+
+~~~
+org.teiid.query.sql
+org.teiid.query.sql.lang
+org.teiid.query.sql.proc
+org.teiid.query.sql.symbol
+org.teiid.query.sql.navigator
+org.teiid.query.sql.visitor
+org.teiid.query.sql.til
+~~~
+
+## LanguageObject
+
+`org.teiid.query.sql.LanguageObject` is the primary interface for all language objects(There mainly 2 kinds of language objects: language objects, symbol objects, procedure language objects). The LanguageObject extends the `java.lang.Cloneable` and define a `acceptVisitor` method for the language object to call back on the visitor.
+
+~~~
+void acceptVisitor(LanguageVisitor visitor);
+~~~
+
+### Language objects
+
+Language objects are too complex, we split into 3 sections: Command, Criteria, From Clause and others.
+
+#### Command
 
 ![UML of Command]({{ site.baseurl }}/assets/blog/teiid-uml-sql-command.png)
 
 A Command is an interface for all the language objects that are at the root of a language object tree representing a SQL statement.  For instance, a Query command represents a SQL select query, an Update command represents a SQL update statement, etc.
 
-### Example of Query
+#### Criteria
 
-Combined with [Example of Select](#Example of Select) and [Example of From](#Example of From), the Example of Query looks
+![UML of Criteria]({{ site.baseurl }}/assets/blog/teiid-uml-criteria.png)
 
-~~~
-Query command = new Query();
-command.setSelect(select);
-command.setFrom(from);
-System.out.println(command);
-~~~
+The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a query, which defines constraints on the data values to be retrieved for each parameter in the select clause.
 
-The output of above code:
 
-~~~
-SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
-~~~
-
-## LanguageObject
+#### From Clause and others
 
 ![UML of LanguageObject]({{ site.baseurl }}/assets/blog/teiid-uml-sql-other.png)
 
@@ -49,9 +70,11 @@ SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
 * `FromClause` - A FromClause is an interface for subparts held in a FROM clause. One type of FromClause is `UnaryFromClause`, which is the more common use and represents a single group.  Another, less common type of FromClause is the `JoinPredicate` which represents a join between two FromClauses and may contain criteria.
 * `org.teiid.query.sql.lang.Select` - represents the SELECT clause of a query, which defines what elements or expressions are returned from the query.
 
-### Example of Select
+#### Examples
 
-~~~java
+##### Example.1 - Select
+
+~~~
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
 ElementSymbol id = new ElementSymbol("ID", group);
 id.setType(DataTypeManager.DefaultDataClasses.STRING);
@@ -64,9 +87,17 @@ Select select = new Select();
 select.addSymbol(id);
 select.addSymbol(symbol);
 select.addSymbol(name);
+
+System.out.println(select);
 ~~~
 
-### Example of From
+Run above code will output
+
+~~~
+ A.ID, A.SYMBOL, A.COMPANY_NAME
+~~~
+
+##### Example.2 - From
 
 ~~~
 From from = new From();
@@ -74,32 +105,252 @@ UnaryFromClause clause = new UnaryFromClause();
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
 clause.setGroup(group);
 from.addClause(clause);
+
+System.out.println(from);
 ~~~
 
-## Symbol
+Run above code will output
 
-![UML of Symbol]({{ site.baseurl }}/assets/blog/teiid-uml-symbol.png)
+~~~
+FROM Accounts.PRODUCT AS A
+~~~
 
-* `org.teiid.query.sql.symbol.Symbol` - This is the server's representation of a metadata symbol. The only thing a symbol has to have is a name. This name relates only to how a symbol is specified in a user's query and does not necessarily relate to any actual metadata identifier (although it may). Subclasses of this class provide specialized instances of symbol for various circumstances in a user's query. In the context of a single query, a symbol's name has a unique meaning although it may be used more than once in some circumstances.
+##### Example.3 - Query
+
+~~~
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+ElementSymbol id = new ElementSymbol("ID", group);
+id.setType(DataTypeManager.DefaultDataClasses.STRING);
+ElementSymbol symbol = new ElementSymbol("SYMBOL", group);
+symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+ElementSymbol name = new ElementSymbol("COMPANY_NAME", group);
+symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+
+Select select = new Select();
+select.addSymbol(id);
+select.addSymbol(symbol);
+select.addSymbol(name);
+
+From from = new From();
+UnaryFromClause clause = new UnaryFromClause();
+clause.setGroup(group);
+from.addClause(clause);
+
+Query command = new Query();
+command.setSelect(select);
+command.setFrom(from);
+System.out.println(command);
+~~~
+
+Run above code will output
+
+~~~
+SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
+~~~
+
+### Symbol objects
+
+![Teiid Query API Symbol objects]({{ site.baseurl }}/assets/blog/teiid/teiid-query-api-lang-symbol.png)
+
+* The `Expression` is the interface for an expression in a SQL string. Expressions can be of several types (see subclasses), but all expressions have a type.  These types are used for type checking.
+* The `Symbol` is the server's representation of a metadata symbol.  The only thing a symbol has to have is a name.  This name relates only to how a symbol is specified in a user's query and does not necessarily relate to any actual metadata identifier (although it may).  Subclasses of this class provide specialized instances of symbol for various circumstances in a user's query.  In the context of a single query, a symbol's name has a unique meaning although it may be used more than once in some circumstances.
 * `org.teiid.query.sql.symbol.GroupSymbol` - This is the server's representation of a metadata group symbol. The group symbol has a name, an optional definition, and a reference to a real metadata ID. Typically, a GroupSymbol will be created only from a name and possibly a definition if the group has an alias.  The metadata ID is discovered only when resolving the query.
 * `org.teiid.query.sql.symbol.ElementSymbol` - This is a subclass of Symbol representing a single element.  An ElementSymbol also is an expression and thus has a type.  Element symbols have a variety of attributes that determine how they are displayed - a flag for displaying fully qualified and an optional vdb name.
 
-**Example of GroupSymbol**
+#### Examples
 
-~~~java
-GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+##### Example.1 - GroupSymbol
+
+~~~
+GroupSymbol a = new GroupSymbol("A", "Accounts.PRODUCT");
+GroupSymbol b = new GroupSymbol("A");
+GroupSymbol c = new GroupSymbol("Accounts.A");
 ~~~
 
-**Example of ElementSymbol**
+##### Example.2 - ElementSymbol
 
-~~~java
+~~~
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
 ElementSymbol id = new ElementSymbol("ID", group);
 id.setType(DataTypeManager.DefaultDataClasses.STRING);
 ~~~
 
-## ProcessorPlan
+##### Example.3 - Constant Expression
 
-![UML of ProcessorPlan]({{ site.baseurl }}/assets/blog/teiid-uml-processorPlan.png)
+~~~
+Constant c1 = new Constant("Hello Wolrd");
+Constant c2 = new Constant(10000L);
+Constant c3 = new Constant(null);
+constant c4 = new Constant(null, DataTypeManager.DefaultDataClasses.STRING);
 
-* ProcessorPlan represents a processor plan. It is generic in that it abstracts the interface to the plan by the processor, meaning that the actual implementation of the plan or the types of processing done by the plan is not important to the processor.
+System.out.println(c1.getValue());
+System.out.println(c2.getType());
+System.out.println(c3.isNull());
+~~~
+
+##### Example.4 - Function Expression
+
+~~~
+Function function = new Function("FROM_UNIXTIME",  new Expression[]{new Constant(1900000000)});
+System.out.println(function);
+~~~
+
+### Procedure language objects
+
+![Teiid Query API Procedure language objects]({{ site.baseurl }}/assets/blog/teiid/teiid-query-api-sql-lang-proc.png)
+
+* The `Statement` represents the a statement in the stored procedure language. The subclasses of this class represent specific statements like: IfStatement, AssignmentStatement, ReturnStatement, LoopStatement, WhileStatement, etc.
+
+## LanguageVisitor
+
+`org.teiid.query.sql.LanguageVisitor` is one of key api of teiid query sql api. The LanguageVisitor can be used to visit a LanguageObject as if it were a tree and perform some action on some or all of the language objects that are visited. The LanguageVisitor is extended to create a concrete visitor and some or all of the public visit methods should be overridden to provide the visitor functionality. These public visit methods SHOULD NOT be called directly.
+
+**The public visit methods supplies by LanguageVisitor**
+
+~~~
+// Visitor methods for language objects
+visit(BatchedUpdateCommand obj)
+visit(BetweenCriteria obj)
+visit(CaseExpression obj)
+visit(CompareCriteria obj)
+visit(CompoundCriteria obj)
+visit(Delete obj)
+visit(ExistsCriteria obj)
+visit(From obj)
+visit(GroupBy obj)
+visit(Insert obj)
+visit(IsNullCriteria obj)
+visit(JoinPredicate obj)
+visit(JoinType obj)
+visit(Limit obj)
+visit(MatchCriteria obj)
+visit(NotCriteria obj)
+visit(Option obj)
+visit(OrderBy obj)
+visit(Query obj)
+visit(SearchedCaseExpression obj)
+visit(Select obj)
+visit(SetCriteria obj)
+visit(SetQuery obj)
+visit(StoredProcedure obj)
+visit(SubqueryCompareCriteria obj)
+visit(SubqueryFromClause obj)
+visit(SubquerySetCriteria obj)
+visit(UnaryFromClause obj)
+visit(Update obj)
+visit(Into obj)
+visit(DependentSetCriteria obj)
+visit(Create obj)
+visit(Drop obj)
+
+// Visitor methods for symbol objects
+visit(AggregateSymbol obj)
+visit(AliasSymbol obj)
+visit(MultipleElementSymbol obj)
+visit(Constant obj)
+visit(ElementSymbol obj)
+visit(ExpressionSymbol obj)
+visit(Function obj)
+visit(GroupSymbol obj)
+visit(Reference obj)
+visit(ScalarSubquery obj)
+    
+// Visitor methods for procedure language objects    
+visit(AssignmentStatement obj)
+visit(Block obj)
+visit(CommandStatement obj)
+visit(CreateProcedureCommand obj)
+visit(DeclareStatement obj)    
+visit(IfStatement obj)
+visit(RaiseStatement obj)
+visit(BranchingStatement obj)
+visit(WhileStatement obj)
+visit(LoopStatement obj)
+visit(DynamicCommand obj)
+visit(ProcedureContainer obj)
+visit(SetClauseList obj)
+visit(SetClause obj)
+visit(OrderByItem obj)
+visit(XMLElement obj)
+visit(XMLAttributes obj)
+visit(XMLForest obj)
+visit(XMLNamespaces obj)
+visit(TextTable obj)
+visit(TextLine obj)
+visit(XMLTable obj)
+visit(DerivedColumn obj)
+visit(XMLSerialize obj)
+visit(XMLQuery obj)
+visit(QueryString obj)
+visit(XMLParse obj)
+visit(ExpressionCriteria obj)
+visit(WithQueryCommand obj)
+visit(TriggerAction obj)
+visit(ArrayTable obj)
+visit(AlterView obj)
+visit(AlterProcedure obj)
+visit(AlterTrigger obj)
+visit(WindowFunction windowFunction)
+visit(WindowSpecification windowSpecification)
+visit(Array array)
+visit(ObjectTable objectTable)
+visit(ExceptionExpression obj)
+visit(ReturnStatement obj)
+visit(JSONObject obj)
+visit(XMLExists xmlExists)
+visit(XMLCast xmlCast)
+visit(IsDistinctCriteria isDistinctCriteria)
+~~~
+
+> NOTE: There are 3 kinds of visit methods: Visitor methods for language objects, Visitor methods for symbol objects, Visitor methods for procedure language objects.
+
+### Navigator
+
+![Teiid Query API Navigator]({{ site.baseurl }}/assets/blog/teiid/teiid-query-api-navigator.png)
+
+* The `PreOrPostOrderNavigator` overwrite the public vist methods listed in [LanguageVisitor](#languagevisitor), add define additional 2 public static `doVist` method.
+* The `DeepPreOrderNavigator` and `DeepPostOrderNavigator` used for deep navigation, the `PreOrderNavigator` and `PostOrderNavigator` for no deep navigation, each of them also supply a public static `doVist` method.
+
+### Visitor
+
+![Teiid Query API Visitor]({{ site.baseurl }}/assets/blog/teiid/teiid-query-api-visitor.png)
+
+* `ExpressionMappingVisitor` - It is important to use a Post Navigator with this class, otherwise a replacement containing itself will not work
+* `AbstractSymbolMappingVisitor` - It is used to update LanguageObjects by replacing one set of symbols with another.  There is one abstract method which must be overridden to define how the mapping lookup occurs.
+* `StaticSymbolMappingVisitor` - It is used to update LanguageObjects by replacing the virtual elements/groups present in them with their physical counterparts. It is currently used only to visit Insert/Delete/Update objects and parts of those objects.
+* `CommandCollectorVisitor` - This visitor class will traverse a language object tree and collect all sub-commands it finds. It uses a List to collect the sub-commands in the order they're found. The easiest way to use this visitor is to call the static methods which create the visitor, run the visitor, and get the collection. The public visit() methods should NOT be called directly.
+* `CorrelatedReferenceCollectorVisitor` - This visitor class will traverse a language object tree and collect references that correspond to correlated subquery references. The easiest way to use this visitor is to call the static method which creates the visitor by passing it the Language Object and the variable context to be looked up. The public visit() methods should NOT be called directly.
+* `ElementCollectorVisitor` - This visitor class will traverse a language object tree and collect all element symbol references it finds.  It uses a collection to collect the elements in so different collections will give you different collection properties - for instance, using a Set will remove duplicates. The easiest way to use this visitor is to call the static methods which create the visitor (and possibly the collection), run the visitor, and return the collection. The public visit() methods should NOT be called directly.
+* `EvaluatableVisitor` - This visitor class will traverse a language object tree, and determine if the current expression can be evaluated.
+* `FunctionCollectorVisitor` - This visitor class will traverse a language object tree and collect all Function references it finds.  It uses a collection to collect the Functions in so different collections will give you different collection properties - for instance, using a Set will remove duplicates. This visitor can optionally collect functions of only a specific name. The easiest way to use this visitor is to call the static methods which create the visitor (and possibly the collection), run the visitor, and return the collection. The public visit() methods should NOT be called directly.
+* `GroupCollectorVisitor` - This visitor class will traverse a language object tree and collect all group symbol references it finds.  It uses a collection to collect the groups in so different collections will give you different collection properties - for instance, using a Set will remove duplicates. The easiest way to use this visitor is to call the static methods which create the visitor (and possibly the collection), run the visitor, and get the collection. The public visit() methods should NOT be called directly.
+* `PredicateCollectorVisitor` - Walk a tree of language objects and collect any predicate criteria that are found. A predicate criteria is of the following types: CompareCriteria, MatchCriteria, SetCriteria, SubquerySetCriteria, IsNullCriteria
+* `ReferenceCollectorVisitor` - his visitor class will traverse a language object tree and collect all references it finds. The easiest way to use this visitor is to call the static methods which create the visitor (and possibly the collection), run the visitor, and return the collection. The public visit() methods should NOT be called directly.
+* `SQLStringVisitor` - The SQLStringVisitor will visit a set of language objects and return the corresponding SQL string representation.
+* `ValueIteratorProviderCollectorVisitor` - This visitor class will traverse a language object tree and collect all language objects that implement `SubqueryContainer`. By default it uses a java.util.ArrayList to collect the objects in the order they're found. The easiest way to use this visitor is to call one of the static methods which create the visitor, run the visitor, and get the collection. The public visit() methods should NOT be called directly.
+
+#### Examples
+
+##### Example.1 - AggregateSymbolCollectorVisitor find AggregateSymbols and ElementSymbols
+
+~~~
+String sql = "SELECT COUNT(e1), MAX(DISTINCT e1) FROM pm1.g1 GROUP BY e1 HAVING MAX(e2) > 0 AND NOT MIN(e2) < 100";
+Command command = QueryParser.getQueryParser().parseCommand(sql);
+
+List<Expression> aggs = new ArrayList<Expression>();
+List<Expression> elements = new ArrayList<Expression>();
+AggregateSymbolCollectorVisitor.getAggregates(command, aggs, elements, null, null, null);
+
+System.out.println(aggs);
+System.out.println(elements);
+~~~
+
+run above code will output
+
+~~~
+[COUNT(e1), MAX(DISTINCT e1), MAX(e2), MIN(e2)]
+[e1]
+~~~
+
+The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a query, which defines constraints on the data values to be retrieved for each parameter in the select clause.
+
