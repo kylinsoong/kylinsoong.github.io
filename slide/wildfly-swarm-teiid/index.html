@@ -43,7 +43,7 @@ layout: presentation2
 </div></div>
 <div data-block-id="d7bb2158dac0b51ff809b72e32caea420" class="sl-block" data-block-type="text" style="width: 793px; left: 80px; top: 140px; height: auto;"><div style="z-index: 11;" data-placeholder-text="Text" data-placeholder-tag="p" class="sl-block-content">
 <ul>
-        <li data-fragment-index="0" class="fragment">Spring Boot's Success - 20% market share, JEE to Cloud(CloudFoundry)</li>
+        <li data-fragment-index="0" class="fragment">Spring Boot's Success - JEE to Cloud(CloudFoundry)</li>
 </ul>
 </div></div>
 <div data-block-id="9af28837880915b9b84e768eba336f141" class="sl-block" data-block-type="text" style="width: 793px; left: 80px; top: 230px; height: auto;"><div style="z-index: 12;" data-placeholder-text="Text" data-placeholder-tag="p" class="sl-block-content">
@@ -63,7 +63,7 @@ layout: presentation2
 </div></div>
 <div data-block-id="462efb12d901384fef8bda1fa75a7e8f4" class="sl-block" data-block-type="text" style="width: 793px; left: 80px; top: 440px; height: auto;"><div style="z-index: 13;" data-placeholder-text="Text" data-placeholder-tag="p" class="sl-block-content">
 <ul>
-        <li data-fragment-index="4" class="fragment">Production Swarm will in EAP 7.x</li>
+        <li data-fragment-index="4" class="fragment">Production Swarm will in EAP 7.x ?</li>
 </ul>
 </div></div>
 </section>
@@ -230,7 +230,6 @@ public class BootModuleLoader extends ModuleLoader {
 <pre><code data-trim contenteditable>
 @WildFlyExtension(module = "org.jboss.teiid", classname = "org.teiid.jboss.TeiidExtension")
 @MarshalDMR
-@SuppressWarnings("rawtypes")
 public class TeiidFraction extends Teiid<TeiidFraction> implements Fraction<TeiidFraction> 
 </code></pre>
 </div></div>
@@ -260,7 +259,7 @@ this.group.socketBinding(new SocketBinding("teiid-odbc").port(this.odbcPort));
 <pre><code data-trim contenteditable>
 @Inject
 @Any
-private InfinispanFraction infinispan;
+private Instance<InfinispanFraction> infinispan;
 
 infinispan.cacheContainer("teiid-cache",
                 cc -> cc.defaultCache("resultset")

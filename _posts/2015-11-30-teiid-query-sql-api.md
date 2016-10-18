@@ -55,6 +55,28 @@ Language objects are too complex, we split into 3 sections: Command, Criteria, F
 
 A Command is an interface for all the language objects that are at the root of a language object tree representing a SQL statement.  For instance, a Query command represents a SQL select query, an Update command represents a SQL update statement, etc.
 
+##### Commands categories
+
+There are more than 15 categories as below:
+
+~~~
+TYPE_UNKNOWN
+TYPE_QUERY
+TYPE_INSERT
+TYPE_UPDATE
+TYPE_DELETE
+TYPE_STORED_PROCEDURE
+TYPE_UPDATE_PROCEDURE
+TYPE_BATCHED_UPDATE
+TYPE_DYNAMIC
+TYPE_CREATE
+TYPE_DROP
+TYPE_TRIGGER_ACTION
+TYPE_ALTER_VIEW
+TYPE_ALTER_PROC
+TYPE_ALTER_TRIGGER
+~~~
+
 #### Criteria
 
 ![UML of Criteria]({{ site.baseurl }}/assets/blog/teiid-uml-criteria.png)
@@ -72,7 +94,7 @@ The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a que
 
 #### Examples
 
-##### Example.1 - Select
+##### Example - Select columns
 
 ~~~
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
@@ -97,7 +119,24 @@ Run above code will output
  A.ID, A.SYMBOL, A.COMPANY_NAME
 ~~~
 
-##### Example.2 - From
+##### Example - Select functions
+
+~~~
+Constant constant = new Constant(1900000000, DataTypeManager.DefaultDataClasses.INTEGER);
+Function function = new Function("FROM_UNIXTIME",  new Expression[]{constant});
+ExpressionSymbol symbol = new ExpressionSymbol("expr1", function);      
+Select select = new Select();
+select.addSymbol(symbol);     
+System.out.println(select);
+~~~
+
+Run above code will output
+
+~~~
+FROM_UNIXTIME(1900000000)
+~~~
+
+##### Example - From
 
 ~~~
 From from = new From();
@@ -115,21 +154,16 @@ Run above code will output
 FROM Accounts.PRODUCT AS A
 ~~~
 
-##### Example.3 - Query
+##### Example - Query
 
 ~~~
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
-ElementSymbol id = new ElementSymbol("ID", group);
-id.setType(DataTypeManager.DefaultDataClasses.STRING);
-ElementSymbol symbol = new ElementSymbol("SYMBOL", group);
-symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
-ElementSymbol name = new ElementSymbol("COMPANY_NAME", group);
-symbol.setType(DataTypeManager.DefaultDataClasses.STRING);
+ElementSymbol id = new ElementSymbol("ID", group, String.class);
+ElementSymbol symbol = new ElementSymbol("SYMBOL", group, String.class);
+ElementSymbol name = new ElementSymbol("COMPANY_NAME", group, String.class);
 
-Select select = new Select();
-select.addSymbol(id);
-select.addSymbol(symbol);
-select.addSymbol(name);
+List<ElementSymbol> symbols = Arrays.asList(id, symbol, name);
+Select select = new Select(symbols);
 
 From from = new From();
 UnaryFromClause clause = new UnaryFromClause();
@@ -159,7 +193,7 @@ SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
 
 #### Examples
 
-##### Example.1 - GroupSymbol
+##### Example - GroupSymbol
 
 ~~~
 GroupSymbol a = new GroupSymbol("A", "Accounts.PRODUCT");
@@ -167,7 +201,7 @@ GroupSymbol b = new GroupSymbol("A");
 GroupSymbol c = new GroupSymbol("Accounts.A");
 ~~~
 
-##### Example.2 - ElementSymbol
+##### Example - ElementSymbol
 
 ~~~
 GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
@@ -175,7 +209,7 @@ ElementSymbol id = new ElementSymbol("ID", group);
 id.setType(DataTypeManager.DefaultDataClasses.STRING);
 ~~~
 
-##### Example.3 - Constant Expression
+##### Example - Constant Expression
 
 ~~~
 Constant c1 = new Constant("Hello Wolrd");
@@ -188,11 +222,37 @@ System.out.println(c2.getType());
 System.out.println(c3.isNull());
 ~~~
 
-##### Example.4 - Function Expression
+##### Example - Function(from_unixtime) Expression
 
 ~~~
 Function function = new Function("FROM_UNIXTIME",  new Expression[]{new Constant(1900000000)});
 System.out.println(function);
+~~~
+
+##### Example - Function(timestampadd) Expression
+
+~~~
+String name = FunctionLibrary.TIMESTAMPADD;
+Constant arg0 = new Constant(NonReserved.SQL_TSI_SECOND);
+Constant arg1 = new Constant(1900000000, DataTypeManager.DefaultDataClasses.INTEGER);
+Constant arg2 = new Constant(new Timestamp(0));
+Function timestampadd = new Function(name, new Expression[] {arg0, arg1, arg2});
+System.out.println(timestampadd);
+~~~
+
+run above code output
+
+~~~
+timestampadd(SQL_TSI_SECOND, 1900000000, {ts'1970-01-01 08:00:00.0'})
+~~~
+
+##### Example - ExpressionSymbol, Function, Constant
+
+~~~
+Constant constant = new Constant(1900000000, DataTypeManager.DefaultDataClasses.INTEGER);
+Function function = new Function("FROM_UNIXTIME",  new Expression[]{constant});
+ExpressionSymbol symbol = new ExpressionSymbol("expr1", function);
+System.out.println(symbol);
 ~~~
 
 ### Procedure language objects
@@ -331,7 +391,7 @@ visit(IsDistinctCriteria isDistinctCriteria)
 
 #### Examples
 
-##### Example.1 - AggregateSymbolCollectorVisitor find AggregateSymbols and ElementSymbols
+##### Example - AggregateSymbolCollectorVisitor find AggregateSymbols and ElementSymbols
 
 ~~~
 String sql = "SELECT COUNT(e1), MAX(DISTINCT e1) FROM pm1.g1 GROUP BY e1 HAVING MAX(e2) > 0 AND NOT MIN(e2) < 100";
@@ -352,5 +412,53 @@ run above code will output
 [e1]
 ~~~
 
-The `org.teiid.query.sql.lang.Criteria` represents the criteria clause for a query, which defines constraints on the data values to be retrieved for each parameter in the select clause.
+##### Example - GroupCollectorVisitor find groups
 
+~~~
+GroupSymbol group = new GroupSymbol("A", "Accounts.PRODUCT");
+ElementSymbol id = new ElementSymbol("ID", group, String.class);
+ElementSymbol symbol = new ElementSymbol("SYMBOL", group, String.class);
+ElementSymbol name = new ElementSymbol("COMPANY_NAME", group, String.class);
+
+List<ElementSymbol> symbols = Arrays.asList(id, symbol, name);
+Select select = new Select(symbols);
+
+From from = new From();
+UnaryFromClause clause = new UnaryFromClause();
+clause.setGroup(group);
+from.addClause(clause);
+
+Query command = new Query();
+command.setSelect(select);
+command.setFrom(from);
+
+System.out.println(GroupCollectorVisitor.getGroups(command, true));
+~~~
+
+run above code will output
+
+~~~
+[Accounts.PRODUCT AS A]
+~~~
+
+##### Example - ExpressionMappingVisitor repleace Expression
+
+~~~
+ElementSymbol a = new ElementSymbol("a"); 
+ElementSymbol b = new ElementSymbol("b"); 
+ElementSymbol c = new ElementSymbol("c");
+Function addition = new Function("+", new Expression[] {a, b });
+Function multiplication = new Function("*", new Expression[] {a, b });
+Function original = new Function("+", new Expression[] {addition, c });
+Map<Expression, Expression> map = new HashMap<Expression, Expression>();
+map.put(c, multiplication);
+System.out.print(original + " = ");
+ExpressionMappingVisitor.mapExpressions(original, map);
+System.out.println(original);
+~~~
+
+run above code will output
+
+~~~
+((a + b) + c) = ((a + b) + (a * b))
+~~~
