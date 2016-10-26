@@ -182,6 +182,44 @@ Run above code will output
 SELECT A.ID, A.SYMBOL, A.COMPANY_NAME FROM Accounts.PRODUCT AS A
 ~~~
 
+##### Example - QueryParser to Command
+
+~~~
+import org.teiid.query.parser.QueryParser;
+import org.teiid.query.sql.lang.Command;
+
+String sql = "select from_unixtime(x.e2) from pm1.g1 as x";
+Command command = QueryParser.getQueryParser().parseCommand(sql);
+System.out.println(command);
+~~~
+
+Run above code will output
+
+~~~
+SELECT from_unixtime(x.e2) FROM pm1.g1 AS x
+~~~
+
+> NOTE: QueryParser will parse a SQL String to a language Command Object, this also the first step of Teiid Query Engine process client request.
+
+##### Example - QueryParser to Criteria
+
+~~~
+import org.teiid.query.parser.QueryParser;
+import org.teiid.query.sql.lang.Criteria;
+
+String critStr = "timestampadd(SQL_TSI_SECOND, pm1.g1.e2, {ts'1970-01-01 08:00:00.0'}) = {ts'1992-12-01 07:00:00.0'}";
+Criteria crit = QueryParser.getQueryParser().parseCriteria(critStr);
+System.out.println(crit);
+~~~
+
+Run above code will output
+
+~~~
+timestampadd(SQL_TSI_SECOND, pm1.g1.e2, {ts'1970-01-01 08:00:00.0'}) = {ts'1992-12-01 07:00:00.0'}
+~~~
+
+> NOTE: QueryParser will parse a SQL String to a language CompareCriteria Object, this also the first step of Teiid Query Engine process client request.
+
 ### Symbol objects
 
 ![Teiid Query API Symbol objects]({{ site.baseurl }}/assets/blog/teiid/teiid-query-api-lang-symbol.png)
