@@ -1,14 +1,108 @@
 ---
 layout: blog
-title:  "Phoenix DML Unit Test"
+title:  "Phoenix/HBase SQL Support"
 date:   2015-01-15 13:20:00
 categories: data
-permalink: /phoenix-dml
+permalink: /phoenix-sql
 author: Kylin Soong
 duoshuoid: ksoong2015011502
 ---
 
-[Apache Phoenix](http://phoenix.apache.org/)is a relational database layer over HBase delivered as a client-embedded JDBC driver targeting low latency queries over HBase data. ]The [TestPhoenixDML](https://github.com/kylinsoong/data/blob/master/phoenix-quickstart/src/test/java/org/apache/phoenix/teiid/TestPhoenixDML.java) use Phoenix to execute a series DML unit test, including:
+* Table of contents
+{:toc}
+
+## Prerequisites
+
+Download [order-records-phoenix.sql]({{ site.baseurl }}/assets/download/sql/order-records-phoenix.sql), execute psql.py against a Phoenix/HBase server
+
+~~~
+$ ./bin/psql.py 127.0.0.1:2181 order-records-phoenix.sql
+~~~
+
+This will create 3 tables with initialization data:
+
+**Orders**
+
+![Phoenix Table Orders]({{ site.baseurl }}/assets/blog/data/phoenix-table-orders.png)
+
+**Customers**
+
+![Phoenix Table Customers]({{ site.baseurl }}/assets/blog/data/phoenix-table-customers.png)
+
+**Items**
+
+![Phoenix Table Items]({{ site.baseurl }}/assets/blog/data/phoenix-table-items.png)
+
+## Functions
+
+[http://phoenix.apache.org/language/functions.html](http://phoenix.apache.org/language/functions.html) list all functions Phoenix supported
+
+### Aggregate Functions
+
+#### AVG
+
+~~~
+SELECT ITEMID, AVG(QUANTITY) AVG_QUANTITY 
+FROM ORDERS 
+GROUP BY ITEMID 
+ORDER BY ITEMID DESC
+~~~
+
+#### COUNT
+
+~~~
+SELECT COUNT(*), COUNT(ITEMID), COUNT(DISTINCT ITEMID) FROM ORDERS
+~~~
+
+#### MAX, MIN, SUM
+
+~~~
+SELECT MAX(QUANTITY), MIN(QUANTITY), SUM(QUANTITY) FROM ORDERS
+SELECT ITEMID, MAX(QUANTITY), MIN(QUANTITY), SUM(QUANTITY) FROM ORDERS GROUP BY ITEMID
+~~~ 
+
+### String Functions
+
+#### SUBSTR
+
+~~~
+SELECT SUBSTR(CUSTOMERNAME, 15) FROM Customers WHERE CUSTOMERID = 'C005'
+SELECT SUBSTR(CUSTOMERNAME, 15, 9) FROM Customers WHERE CUSTOMERID = 'C005'
+~~~
+
+#### LPAD
+
+~~~
+SELECT LPAD(COUNTRY, 15) FROM Customers WHERE CUSTOMERID = 'C005'
+SELECT LPAD(COUNTRY, 15, '*') FROM Customers WHERE CUSTOMERID = 'C005'
+~~~
+
+#### UPPER
+
+~~~
+SELECT UPPER(COUNTRY) FROM Customers WHERE CUSTOMERID = 'C005'
+~~~
+
+#### INSTR
+
+~~~
+SELECT INSTR(CUSTOMERNAME, 'Applian') FROM Customers WHERE CUSTOMERID = 'C005'
+~~~
+
+### Time and Date Functions
+
+### Numeric Functions
+
+### Array Functions
+
+### Math Functions
+
+### Other Functions
+
+
+## DML/DDL Commands
+
+The [TestPhoenixDML](https://github.com/kylinsoong/data/blob/master/phoenix-quickstart/src/test/java/org/apache/phoenix/teiid/TestPhoenixDML.java) use Phoenix to execute a series DML unit test, including:
 
 * testMetaData
 * testInsert
