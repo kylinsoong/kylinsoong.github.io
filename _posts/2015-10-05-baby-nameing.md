@@ -1,12 +1,25 @@
 ---
 layout: blog
-title:  "小孩起名"
+title:  "汉字摘录"
 date:   2015-10-05 16:00:00
 categories: other
-permalink: /baby-naming
+permalink: /words
 author: Kylin Soong
 duoshuoid: ksoong2015100504
 ---
+
+* Table of contents
+{:toc}
+
+## 汉字出处
+
+### 浣
+
+拼音： huàn
+
+* `竹喧归浣女，莲动下渔舟。` ―― 王维《山居秋暝》
+* `心之忧矣，如匪浣衣。` ―― 《诗经.国风.邶风.柏舟》
+
 
 ## 楚辞取名
 
@@ -17,8 +30,6 @@ duoshuoid: ksoong2015100504
 * 夫维圣哲以茂行兮
 * 抚长剑兮玉珥，璆锵鸣兮琳琅
 
-[.](http://book.douban.com/review/5362460/)
-
 ## 论语取名
 
 * 未之思也，夫何远之有(子罕9·31)
@@ -28,13 +39,9 @@ duoshuoid: ksoong2015100504
 * 士不可以不弘毅(泰伯8·7)
 * 文质彬彬，然后君子(雍也6·18)
 
-[.](http://book.douban.com/review/5563790/)
-
 ## 诗经取名
 
 * 终风且霾，惠然肯来
 * 自牧归荑，洵美且异
 * 青青子佩，悠悠我思
 * 蜉蝣之羽，衣裳楚楚
-
-[.](http://book.douban.com/review/5093422/)
