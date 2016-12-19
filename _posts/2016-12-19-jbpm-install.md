@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Install jBPM From jbpm-installer"
+title:  "Install jBPM from jbpm-installer"
 date:   2016-12-19 12:00:12
 categories: jbpm
 permalink: /jbpm-install
@@ -98,6 +98,6 @@ start jBPM via
 ./bin/standalone.sh -b 0.0.0.0 -bmanagement=0.0.0.0 -c standalone-full.xml
 ~~~
 
-Once start finished, access http://localhost:8080/jbpm-console will log into jBPM console with admin/admin:
+Once start finished, access http://localhost:8080/jbpm-console will log into jBPM console with `admin/password1!`:
 
 ![jBPM Welcome]({{ site.baseurl }}/assets/blog/jbpm/jbpm-welcome-page.png)
