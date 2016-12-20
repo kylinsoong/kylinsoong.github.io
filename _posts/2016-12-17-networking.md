@@ -122,4 +122,175 @@ Options for ss and netstat:
 
 ### Configuring Networking with nmcli
 
+**NetworkManager** is a daemon that monitors and manages network settings. The network configuration files in the `/etc/sysconfig/network-scripts` directory.
 
+
+#### Viewing network information with nmcli
+
+~~~
+# nmcli connection show 
+NAME     UUID                                  TYPE            DEVICE  
+enp0s25  131d803f-e480-4512-8f4a-299d275e4a37  802-3-ethernet  enp0s25 
+virbr0   4a9927cf-fd88-42eb-b60f-2863e2baecd1  bridge          virbr0
+~~~
+
+~~~
+# nmcli connection show --active 
+NAME     UUID                                  TYPE            DEVICE  
+enp0s25  131d803f-e480-4512-8f4a-299d275e4a37  802-3-ethernet  enp0s25 
+virbr0   4a9927cf-fd88-42eb-b60f-2863e2baecd1  bridge          virbr0 
+~~~
+
+~~~
+# nmcli connection show enp0s25 
+connection.id:                          enp0s25
+connection.uuid:                        131d803f-e480-4512-8f4a-299d275e4a37
+connection.stable-id:                   --
+connection.interface-name:              enp0s25
+connection.type:                        802-3-ethernet
+connection.autoconnect:                 yes
+...
+~~~
+
+A **device** is a network interface. A connection is a configuration used for a device which is made up of a collection of settings. Multiple connections may exist for a device, but only one may be active at a time.
+
+~~~
+# nmcli device status 
+DEVICE      TYPE      STATE        CONNECTION 
+virbr0      bridge    connected    virbr0     
+enp0s25     ethernet  connected    enp0s25    
+wlp3s0      wifi      unavailable  --         
+lo          loopback  unmanaged    --      
+~~~
+
+~~~
+# nmcli device show enp0s25 
+GENERAL.DEVICE:                         enp0s25
+GENERAL.TYPE:                           ethernet
+GENERAL.HWADDR:                         00:21:CC:71:3B:09
+GENERAL.MTU:                            1500
+GENERAL.STATE:                          100 (connected)
+...
+~~~
+
+#### Creating network connections with nmcli
+
+* Define a new connection named "default" which will autoconnect as an Ethernet connecton on eth0 device using DHCP:
+
+~~~
+# nmcli connection add con-name "default" type ethernet ifname eth0
+~~~
+
+* Change back to the DHCP connection.
+
+~~~
+# nmcli connection up default
+~~~
+
+* Delete a connection
+
+~~~
+# nmcli connection delete default
+~~~
+
+* Create a static connection with the same IPv4 address, network prefix, and default gateway. Name the new connection static-eth0.
+
+~~~
+# nmcli connection add con-name "static-eth0" ifname enp0s25 type ethernet ipv4.addresses 10.66.192.121/24 ipv4.gateway 10.66.193.254
+~~~
+
+* Modify the new connection to add the DNS setting.
+
+~~~
+# nmcli connection modify "static-eth0" ipv4.dns 10.72.17.5
+~~~
+
+* Display and activate the new connection.
+
+~~~
+# nmcli connection show
+# nmcli connection show --active
+# nmcli connection up "static-eth0"
+# nmcli connection show --active
+# ip addr show enp0s25
+# ip route 
+# ping 10.72.17.5
+# nmcli connection modify "static-eth0" connection.autoconnect no
+# reboot
+# nmcli connection show --active
+~~~
+
+### Editing Network Configuration Files
+
+Interface configuration files control the software interfaces for individual network devices. These files are usually named /etc/sysconfig/network-scripts/ifcfg-<name>, where <name> refers to the name of the device or connection that the configuration file controls.
+
+Example of static-eth0:
+
+~~~
+# cat /etc/sysconfig/network-scripts/ifcfg-static-eth0 
+TYPE=Ethernet
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=static-eth0
+UUID=57e917f1-9f9a-4c35-8fba-366876eb608e
+DEVICE=enp0s25
+ONBOOT=no
+DNS1=10.72.17.5
+IPADDR=10.66.192.121
+PREFIX=24
+GATEWAY=10.66.193.254
+PEERDNS=yes
+PEERROUTES=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+~~~
+
+After modify this configuration file, run nmcli reload and restart the interface, make sure the changes to take effect:
+
+~~~
+# nmcli connection reload
+# nmcli connection down "System eth0"
+# nmcli connection up "System eth0"
+~~~
+
+### Configuring Host Names and Name Resolution
+
+#### Changing the system host name
+
+~~~
+# hostname
+ksoong.org
+~~~
+
+A static host name may be specified in the **/etc/hostname** file. The `hostnamectl` command is used to modify this file and may be used to view the status of the system's fully qualified host name.
+
+~~~
+# cat /etc/hostname 
+ksoong.org
+~~~
+
+~~~
+# hostnamectl set-hostname ksoong.com
+# hostnamectl status
+~~~
+
+#### Configuring name resolution
+
+The stub resolver is used to convert host names to IP addresses or the reverse. The contents of the file **/etc/hosts** are checked first.
+
+~~~
+# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+~~~
+
+~~~
+# getent hosts ksoong.com
+# host ksoong.com
+~~~
