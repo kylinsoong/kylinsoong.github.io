@@ -54,6 +54,13 @@ unzip jbpm-installer/lib/kie-server-6.5.0.Final-wildfly-10.0.0.Final.war -d ./wi
 touch ./wildfly-10.0.0.Final/standalone/deployments/kie-server.war.dodeploy
 ~~~
 
+### 5. Install dashboard
+
+~~~
+$ unzip jbpm-installer/lib/dashboard-builder-6.5.0.Final-wildfly-10.0.0.Final.war -d wildfly-10.0.0.Final/standalone/deployments/dashboard-builder.war
+touch ./wildfly-10.0.0.Final/standalone/deployments/dashboard-builder.war.dodeploy
+~~~
+
 ### 5. Set up user group
 
 Change into WildFly Home, execute add users shell script [add-users.sh]({{ site.baseurl }}/assets/download/shell/add-users.sh):

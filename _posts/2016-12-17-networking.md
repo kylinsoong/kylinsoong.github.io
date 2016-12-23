@@ -294,3 +294,16 @@ The stub resolver is used to convert host names to IP addresses or the reverse. 
 # getent hosts ksoong.com
 # host ksoong.com
 ~~~
+
+## IPv4/IPv6 networking
+
+### IPv4 Networking Configuration
+
+In Linux, the configuration of network interfaces is managed by a system daemon called **NetworkManager**. For NetworkManager:
+
+1. A `device` is a network interface.
+2. A `connection` is a connection of settings that can be configured for a device.
+3. Only one connection is `active` for any one device at a time. Multiple connections may exist, for use by different devices or to allow a ocnfiguration to be altered for the same device.
+4. Each connection has a name or ID that identifies it.
+5. The persistent configuration for a connection is stored in **/etc/sysconfig/network-scripts/ifcfg-name**, which  `name` is the name of the connection(although spaces are normally replaced with underscored in the file name). This file can be edited by hand if desired.
+6. The `nmcli` utility can be used to create and edit connection files from the shell prompt. 
