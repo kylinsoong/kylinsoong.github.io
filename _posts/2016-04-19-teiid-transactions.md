@@ -48,3 +48,36 @@ In the context of XA transactions, a JDBC data source can be exposed as a `javax
 XAConnection getXAConnection() throws SQLException;
 XAConnection getXAConnection(String user, String password) throws SQLException;
 ~~~
+
+## Client Perspective Transactions
+
+Teiid supports three types of transactions from a client perspective:
+
+1. Local
+2. Global
+3. Request level
+
+In this section we will use example to demonstrate these types of transactions.
+
+### Local Transactions
+
+A Local transaction from a client perspective affects only a single resource, but can coordinate multiple statements. Base on JDBC Specific, most vendor set `autoCommit` to `true` by default, so the very normal used local transaction pattern like
+
+~~~
+connection.setAutoCommit(false);
+
+Statement statement = connection.createStatement();
+statement.execute()
+statement.execute()
+...
+
+connection.commit();
+~~~
+
+If want to end a local transaction, either execute the following operation:
+
+~~~
+connection.setAutoCommit(true)
+connection.commit()
+connection.rollback()
+~~~

@@ -1,11 +1,11 @@
 ---
 layout: blog
 title:  "Tips for debug Teiid source code"
-date:   2015-07-29 17:00:00
+date:   2016-12-28 17:00:00
 categories: teiid
 permalink: /teiid-code-debug
 author: Kylin Soong
-duoshuoid: ksoong2015072901
+duoshuoid: ksoong2016122801
 excerpt: Tips of debug teiid source code
 ---
 
@@ -70,4 +70,36 @@ By default, the Client ping are enabled for guaranteeing each client session has
 
 ~~~
 -Dorg.teiid.sockets.DisablePing=false
+~~~
+
+### 7. How to run specific junit test class and arquillian test class
+
+* An example of run specific junit test class
+
+~~~
+cd test-integrations/common
+mvn -Dtest=TestSystemVirtualModel clean test
+~~~
+
+* An example of run specific junit test method
+
+~~~
+cd test-integrations/common
+mvn -Dtest=TestSystemVirtualModel#testFunctions clean test
+~~~
+
+> NOTE: With `-Dreplace_expected=true` option in above junit test can quick fix integration test failure if the system schema have be changed.
+
+* An example of run arquillian test
+
+~~~
+cd test-integrations/common
+mvn clean test -P arquillian-tests
+~~~
+
+* An example of run specifc arquillian test class
+
+~~~
+cd test-integrations/common
+mvn -Dtest=IntegrationTestDeployment clean test -P arquillian-tests
 ~~~
