@@ -24,7 +24,7 @@ wget https://download.jboss.org/jbpm/release/6.5.0.Final/jbpm-6.5.0.Final-instal
 
 ## Installation
 
-With <<Installaton, Installaton>> section's zip file, 6 step are used to install jBPM.
+With [Download](#download) section's zip file, 6 step are used to install jBPM.
 
 ### 1. Get jbpm-installer
 

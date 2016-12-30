@@ -49,6 +49,12 @@ XAConnection getXAConnection() throws SQLException;
 XAConnection getXAConnection(String user, String password) throws SQLException;
 ~~~
 
+### XAConnection & Connection
+
+![XAConnection & Connection]({{ site.baseurl }}/assets/blog/teiid/XAConnectionConnection.png)
+
+
+
 ## Client Perspective Transactions
 
 Teiid supports three types of transactions from a client perspective:
