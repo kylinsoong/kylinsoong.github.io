@@ -307,3 +307,85 @@ In Linux, the configuration of network interfaces is managed by a system daemon 
 4. Each connection has a name or ID that identifies it.
 5. The persistent configuration for a connection is stored in **/etc/sysconfig/network-scripts/ifcfg-name**, which  `name` is the name of the connection(although spaces are normally replaced with underscored in the file name). This file can be edited by hand if desired.
 6. The `nmcli` utility can be used to create and edit connection files from the shell prompt. 
+
+## Domain Name System(DNS)
+
+### DNS 基本概念
+
+* **Domain** - A domain is a collection of resource records that ends in a common name and represents an entire subtree of the DNS name space, eg, `example.com`.
+* **Subdomain** - A subdomain is a domain that is a subtree of another domain, eg, `lab.example.com` is a subdomain of `example.com`.
+* **Zone** - A zone is the portion of a domain for which a particular nameserver is directly responsible, or authoritative. This may be an entire domain, or just part of a domain with some or all of its subdomains delegated to other nameserver(s)
+
+#### DNS 解析
+
+When a system needs to perform name resolution using a DNS server, it begins by sending queries to the servers listed in `/etc/resolv.conf` in order, until it gets a response or runs out of servers. The `host` or `dig` commands can be used to manually look up DNS names.
+
+* Local authoritative data
+* Local cached non-authoritative data
+* Remote non-authoritative data via recursion
+
+#### DNS RRs
+
+DNS resource records(RRs) are entries in a DNS zone that specify information about a particular name or object in the zone.
+
+* A (IPv4 address) records
+* AAAA (IPv6 address) records
+* CNAME(canonical name) records
+* PTR (pointer) records
+* NS (name server) records
+* SOA (start of authority) records
+* TXT(text) records
+* SRV (service) records
+
+#### Hosts and resource records
+
+A typical host, whether a client or a server, will have the following records:
+
+1. One or more `A` and/or `AAAA` records mapping its host name to its IP addresses
+2. A `PTR` record for each of its IP addresses, reverse mapping them to its host name
+3. Optionally, one or more `CNAME` records mapping alternate names to its canonical host name
+
+A DNS zone will typically have, in addition to the records for the hosts in the zone:
+
+1. An `NS` record for each of its authoritative name servers
+2. One or more `MX` records mapping the domain name to the mail exchange which receives email for addresses endng in the domain name
+3. Optionally, one or more `TXT` records for functions such as SPF or Google Site Verification
+4. Optionally, one or more `SRV` records to locate services in the domain
+
+### Nameserver 配置
+
+#### Caching nameservers and DNSSEC
+
+**Caching nameservers** store DNS query results in a local cache and removes resource records from the cache when their TTLs expire. It is common to set up caching nameservers to perform queries on behalf of clients on the local network. This greatly improves the efficiency of DNS name resolutions by reducing DNS traffic across the Internet. As the cache grows, DNS performance improves as the caching nameserver answers more and more client queries from its local cache.
+
+**DNSSEC validation** given the stateless nature of UDP, DNS transactions are prone to spoofing and tampering. Caching nameservers have historically been favored targets of attackers looking to redirect or hijack network traffic. This is often achieved by exploiting vulnerabilities in DNS server software to fool a DNS server into accepting and populating malicious data into its cache, a technique commonly referred to as cache poisoning. Once the attacker succeeds in poisoning a DNS server's cache, they effectively compromise the DNS data received by the numerous clients utilizing the caching name service on the DNS server and can consequently redirect or hijack the clients' network traffic. While a caching nameserver can greatly improve DNS performance on the local network, they can also provide improved security by `Domain Name System Security Extensions` (DNSSEC) validation. DESSEC validation enabled at the caching nameserver allows the authenticity and integrity of resource records to be validated prior to being places in the cache for use by clients, and therefore protects clients against the consequences of cache poisoning.
+
+#### Configuring and administering unbound as a caching nameserver
+
+### DNS Troubleshooting
+
+#### Name resolution methods
+
+On Linux systems, name resolution is attempted first with the hosts file `/etc/hosts` by default, per order specified in `/etc/nsswitch.conf`. Therefore, when beginning name resolution troubleshooting, do not leap to the assumption that the issue resides with DNS. Begin first by identifying the name resolution mechanism which is in play, rather than simply starting with DNS.
+
+The `getent` and `gethostip` commands from the syslinux package, can both be used to perform name resolution, mirroring the process used by most applications in following the order of host name resolution as dictated by `/etc/nsswitch.conf`.
+
+~~~
+# getent hosts github.com
+192.30.253.112  github.com
+192.30.253.113  github.com
+~~~
+
+#### Client-server network connectivity
+
+When using `dig` to troubleshoot a DNS issue, if a response is not received from a DNS server, it is a clear indication that the cause lies with the client-server network connectivity to the DNS server.
+
+~~~
+# dig A baidu.com
+
+; <<>> DiG 9.9.4-RedHat-9.9.4-8.fc20 <<>> A baidu.com
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+~~~
+
+
