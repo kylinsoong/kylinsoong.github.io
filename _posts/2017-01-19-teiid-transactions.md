@@ -1,11 +1,11 @@
 ---
 layout: blog
 title:  "Transaction in Teiid"
-date:   2016-04-19 17:00:00
+date:   2017-01-19 17:00:00
 categories: teiid
 permalink: /teiid-transactions
 author: Kylin Soong
-duoshuoid: ksoong2016041901
+duoshuoid: ksoong2017011901
 excerpt: Atomic transaction (R/W), XA datasources, two phase commit, compensating transactions 
 ---
 
@@ -87,3 +87,63 @@ connection.setAutoCommit(true)
 connection.commit()
 connection.rollback()
 ~~~
+
+## TransactionService in teiid query engine
+
+### Core API
+
+![TransactionService]({{ site.baseurl }}/assets/blog/teiid/teiid-uml-TransactionService.png)
+
+The `TransactionService` is the key api in teiid query engine refer to transaction, it be set to *DQPCore* while teiid server start, as above figure, there mainly 3 aspects api defined:
+
+* processor level methods
+
+~~~
+void begin(TransactionContext context) throws XATransactionException;
+void commit(TransactionContext context) throws XATransactionException;
+void rollback(TransactionContext context) throws XATransactionException;
+TransactionContext getOrCreateTransactionContext(String threadId);
+void suspend(TransactionContext context) throws XATransactionException;
+void resume(TransactionContext context) throws XATransactionException;
+~~~
+
+* local transaction methods
+
+~~~
+TransactionContext begin(String threadId) throws XATransactionException;
+void commit(String threadId) throws XATransactionException;
+void rollback(String threadId) throws XATransactionException;
+void cancelTransactions(String threadId, boolean requestOnly) throws XATransactionException;
+~~~
+
+* global transaction methods
+
+~~~
+int prepare(final String threadId, XidImpl xid, boolean singleTM) throws XATransactionException;
+void commit(final String threadId, XidImpl xid, boolean onePhase, boolean singleTM) throws XATransactionException;
+void rollback(final String threadId, XidImpl xid, boolean singleTM) throws XATransactionException;
+Xid[] recover(int flag, boolean singleTM) throws XATransactionException;
+void forget(final String threadId, XidImpl xid, boolean singleTM) throws XATransactionException;
+void start(final String threadId, XidImpl xid, int flags, int timeout, boolean singleTM) throws XATransactionException;
+void end(final String threadId, XidImpl xid, int flags, boolean singleTM) throws XATransactionException;
+~~~
+
+The `TransactionServerImpl` mainly contain a `TransactionManager` for local transaction, and `WorkManager`, `XATerminator` for global transaction.
+
+The `TransactionContext` are session level context which contains a series of attributes with set/get method.
+
+### How TransactionService be set to DQPCore
+
+While teiid server startup, which teiid subsystem be install to server, the `TransactionManager` be injected to DQPCoreService:
+
+~~~
+engineBuilder.addDependency(ServiceName.JBOSS.append("connector", "workmanager", workManager), WorkManager.class, engine.getWorkManagerInjector()); 
+engineBuilder.addDependency(ServiceName.JBOSS.append("txn", "XATerminator"), XATerminator.class, engine.getXaTerminatorInjector()); 
+engineBuilder.addDependency(ServiceName.JBOSS.append("txn", "TransactionManager"), TransactionManager.class, engine.getTxnManagerInjector());
+~~~
+
+### How TransactionService begin
+
+![TransactionService begin]({{ site.baseurl }}/assets/blog/teiid/teiid-seq-TransactionService-begin.png)
+
+A ProcessProcessor will create a session level TransactionContext, the transaction will begin if met the condition.
