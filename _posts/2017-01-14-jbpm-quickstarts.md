@@ -12,14 +12,15 @@ excerpt: A series of quickstart example for jBPM
 * Table of contents
 {:toc}
 
-## HelloWorld
+## Script task
 
-HelloWorld 流程如下图所示：
+### HelloWorld
 
-
-如上为一简单的流程，仅有一个Script Task节点，流程运行Script Task节点执行Java代码，输出
+HelloWorld 流程如下图所示
 
 ![HelloWorld]({{ site.baseurl }}/assets/blog/jbpm/jbpm-quickstarts-helloworld.png)
+
+如上为一简单的流程，仅有一个Script Task节点，流程运行Script Task节点执行Java代码，输出
 
 ~~~
 Hello World jBPM
@@ -28,7 +29,7 @@ Hello World jBPM
 * [HelloWorld.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/helloworld/HelloWorld.java)
 * [HelloWorld.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/helloworld/HelloWorld.bpmn2)
 
-### 示例运行
+#### 示例运行
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -37,7 +38,7 @@ KieSession ksession = kieBase.newKieSession();
 ksession.startProcess("org.jbpm.quickstarts.HelloWorld");
 ~~~
 
-## Looping
+### Looping
 
 Looping流程如下图所示：
 
@@ -69,7 +70,7 @@ System.out.println("Loop completed");
 * [Looping.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/looping/Looping.java)
 * [Looping.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/looping/Looping.bpmn2)
 
-### 示例运行
+#### 示例运行
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -90,9 +91,21 @@ Loop started
 Loop completed
 ~~~
 
+## Service task
+
+Service task 代表执行 jBPM 引擎之外的一个抽象工作，常见的 Service task 有：
+
+* 接发邮件
+* 日志记录
+* 调运 Web Service
+
+### 
+
 ## Business rule task
 
-Business rule task 流程如下：
+### HelloWorld
+
+HelloWorld Business rule task 流程如下：
 
 ![Business rule]({{ site.baseurl }}/assets/blog/jbpm/jbpm-quickstarts-businessrules.png)
 
@@ -114,7 +127,7 @@ end
 * [ruletaskprocess-rule.drl](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/rule/ruletaskprocess-rule.drl)
 * [ruletaskprocess-rule2.drl](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/rule/ruletaskprocess-rule2.drl)
 
-### 示例运行
+#### 示例运行
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -137,7 +150,11 @@ Hello World Rule 2
 
 ## User Task
 
-User Task 是指节点必须有人的参与后才能够完成，是 BPM 重要特新的体现，User Task 必须使用数据库存储流程运行时数据，如下为本部分使用到的流程示意：
+User Task 是指节点必须有人的参与后才能够完成，是 BPM 重要特新的体现，User Task 必须使用数据库存储流程运行时数据.
+
+### Evaluation
+
+如下为本部分使用到的流程：
 
 ![User Task]({{ site.baseurl }}/assets/blog/jbpm/jbpm-quickstarts-usertask.png)
 
@@ -152,7 +169,7 @@ User Task 是指节点必须有人的参与后才能够完成，是 BPM 重要�
 * [Evaluation.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/humantask/Evaluation.java)
 * [Evaluation.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/humantask/Evaluation.npmn2)
 
-### 示例运行
+#### 示例运行
 
 ~~~
 // Prepare datasource

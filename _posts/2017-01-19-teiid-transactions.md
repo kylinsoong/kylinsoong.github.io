@@ -88,6 +88,58 @@ connection.commit()
 connection.rollback()
 ~~~
 
+## The underlying of Local Transaction
+
+The traditional way to execute a transaction like
+
+~~~
+conn.setAutoCommit(false);
+execute(SQL_INSERET);
+conn.commit();
+~~~
+
+This simply send 3 messages to server side, which the DQP methods: begin(), executeRequest(), commit() be executed accordingly.
+
+![Transaction in client]({{ site.baseurl }}/assets/blog/teiid/teiid-seq-Transaction-client.png)
+
+* Once set AutoCommit to false, a reference flag will be set
+* JDBC Statement execute() will trigger the `begin()` and `executeRequest()`
+* The commit from connection will trigger the `commit()` in server side
+
+### begin()
+
+![DQPCore begin]({{ site.baseurl }}/assets/blog/teiid/teiid-seq-dqp-begin.png)
+
+* The DQPCore begin() will trigger the TransactionManager's begin() method via Proxy.
+
+### executeRequest()
+
+### commit()
+
+![DQPCore commit]({{ site.baseurl }}/assets/blog/teiid/teiid-seq-dqp-commit.png)
+
+* The proxy commit in a different threads for asyn.
+
+### An example of dynamic proxy use to to log transactions
+
+In above [begin()](#begin) and [commit()](#commit) section, a dynamic proxy be used to begin or commit transaction, be low is a example to simply view how proxy works.
+
+~~~
+TransactionServiceImpl transactionServiceImpl = new TransactionServiceImpl();
+TransactionService transactionService = (TransactionService) LogManager.createLoggingProxy(LogConstants.CTX_TXN_LOG, transactionServiceImpl, new Class[] {TransactionService.class}, MessageLevel.DETAIL, Thread.currentThread().getContextClassLoader());
+transactionService.begin("sampleID");
+transactionService.commit("sampleID");
+~~~
+
+This will generate log like
+
+~~~
+2017-01-23 16:17 538 FINER   [org.teiid.TXN_LOG] (main) before begin:org.teiid.test.teiid4699.TransactionServiceImpl@5f4da5c3(sampleID)
+2017-01-23 16:17 540 FINER   [org.teiid.TXN_LOG] (main) after begin : null
+2017-01-23 16:17 540 FINER   [org.teiid.TXN_LOG] (main) before commit:org.teiid.test.teiid4699.TransactionServiceImpl@5f4da5c3(sampleID)
+2017-01-23 16:17 541 FINER   [org.teiid.TXN_LOG] (main) after commit : null
+~~~
+
 ## TransactionService in teiid query engine
 
 ### Core API
