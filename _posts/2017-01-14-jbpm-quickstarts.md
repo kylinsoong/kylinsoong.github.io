@@ -29,7 +29,7 @@ Hello World jBPM
 * [HelloWorld.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/helloworld/HelloWorld.java)
 * [HelloWorld.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/helloworld/HelloWorld.bpmn2)
 
-#### 示例运行
+**示例运行**
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -70,7 +70,7 @@ System.out.println("Loop completed");
 * [Looping.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/looping/Looping.java)
 * [Looping.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/looping/Looping.bpmn2)
 
-#### 示例运行
+**示例运行**
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -127,7 +127,7 @@ end
 * [ruletaskprocess-rule.drl](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/rule/ruletaskprocess-rule.drl)
 * [ruletaskprocess-rule2.drl](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/rule/ruletaskprocess-rule2.drl)
 
-#### 示例运行
+**示例运行**
 
 ~~~
 KieHelper kieHelper = new KieHelper();
@@ -167,9 +167,9 @@ User Task 是指节点必须有人的参与后才能够完成，是 BPM 重要�
 相关代码：
 
 * [Evaluation.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/humantask/Evaluation.java)
-* [Evaluation.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/humantask/Evaluation.npmn2)
+* [Evaluation.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/humantask/Evaluation.bpmn2)
 
-#### 示例运行
+**示例运行**
 
 ~~~
 // Prepare datasource
@@ -260,3 +260,137 @@ Process started ...
  'mary' completing task HR Evaluation: You need to evaluate kylin.
 Process instance completed
 ~~~
+
+## Reusable sub-process
+
+### Pass parameters between Parent process and Reusable Sub-Process
+
+Reusable Sub-Process是在主流程里面执行另为一个流程（子流程），当流程执行到Reusable Sub-Process节点时流程执行引擎根据提供的流程（子流程）ID，Reusable Sub-Process示例流程如下（主流程和子流程）：
+
+![Reusable Sub-Process Parent]({{ site.baseurl }}/assets/blog/jbpm/reusable-subprocess-parent.png)
+
+![Reusable Sub-Process Child]({{ site.baseurl }}/assets/blog/jbpm/reusable-subprocess-child.png)
+
+Reusable Sub-Process示例流程运行时传入三条字符串message 1，message 2和message 3，在流程运行时主流程的Format tag节点中生成一个tag，在子流程Apply Tag中将生成的tsg添加到每一条消息的末尾，流程运行结束输出三条消息确认设定tag情况。主流程的Format tag节点为Service Task节点，运行时执行的Java代码如下：
+
+~~~
+System.out.println("Parent-process id = "+kcontext.getProcessInstance().getId());  
+java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("mm-dd-yyyy");  
+kcontext.setVariable("tag",  sdf.format(new java.util.Date()));
+~~~
+
+子流程Apply Tag节点为Service Task节点，运行时执行的Java代码如下：
+
+~~~
+System.out.println("Child-process id = "+kcontext.getProcessInstance().getId());  
+java.util.List<String> taggedMessages = new java.util.ArrayList<String>();  
+for (Object message : internalMessages){  
+    taggedMessages.add(((String)message)+" - "+internalTag);      
+}  
+kcontext.setVariable("internalMessages",taggedMessages); 
+~~~
+
+* [ReusableSubProcess.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/reusable/ReusableSubProcess.java)
+* [reusableSubProcess-Parent.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/reusable/reusableSubProcess-Parent.bpmn2)
+* [reusableSubProcess-Child.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/reusable/reusableSubProcess-Child.bpmn2)
+
+**示例运行**
+
+~~~
+KieHelper kieHelper = new KieHelper();
+KieBase kieBase = kieHelper
+        .addResource(ResourceFactory.newClassPathResource("quickstarts/reusable/reusableSubProcess-Parent.bpmn2"))
+        .addResource(ResourceFactory.newClassPathResource("quickstarts/reusable/reusableSubProcess-Child.bpmn2"))
+        .build();
+KieSession ksession = kieBase.newKieSession();
+        
+List<String> messages = new ArrayList<String>();
+messages.add("message 1");
+messages.add("message 2");
+messages.add("message 3");
+Map<String,Object> params = new HashMap<String, Object>();
+params.put("messages", messages); 
+        
+System.out.println("Before: " + params.get("messages"));
+ProcessInstance process = ksession.startProcess("org.jbpm.quickstarts.reusableSubProcess.Parent", params
+WorkflowProcessInstance processInstance = (WorkflowProcessInstance) process;
+System.out.println("After: " + processInstance.getVariable("messages"));
+ksession.dispose();
+~~~
+
+示例流程运行输出结果如下：
+
+~~~
+Before: [message 1, message 2, message 3]
+Parent-process id = 1
+Child-process id = 2
+After: [message 1 - 11-02-2017, message 2 - 11-02-2017, message 3 - 11-02-2017]
+~~~
+
+## Embedded sub-process
+
+### Set tag via Embedded sub-process
+
+EmbeddedSubProcess 是指在流程设计时子流程镶嵌在主流程，如下为 EmbeddedSubProcess 流程示意：
+
+![Embedded Sub-Process]({{ site.baseurl }}/assets/blog/jbpm/embedded-subprocess.png)
+
+如图 `Tagger Embedded Process` 为镶嵌在主流程中的子流程，EmbeddedSubProcess流程运行时传输三条字符串message 1，message 2和message 3，在流程运行时主流程的Format tag节点中生成一个tag，在子流程Apply Tag中将生成的tsg添加到每一条消息的末尾，流程运行结束输出三条消息确认设定tag情况。
+
+主流程的Format tag节点为Service Task节点，运行时执行的Java代码如下：
+
+~~~
+System.out.println("Parent-process id = "+kcontext.getProcessInstance().getId());
+java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("mm-dd-yyyy");
+kcontext.setVariable("tag",  sdf.format(new java.util.Date()));
+~~~
+
+即将当前的时间以mm-dd-yyyy格式作为tag。子流程Apply Tag节点为Service Task节点，运行时执行的Java代码如下：
+
+~~~
+System.out.println("Embedded-process id = "+kcontext.getProcessInstance().getId());
+java.util.List<String> taggedMessages = new java.util.ArrayList<String>();
+for (Object message : messages){
+    taggedMessages.add(((String)message)+" - "+tag);    
+}
+kcontext.setVariable("messages",taggedMessages);
+~~~
+
+* [EmbeddedSubProcess.java](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/java/org/jbpm/quickstarts/embedded/EmbeddedSubProcess.java)
+* [embeddedSubProcess.bpmn2](https://raw.githubusercontent.com/kylinsoong/jbpm-examples/master/quickstarts/src/main/resources/quickstarts/embedded/embeddedSubProcess.bpmn2)
+
+**示例运行**
+
+~~~
+KieHelper kieHelper = new KieHelper();
+KieBase kieBase = kieHelper
+        .addResource(ResourceFactory.newClassPathResource("quickstarts/embedded/embeddedSubProcess.bpmn2"))
+        .build();
+KieSession ksession = kieBase.newKieSession();
+        
+List<String> messages = new ArrayList<String>();
+messages.add("message 1");
+messages.add("message 2");
+messages.add("message 3");
+Map<String,Object> params = new HashMap<String, Object>();
+params.put("messages", messages); 
+        
+System.out.println("Before: " + params.get("messages"));
+ProcessInstance process = ksession.startProcess("org.jbpm.quickstarts.embeddedSubProcess", params);
+WorkflowProcessInstance processInstance = (WorkflowProcessInstance) process;
+System.out.println("After: " + processInstance.getVariable("messages"));
+ksession.dispose();
+~~~
+
+流程运行输出的结果如下：
+
+~~~
+Before: [message 1, message 2, message 3]
+Parent-process id = 1
+Embedded-process id = 1
+After: [message 1 - 32-02-2017, message 2 - 32-02-2017, message 3 - 32-02-2017]
+~~~
+
+## Multi-instance sub-process
+
+###
