@@ -37,6 +37,14 @@ execute(conn, "SELECT * FROM TEMP", false);
 
 > NOTE: The Explicit creatation do the same work as the implicit way above.
 
+### The underlying of Create
+
+![Temp table create]({{ site.baseurl }}/assets/blog/teiid/teiid-seq-temp-create.png)
+
+The `CREATE LOCAL TEMPORARY TABLE` will create a STree Object.
+
+
+
 ## Global Temporary Tables
 
 As per [Teiid Document](https://teiid.gitbooks.io/documents/content/reference/Temp_Tables.html#_global_temporary_tables), Global temporary tables are created in Teiid Designer or via the metadata supplied to Teiid at deploy time. Unlike local temporary tables, they cannot be created at runtime. A global temporary tables share a common definition via a schema entry, but each session has a new instance of the temporary table created upon it’s first use. The table is then dropped when the session ends. There is no explicit drop support.

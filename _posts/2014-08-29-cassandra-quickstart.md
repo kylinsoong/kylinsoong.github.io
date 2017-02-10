@@ -129,7 +129,7 @@ cqlsh:demo> DELETE from users WHERE lastname = “Doe”;
 </dependency>
 ~~~ 
 
-### Build a Cluster via address, port, username, password
+### Build a Cluster
 
 ~~~
 Cluster cluster = Cluster.builder()
