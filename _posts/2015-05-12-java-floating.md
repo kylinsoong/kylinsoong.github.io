@@ -12,7 +12,9 @@ excerpt: Java 运算符
 * Table of contents
 {:toc}
 
-### 位运算符 <<
+## 位运算符
+
+###  <<
 
 位运算符 << 指将二进制位左移， a << b 即为 a * (2^b)，例如：
 
@@ -21,7 +23,7 @@ excerpt: Java 运算符
 * 1 << 20  ->  1 * (2^20) = 1048576     (1 MB)
 * 1 << 30  ->  1 * (2^30) = 1073741824  (1 GB)
 
-### 位运算符 >>
+###  >>
 
 位运算符 >> 指将二进制位右移 a >> b 即为 a / (2^b)，例如：
 
@@ -30,6 +32,12 @@ excerpt: Java 运算符
 * 1024 >> 10        ->  1024 / (2^10) =1              (KB 转化字节) 
 
 NOTE: 一个应用实例, Teiid BufferManager 默认设定的 MaxBufferSpace 为 50 GB(50L<<30) 
+
+### >>>
+
+位运算符 >>> 指将二进制位右移，且用 0 填充前面的位。
+
+http://docs.oracle.com/javase/tutorial/java/nutsandbolts/op3.html
 
 ### 比率运算符 .
  

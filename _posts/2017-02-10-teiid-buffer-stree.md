@@ -14,7 +14,7 @@ excerpt: Understanding Teiid BufferManager - STree, SPage
 
 ## Steps
 
-This article contains a series of buffer snapshot for creating a `STree`, and add a series of `Tuple` to `STree`, a `Tuple` contains 5 elements, each time one `Tuple` be inserted.
+This article contains a series of buffer snapshot for creating a `STree`, and add a series of `Tuple` to `STree`, a `Tuple` contains 5 elements, the first 2 elements play as primary key, each time one `Tuple` be inserted.
 
 ### 0. Create
 
