@@ -316,3 +316,60 @@ result.forEach(row -> {
     System.out.println();
  );
 ~~~
+
+### Example.3 Select
+
+Assume the following documents exist in Keyspace `default`:
+
+~~~
+[
+  {
+    "default": {
+      "Name": "John Doe",
+      "SavedAddresses": [
+        "123 Main St.",
+        "456 1st Ave"
+      ],
+      "Type": "Customer"
+    }
+  },
+  {
+    "default": {
+      "CreditCard": {
+        "CVN": 123,
+        "CardNumber": "4111 1111 1111 111",
+        "Expiry": "12/12",
+        "Type": "Visa"
+      },
+      "CustomerID": "Customer_12345",
+      "Items": [
+        {
+          "ItemID": 89123,
+          "Quantity": 1
+        },
+        {
+          "ItemID": 92312,
+          "Quantity": 5
+        }
+      ],
+      "Type": "Oder"
+    }
+  }
+]
+~~~
+
+#### FROM
+
+~~~
+SELECT * FROM default
+SELECT * FROM default USE KEYS "customer"
+SELECT * FROM default USE PRIMARY KEYS "customer"
+SELECT * FROM default USE KEYS ["customer", "order"]
+SELECT * FROM default USE PRIMARY KEYS ["customer", "order"]
+SELECT * FROM default:default // The keyspace can be prefixed with an optional namespace
+
+SELECT * FROM default.Items USE PRIMARY KEYS "order"
+
+SELECT S FROM default.SavedAddresses AS S USE PRIMARY KEYS "customer"
+SELECT S[0] FROM default.SavedAddresses AS S USE PRIMARY KEYS "customer"
+~~~
