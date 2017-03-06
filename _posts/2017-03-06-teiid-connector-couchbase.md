@@ -34,7 +34,11 @@ which does not follow the rules of data typing and structure that apply to tradi
 
 There are documents `Customer` and `Order` under Bucket `test`:
 
+**Customer**
+
 ![Cusomter]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-customer.png)
+
+**Order**
 
 ![Order]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-order.png)
 
