@@ -25,10 +25,10 @@ which does not follow the rules of data typing and structure that apply to tradi
 
 ### Principles for mapping documents to JDBC-compatible Tables
 
-. The keyspace/bucket be mapped as top table which contains all key/value pairs not include the nested arrays/documents, key be mapped to column name, the value type be mapped to column type
-. The nested arrays/documents be mapped to different table with name: `the parent table` + `underscore character` + `the key of nested arrays/documents`
-. Each Table has a PK column map the document id, the PK in top table is primary key.
-. If a nested array has a nested array item, the array item item be treated as Object.
+1. The keyspace/bucket be mapped as top table which contains all key/value pairs not include the nested arrays/documents, key be mapped to column name, the value type be mapped to column type
+2. The nested arrays/documents be mapped to different table with name: `the parent table` + `underscore character` + `the key of nested arrays/documents`
+3. Each Table has a PK column map the document id, the PK in top table is primary key.
+4. If a nested array has a nested array item, the array item item be treated as Object.
 
 ### An Example of Schema Definition
 
