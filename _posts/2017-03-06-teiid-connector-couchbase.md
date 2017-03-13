@@ -42,15 +42,16 @@ There are documents `Customer` and `Order` under Bucket `test`:
 
 ![Order]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-order.png)
 
+#### Mapped table relations
+
+![Table relations]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-customerOrders-tables.png)
+
 The above documents will map to 4 tables: `test`, `test_CreditCard`, `test_Items`, `test_SavedAddresses`.
 
-![test]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-mapped-test.png)
+#### Data Samples
 
-![test_CreditCard]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-mapped-test_CreditCard.png)
+![test]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-mapped-tables-data.png)
 
-![test_Items]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-mapped-test_Items.png)
-
-![test_SavedAddresses]({{ site.baseurl }}/assets/blog/teiid/teiid-couchbase-mapped-test_SavedAddresses.png)
 
 
 
