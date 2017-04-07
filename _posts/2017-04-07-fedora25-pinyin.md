@@ -1,6 +1,6 @@
 ---
 layout: blog
-title:  "Useful Linux Commands"
+title:  "How to set up Chinese(Intelligent Pinyin) Input in Fedora 25"
 date:   2017-04-07 16:14:12
 categories: linux
 permalink: /fedora25-pinyin
