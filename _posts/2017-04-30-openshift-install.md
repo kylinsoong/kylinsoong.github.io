@@ -1,8 +1,8 @@
 ---
 layout: blog
 title:  "OpenShift Origin I - Installation"
-date:   2017-03-16 20:00:00
-categories: data
+date:   2017-04-30 15:00:00
+categories: openshift
 permalink: /openshift-1
 author: Kylin Soong
 excerpt: OpenShift Origin Installation
@@ -84,7 +84,22 @@ tar -xvf openshift-origin-server-v3.6.0-alpha.0-0343989-linux-64bit.tar.gz
 PATH=$PATH:~/openshift/openshift-origin-server-v3.6.0-alpha.0-0343989-linux-64bit
 ~~~
 
+### Start Docker Service
+
+~~~
+# systemctl start docker.service
+# systemctl status docker.service
+~~~
+
+### Web Console Walkthrough
+
+Login Web Console [https://localhost:8443/console](https://localhost:8443/console) via either `system`/`admin`, or `test`/`test`.
+
+### CLI Walkthrough
+
+//TODO--
+
 ## Useful Links
 
-* https://docs.openshift.org/latest/welcome/index.html
-* https://docs.openshift.org/latest/getting_started/administrators.html
+* [https://docs.openshift.org/latest/welcome/index.html](https://docs.openshift.org/latest/welcome/index.html)
+* [https://docs.openshift.org/latest/getting_started/administrators.html](https://docs.openshift.org/latest/getting_started/administrators.html)
