@@ -91,6 +91,12 @@ PATH=$PATH:~/openshift/openshift-origin-server-v3.6.0-alpha.0-0343989-linux-64bi
 # systemctl status docker.service
 ~~~
 
+### Start OpenShift
+
+~~~
+# openshift start
+~~~
+
 ### Web Console Walkthrough
 
 Login Web Console [https://localhost:8443/console](https://localhost:8443/console) via either `system`/`admin`, or `test`/`test`.
