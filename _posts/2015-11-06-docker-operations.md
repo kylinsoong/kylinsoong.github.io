@@ -32,7 +32,7 @@ $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                           NAMES
 a215e83a4433        nginx               "nginx -g 'daemon off"   6 minutes ago       Up 6 minutes        0.0.0.0:32773->80/tcp, 0.0.0.0:32772->443/tcp   evil_engelbart
 $ docker inspect evil_engelbart
-$ docker inspect --format {{.NetworkSettings.IPAddress}} evil_engelbart
+$ docker inspect --format {{NetworkSettings.IPAddress}} evil_engelbart
 $ docker inspect evil_engelbart | grep IPAddres
 ~~~
 
