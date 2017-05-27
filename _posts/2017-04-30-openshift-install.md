@@ -107,6 +107,19 @@ Login Web Console [https://localhost:8443/console](https://localhost:8443/consol
 
 //TODO--
 
+## Troubleshoot the installation
+
+### how to add Docker daemon option insecure-registry in Fedora
+
+Edit `/etc/docker/daemon.json` add --insecure-registry as bellow
+
+~~~
+{
+    "insecure-registries": ["172.30.0.0/16"]
+}
+~~~
+
+
 ## Links
 
 * [https://docs.openshift.org/latest/welcome/index.html](https://docs.openshift.org/latest/welcome/index.html)
