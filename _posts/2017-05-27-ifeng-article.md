@@ -1,7 +1,7 @@
 ---
 layout: blog
 title:  "驳凤凰周刊文章『中产鄙视链：绝不让娃和没英文名的孩子同读幼儿园』 "
-date:   2017-05-27 16:00:00
+date:   2017-02-27 16:00:00
 categories: other
 author: Kylin Soong
 ---
