@@ -8,4 +8,4 @@ author: Kylin Soong
 excerpt: Red Hat Enterprise Linux 7.3 系统安装配置图解教程
 ---
 
-https://openshift.gitbooks.io/cookbook/content/linux/rhel73/readme.html
+[https://openshift.gitbooks.io/cookbook/content/linux/rhel73/readme.html](https://openshift.gitbooks.io/cookbook/content/linux/rhel73/readme.html)
