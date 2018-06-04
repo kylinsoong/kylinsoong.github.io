@@ -3,6 +3,7 @@ layout: blog
 title:  "MariaDB 事物隔离实验"
 date:   2017-10-25 19:00:00
 categories: database
+permalink: database-mariadb-txisolation
 author: Kylin Soong
 ---
 

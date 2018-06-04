@@ -3,6 +3,7 @@ layout: blog
 title:  "微服务 I - 概念汇总"
 date:   2017-11-01 19:00:00
 categories: microservice
+permalink: microservice-concepts
 author: Kylin Soong
 ---
 

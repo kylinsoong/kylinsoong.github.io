@@ -3,6 +3,7 @@ layout: blog
 title:  "微服务 II - 业务处理异步化"
 date:   2017-11-06 19:00:00
 categories: microservice
+permalink: microservice-async-process
 author: Kylin Soong
 ---
 
