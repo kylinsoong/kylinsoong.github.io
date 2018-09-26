@@ -65,6 +65,6 @@ disqus:
   config: false
   id: need register
 
-duoshuo:
-  config: true
-  id: ksoong   
+#duoshuo:
+#  config: true
+#  id: ksoong   
